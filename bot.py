@@ -1,6 +1,4 @@
-import asyncio
 import discord
-from main import tokens
 from discord.ext import commands
 
 
@@ -44,6 +42,7 @@ async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
     await ctx.send('Chrissi ist ein dummer Hacker!', delete_after=7000)
 
+
 @bot.command()
 async def gumo(ctx):
     """KI wünscht allen einen guten Morgen"""
@@ -67,4 +66,4 @@ async def react(ctx, reaction):
 #Bot auf Server
 
 
-bot.run(tokens.token)
+bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
