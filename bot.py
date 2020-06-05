@@ -65,7 +65,7 @@ async def hallo(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    await ctx.send('Ich wünsche allen eine GuNa!')
+    await ctx.send('Chrissi behindert!')
 
 
 #@commands.is_owner()
