@@ -4,58 +4,67 @@ from main import tokens
 from discord.ext import commands
 
 
-client = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!')
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'{client.user} ist online')
-    await client.change_presence(activity=discord.Game('Upcoming: GAD Vl 13:15'), status=discord.Status.online)
+    print(f'{bot.user} ist online')
+    await bot.change_presence(activity=discord.Game('Upcoming: Lerni für Klausuren'), status=discord.Status.online)
 
 
-@client.event
+@bot.event
 async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
-        await ctx.send('Command not found. :(')
+        await ctx.send('KI dummdumm :(')
     else:
-        await ctx.send("I don't understand ._.")
+        await ctx.send("KI nix verstehi ._.")
 
 
-@client.command()
+@bot.command()
 async def clear(ctx, amount=1):
-    """Delete the given amount of messages (default == 1) with !clear {amount}*"""
-    await ctx.channel.purge(limit=amount+1)
+    """Lösche die übergebene Anzahl an Messages (default == 1) mit !clear {amount}*"""
+
+    if ctx.channel.id == 705427122151227442:
+        await ctx.channel.purge(limit=1)
+        await ctx.send('Pseudohistorie wird hier nicht geduldet!', delete_after=60)
+    else:
+        await ctx.channel.purge(limit=amount+1)
 
 
-@client.command()
+@bot.command()
 async def event(ctx, *, event):
-    """Change the current event with !event {event}"""
+    """Setze ein neues Event mit !event {event}"""
     await ctx.send(f'Current event changed to {event}')
-    await client.change_presence(activity=discord.Game(f'Upcoming: {event}'), status=discord.Status.online)
+    await bot.change_presence(activity=discord.Game(f'Upcoming: {event}'), status=discord.Status.online)
 
 
-@client.command()
+@bot.command(aliases=["hacker"])
 async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
     await ctx.send('Chrissi ist ein dummer Hacker!', delete_after=7000)
 
-@client.command()
+@bot.command()
 async def gumo(ctx):
     """KI wünscht allen einen guten Morgen"""
     await ctx.send('Ich wünsche allen einen GuMo!')
 
 
-@client.command()
+@bot.command()
 async def guna(ctx):
     """KI wünscht allen eine gute Nacht"""
     await ctx.send('Ich wünsche allen eine GuNa!')
 
 
 #!react bruh
+@bot.command()
+async def react(ctx, reaction):
+    """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
+    await ctx.send('Ich wünsche allen eine GuNa!')
 
 
 #@commands.is_owner()
 #Bot auf Server
 
 
-client.run(tokens.token)
+bot.run(tokens.token)
