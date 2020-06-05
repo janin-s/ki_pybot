@@ -58,7 +58,7 @@ async def guna(ctx):
 @bot.command()
 async def hallo(ctx):
     """KI wünscht allen eine gute Nacht"""
-    await ctx.send('Hallo I bims!')
+    await ctx.send('Hallo, I bims!')
 
 
 #!react bruh
