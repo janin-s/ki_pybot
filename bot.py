@@ -9,7 +9,7 @@ bot = commands.Bot(command_prefix='!')
 @bot.event
 async def on_ready():
     print(f'{bot.user} ist online')
-    await bot.change_presence(activity=discord.Game('Upcoming: Lerni für Klausuren'), status=discord.Status.online)
+    await bot.change_presence(activity=discord.Game('Next: Lerni für Klausuren'), status=discord.Status.online)
 
 
 @bot.event
