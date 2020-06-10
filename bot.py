@@ -3,7 +3,7 @@ from discord.ext import commands
 
 
 bot = commands.Bot(command_prefix='!')
-bot.activity = ""
+bot_activity = ""
 
 
 @bot.event
@@ -35,14 +35,16 @@ async def clear(ctx, amount=1):
 async def event(ctx, *, event):
     """Setze ein neues Event mit !event {event}"""
     await ctx.send(f'Current event changed to {event}')
-    bot.activity = event
+    # global bot_activity
+    # bot_activity = event
     await bot.change_presence(activity=discord.Game(f'Next: {event}'), status=discord.Status.online)
 
 
-@bot.command(aliases=["getevent", "getEvent"])
-async def get_event(ctx):
-    """Gibt das aktuelle Event aus"""
-    await ctx.send(bot.activity)
+# @bot.command(aliases=["getevent", "getEvent"])
+# async def get_event(ctx):
+#     """Gibt das aktuelle Event aus"""
+#     global bot_activity
+#     await ctx.send(bot_activity)
 
 
 @bot.command(aliases=["hacker"])
