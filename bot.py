@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-bot_activity = ""
+bot_activity = "lol"
 bot = commands.Bot(command_prefix='!')
 
 
