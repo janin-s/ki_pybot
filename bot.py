@@ -40,15 +40,15 @@ async def event(ctx, *, event):
     await bot.change_presence(activity=discord.Game(f'Next: {event}'), status=discord.Status.online)
 
 
-@bot.command(aliases=["rip", "suizid", "mag sterben", "shot_counter", "shot counter"])
+@bot.command(aliases=["rip", "suizid", "lost"])
 async def shot(ctx):
     """Erhöht den Shot-Counter um 1"""
-    if ctx.message.author.id == 388061626131283968 or 295927454562779139:
+    if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
         global shot_counter
         shot_counter += 1
         await ctx.send(f'Shot-Counter: {shot_counter}')
     else:
-        ctx.send('Jonas haut dich :knast:', delete_after=60)
+        await ctx.send('Jonas haut dich <:knast:731290033046159460>', delete_after=60)
 
 
 @bot.command(aliases=["hacker"])
