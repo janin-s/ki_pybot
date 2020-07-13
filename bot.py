@@ -4,6 +4,7 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix='!')
 bot_activity = ""
+shot_counter = 0
 
 
 @bot.event
@@ -39,13 +40,12 @@ async def event(ctx, *, event):
     # bot_activity = event
     await bot.change_presence(activity=discord.Game(f'Next: {event}'), status=discord.Status.online)
 
-
-# @bot.command(aliases=["getevent", "getEvent"])
-# async def get_event(ctx):
-#     """Gibt das aktuelle Event aus"""
-#     global bot_activity
-#     await ctx.send(bot_activity)
-
+@bot.command(aliases=["shot", "shot_counter", "shout counter"])
+async def rip(ctx):
+        """Erhöht den Shot-Counter um 1"""
+        global shot_counter
+        shot_counter += 1
+        await ctx.send(f'Shot-Counter: {shot_counter}')
 
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
