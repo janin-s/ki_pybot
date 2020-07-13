@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 
-
 bot = commands.Bot(command_prefix='!')
 bot_activity = ""
 shot_counter = 0
@@ -29,7 +28,7 @@ async def clear(ctx, amount=1):
         await ctx.channel.purge(limit=1)
         await ctx.send('Pseudohistorie wird hier nicht geduldet!', delete_after=60)
     else:
-        await ctx.channel.purge(limit=amount+1)
+        await ctx.channel.purge(limit=amount + 1)
 
 
 @bot.command()
@@ -40,12 +39,17 @@ async def event(ctx, *, event):
     # bot_activity = event
     await bot.change_presence(activity=discord.Game(f'Next: {event}'), status=discord.Status.online)
 
-@bot.command(aliases=["shot", "shot_counter", "shout counter"])
-async def rip(ctx):
-        """Erhöht den Shot-Counter um 1"""
+
+@bot.command(aliases=["rip", "suizid", "mag sterben", "shot_counter", "shot counter"])
+async def shot(ctx):
+    """Erhöht den Shot-Counter um 1"""
+    if ctx.message.author.id == 388061626131283968 or 295927454562779139:
         global shot_counter
         shot_counter += 1
         await ctx.send(f'Shot-Counter: {shot_counter}')
+    else:
+        ctx.send('Jonas haut dich :knast:', delete_after=60)
+
 
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
@@ -65,21 +69,15 @@ async def guna(ctx):
     await ctx.send('Ich wünsche allen eine GuNa!')
 
 
-@bot.command()
-async def hallo(ctx):
-    """KI wünscht allen eine gute Nacht"""
-    await ctx.send('Hallo, I bims!')
-
-
-#!react bruh
+# !react bruh
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
     await ctx.send('Chrissi behindert!')
 
 
-#@commands.is_owner()
-#Bot auf Server
+# @commands.is_owner()
+# Bot auf Server
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
