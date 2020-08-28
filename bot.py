@@ -68,6 +68,10 @@ async def guna(ctx):
     """KI wünscht allen eine gute Nacht"""
     await ctx.send('Ich wünsche allen eine GuNa!')
 
+@bot.command()
+async def sev(ctx):
+    """Sev ist behindert"""
+    await ctx.send('https://de.wikihow.com/Einen-ganzen-Tag-lang-schweigen')
 
 # !react bruh
 @bot.command()
