@@ -24,11 +24,7 @@ async def on_command_error(ctx, error, force=False):
 async def clear(ctx, amount=1):
     """Lösche die übergebene Anzahl an Messages (default == 1) mit !clear {amount}*"""
 
-    if ctx.channel.id == 705427122151227442:
-        await ctx.channel.purge(limit=1)
-        await ctx.send('Pseudohistorie wird hier nicht geduldet!', delete_after=60)
-    else:
-        await ctx.channel.purge(limit=amount + 1)
+    await ctx.channel.purge(limit=amount + 1)
 
 
 @bot.command()
