@@ -9,7 +9,7 @@ shot_counter = 0
 @bot.event
 async def on_ready():
     print(f'{bot.user} ist online')
-    await bot.change_presence(activity=discord.Game('Next: Lerni für Klausuren'), status=discord.Status.online)
+    await bot.change_presence(activity=discord.Game('Exmatrikulation kickt'), status=discord.Status.online)
 
 
 @bot.event
@@ -23,8 +23,11 @@ async def on_command_error(ctx, error, force=False):
 @bot.command()
 async def clear(ctx, amount=1):
     """Lösche die übergebene Anzahl an Messages (default == 1) mit !clear {amount}*"""
-
-    await ctx.channel.purge(limit=amount + 1)
+    if ctx.channel.id == 705427122151227442:
+        await ctx.channel.purge(limit=1)
+        await ctx.send('Pseudohistorie wird hier nicht geduldet!', delete_after=60)
+    else:
+        await ctx.channel.purge(limit=amount + 1)
 
 
 @bot.command()
@@ -33,7 +36,7 @@ async def event(ctx, *, event):
     await ctx.send(f'Current event changed to {event}')
     # global bot_activity
     # bot_activity = event
-    await bot.change_presence(activity=discord.Game(f'Next: {event}'), status=discord.Status.online)
+    await bot.change_presence(activity=discord.Game(f'{event}'), status=discord.Status.online)
 
 
 @bot.command(aliases=["rip", "suizid", "lost"])
