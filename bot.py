@@ -80,7 +80,7 @@ async def sev(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    await ctx.send('Chrissi behindert!')
+    await ctx.send('Dieses Feature existiert noch nicht, weil Janin faul ist! >:(')
 
 
 # @commands.is_owner()
