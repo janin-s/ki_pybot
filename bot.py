@@ -61,6 +61,10 @@ async def gumo(ctx):
     """KI wünscht allen einen guten Morgen"""
     await ctx.send('Ich wünsche allen einen GuMo!')
 
+@bot.command()
+async def gumi(ctx):
+    """KI wünscht allen einen guten Mittag"""
+    await ctx.send('Ich wünsche allen einen GuMi!')
 
 @bot.command()
 async def guna(ctx):
