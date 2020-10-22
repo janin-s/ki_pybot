@@ -83,7 +83,7 @@ async def guna(ctx):
 async def bye(ctx):
     """KI verabschiedet sich"""
     z = random.randint(0, 15)
-    await ctx.send(bye[z])
+    await ctx.send(bye[0])
 
 
 @bot.command()
