@@ -53,7 +53,7 @@ async def shot(ctx):
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
-    await ctx.send('Chrissi ist ein dummer Hacker!', delete_after=7000)
+    await ctx.send('Chrissi ist immer sehr nett!', delete_after=7000)
 
 
 @bot.command()
@@ -80,7 +80,7 @@ async def sev(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    await ctx.send('Dieses Feature existiert noch nicht, weil Janin faul ist! >:(')
+    await ctx.send('Dieses Feature existiert noch nicht, weil Janin faul ist! >:( Kann doch nicht wahr sein, wir warten alle schon lange auf !react, schlimmer als Krusche!')
 
 
 # @commands.is_owner()
