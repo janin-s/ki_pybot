@@ -92,6 +92,12 @@ async def sev(ctx):
     await ctx.send('https://de.wikihow.com/Einen-ganzen-Tag-lang-schweigen')
 
 
+@bot.command()
+async def lukas(ctx):
+    """Lukas ist behindert"""
+    await ctx.send('https://de.wikihow.com/Mit-einer-geistig-behinderten-person-kommunizieren')
+
+
 # !react bruh
 @bot.command()
 async def react(ctx, reaction):
