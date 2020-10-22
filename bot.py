@@ -1,3 +1,5 @@
+import random
+
 import discord
 from discord.ext import commands
 
@@ -5,6 +7,9 @@ bot = commands.Bot(command_prefix='!')
 bot_activity = ""
 shot_counter = 0
 
+bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßi Müsli!", "Tschüßli Müsli!",
+       "Bis Spätersilie!", "San Frantschüssko!", "Bis Baldrian!", "Bye mit Ei!", "Tschau mit au!", "Tschö mit ö!",
+       "Hau Rheinwald!", "Schalömmchen!", "Schönes Knochenende!", "Tschüssikowski!", "Tüdelü in aller Früh!"]
 
 @bot.event
 async def on_ready():
@@ -53,7 +58,7 @@ async def shot(ctx):
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
-    await ctx.send('Chrissi ist immer sehr nett!', delete_after=7000)
+    await ctx.send('Chrissi ist ein gemeiner Lügner!', delete_after=7000)
 
 
 @bot.command()
@@ -70,6 +75,11 @@ async def gumi(ctx):
 async def guna(ctx):
     """KI wünscht allen eine gute Nacht"""
     await ctx.send('Ich wünsche allen eine GuNa!')
+
+@bot.command()
+async def bye(ctx):
+    """KI wünscht allen einen guten Morgen"""
+    await ctx.send(bye[random.randint(0, 15)])
 
 @bot.command()
 async def sev(ctx):
