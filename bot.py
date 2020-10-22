@@ -3,8 +3,8 @@ import random
 import discord
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix='!')
-bot_activity = ""
+
+bot = commands.Bot(command_prefix='!', case_insensitive=True)
 shot_counter = 0
 
 
@@ -36,8 +36,6 @@ async def clear(ctx, amount=1):
 async def event(ctx, *, event):
     """Setze ein neues Event mit !event {event}"""
     await ctx.send(f'Current event changed to {event}')
-    # global bot_activity
-    # bot_activity = event
     await bot.change_presence(activity=discord.Game(f'{event}'), status=discord.Status.online)
 
 
@@ -76,7 +74,7 @@ async def guna(ctx):
     await ctx.send('Ich wünsche allen eine GuNa!')
 
 
-@bot.command(aliases=["BYE"])
+@bot.command()
 async def bye(ctx):
     """KI verabschiedet sich"""
     bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßi Müsli!", "Tschüßli Müsli!",
