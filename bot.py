@@ -7,9 +7,6 @@ bot = commands.Bot(command_prefix='!')
 bot_activity = ""
 shot_counter = 0
 
-bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßi Müsli!", "Tschüßli Müsli!",
-       "Bis Spätersilie!", "San Frantschüssko!", "Bis Baldrian!", "Bye mit Ei!", "Tschau mit au!", "Tschö mit ö!",
-       "Hau Rheinwald!", "Schalömmchen!", "Schönes Knochenende!", "Tschüssikowski!", "Tüdelü in aller Früh!"]
 
 @bot.event
 async def on_ready():
@@ -82,8 +79,11 @@ async def guna(ctx):
 @bot.command()
 async def bye(ctx):
     """KI verabschiedet sich"""
-    z = random.randint(0, 15)
-    await ctx.send("ich bin behindert")
+    bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßi Müsli!", "Tschüßli Müsli!",
+           "Bis Spätersilie!", "San Frantschüssko!", "Bis Baldrian!", "Bye mit Ei!", "Tschau mit au!", "Tschö mit ö!",
+           "Hau Rheinwald!", "Schalömmchen!", "Schönes Knochenende!", "Tschüssikowski!", "Tüdelü in aller Früh!"]
+
+    await ctx.send(bye[random.randint(0, 15)])
 
 
 @bot.command()
