@@ -76,7 +76,7 @@ async def guna(ctx):
     await ctx.send('Ich wünsche allen eine GuNa!')
 
 
-@bot.command()
+@bot.command(aliases=["BYE"])
 async def bye(ctx):
     """KI verabschiedet sich"""
     bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßi Müsli!", "Tschüßli Müsli!",
@@ -100,7 +100,7 @@ async def lukas(ctx):
 
 @bot.command(aliases=["johannes", "jojo"])
 async def nils(ctx):
-    """Nils ist behindert"""
+    """Nils und Johannes sind behindert"""
     await ctx.send('https://de.wikihow.com/Mit-gemeinen-Menschen-richtig-umgehen')
 
 
@@ -108,8 +108,11 @@ async def nils(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    await ctx.send('Dieses Feature existiert noch nicht, weil Janin faul ist! >:( Kann doch nicht wahr sein, '
-                   'wir warten alle schon lange auf !react, schlimmer als Krusche!')
+
+    reaction_list = list(reaction)
+
+    for letter in reaction_list:
+        await ctx.message.add_reaction()
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
