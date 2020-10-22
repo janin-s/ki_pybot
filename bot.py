@@ -66,35 +66,38 @@ async def gumo(ctx):
     """KI wünscht allen einen guten Morgen"""
     await ctx.send('Ich wünsche allen einen GuMo!')
 
+
 @bot.command()
 async def gumi(ctx):
     """KI wünscht allen einen guten Mittag"""
     await ctx.send('Ich wünsche allen einen GuMi!')
+
 
 @bot.command()
 async def guna(ctx):
     """KI wünscht allen eine gute Nacht"""
     await ctx.send('Ich wünsche allen eine GuNa!')
 
+
 @bot.command()
 async def bye(ctx):
     """KI verabschiedet sich"""
-    await ctx.send(bye[random.randint(0, 15)])
+    z = random.randint(0, 15)
+    await ctx.send(bye[z])
+
 
 @bot.command()
 async def sev(ctx):
     """Sev ist behindert"""
     await ctx.send('https://de.wikihow.com/Einen-ganzen-Tag-lang-schweigen')
 
+
 # !react bruh
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    await ctx.send('Dieses Feature existiert noch nicht, weil Janin faul ist! >:( Kann doch nicht wahr sein, wir warten alle schon lange auf !react, schlimmer als Krusche!')
-
-
-# @commands.is_owner()
-# Bot auf Server
+    await ctx.send('Dieses Feature existiert noch nicht, weil Janin faul ist! >:( Kann doch nicht wahr sein, '
+                   'wir warten alle schon lange auf !react, schlimmer als Krusche!')
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
