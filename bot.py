@@ -98,6 +98,12 @@ async def lukas(ctx):
     await ctx.send('https://de.wikihow.com/Mit-einer-geistig-behinderten-person-kommunizieren')
 
 
+@bot.command(aliases=["johannes", "jojo"])
+async def nils(ctx):
+    """Nils ist behindert"""
+    await ctx.send('https://de.wikihow.com/Mit-gemeinen-Menschen-richtig-umgehen')
+
+
 # !react bruh
 @bot.command()
 async def react(ctx, reaction):
