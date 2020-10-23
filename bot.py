@@ -41,7 +41,6 @@ async def event(ctx, *, event):
 
 @bot.command(aliases=["rip", "suizid", "lost"])
 async def shot(ctx):
-    await ctx.send('hallo shot jetzt')
     """Erhöht den Shot-Counter um 1"""
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
         newcount: int = await persistent_counter()
