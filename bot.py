@@ -140,7 +140,7 @@ async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
 
     reaction_list = list(reaction)
-
+    # TODO do this
     for letter in reaction_list:
         await ctx.message.add_reaction()
 
