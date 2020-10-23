@@ -53,7 +53,7 @@ async def shot(ctx):
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
-    await ctx.send('Chrissi ist ein gemeiner Lügner!', delete_after=7000)
+    await ctx.send('Chrissi ist so ein Lieber! Sehr nett und sympathisch!', delete_after=7000)
 
 
 @bot.command()
