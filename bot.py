@@ -41,15 +41,16 @@ async def event(ctx, *, event):
 
 @bot.command(aliases=["rip", "suizid", "lost"])
 async def shot(ctx):
+    ctx.send('hallo shot jetzt')
     """Erhöht den Shot-Counter um 1"""
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
-        newcount: int = persistent_counter()
+        newcount: int = await persistent_counter()
         await ctx.send(f'Shot-Counter: {newcount}')
     else:
         await ctx.send('Jonas haut dich <:knast:731290033046159460>', delete_after=60)
 
 
-def persistent_counter(caller="all"):
+async def persistent_counter(caller="all"):
     # hilfsfunktion für shotcounter, wenn ohne argument globaler shared counter
     # evtl in Zukunft für persönliche Counter nutzbar: user-ID als parameter String
 
@@ -63,7 +64,7 @@ def persistent_counter(caller="all"):
             try:
                 number: int = int(line.split(':').__getitem__(1))
             except ValueError:
-                number = 0
+                number: int = 0
             number = number + 1
             newline = caller + ":" + str(number)
             print(newline.strip())
