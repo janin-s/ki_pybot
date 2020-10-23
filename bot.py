@@ -41,7 +41,7 @@ async def event(ctx, *, event):
 
 @bot.command(aliases=["rip", "suizid", "lost"])
 async def shot(ctx):
-    ctx.send('hallo shot jetzt')
+    await ctx.send('hallo shot jetzt')
     """Erhöht den Shot-Counter um 1"""
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
         newcount: int = await persistent_counter()
@@ -68,9 +68,11 @@ async def persistent_counter(caller="all"):
             number = number + 1
             newline = caller + ":" + str(number)
             print(newline.strip())
+            fileinput.close()
             return number
         else:
             print(line.strip())
+    fileinput.close()
     if not found:
         data = open(r"data", "a")
         data.write(caller + ":0")
