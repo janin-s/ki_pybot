@@ -55,6 +55,12 @@ async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
     await ctx.send('Chrissi ist so ein Lieber! Sehr nett und sympathisch!', delete_after=7000)
 
+    
+@bot.command(aliases=["frech"])
+async def janin(ctx):
+    for c in "faul":
+        await ctx.send(str(c), delete_after=7000)
+    
 
 @bot.command()
 async def gumo(ctx):
