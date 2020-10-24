@@ -69,9 +69,6 @@ async def persistent_counter(caller="all"):
                 print(line.strip())
         fileinput.close()
         return 0
-    return -1
-
-    """
     else:
         found = False
         number: int = 0
@@ -94,7 +91,7 @@ async def persistent_counter(caller="all"):
             data.write(caller + ":0")
             return -1
         return number
-    """
+
 
 
 @bot.command(aliases=["hacker"])
