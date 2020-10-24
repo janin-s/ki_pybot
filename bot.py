@@ -57,6 +57,8 @@ async def persistent_counter(caller="all"):
     # hilfsfunktion für shotcounter, wenn ohne argument globaler shared counter
     # evtl in Zukunft für persönliche Counter nutzbar: user-ID als parameter String
 
+    # adsasdasdasdasdasdasd
+    
     # data stored like this: 'userid:shotcount'
     # shared counter with id 'all'
 
