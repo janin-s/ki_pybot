@@ -49,15 +49,13 @@ async def shot(ctx, *, command=None):
             newcount = await persistent_counter()
         await ctx.send(f'Shot-Counter: {newcount}')
     else:
-        await ctx.send('Jonas haut dich <:knast:731290033046159460>', delete_after=60)
+        await ctx.send('Jonas haut dich <:knast:731290033046159460>')
 
 
 async def persistent_counter(caller="all"):
     # premium function
     # hilfsfunktion für shotcounter, wenn ohne argument globaler shared counter
     # evtl in Zukunft für persönliche Counter nutzbar: user-ID als parameter String
-
-    # adsasdasdasdasdasdasd
     
     # data stored like this: 'userid:shotcount'
     # shared counter with id 'all'
@@ -98,12 +96,12 @@ async def persistent_counter(caller="all"):
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
-    await ctx.send('Chrissi ist so ein Lieber! Sehr nett und sympathisch!!!', delete_after=7000)
+    await ctx.send('Chrisi macht Bot kaputt und ist ein dummer Hacker!!')
 
 
 @bot.command(aliases=["frech"])
 async def janin(ctx):
-    for c in "toll":
+    for c in "janin ist toll":
         await ctx.send(str(c), delete_after=7000)
 
 
