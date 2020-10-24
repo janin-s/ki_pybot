@@ -101,7 +101,7 @@ async def chrissi(ctx):
 
 @bot.command(aliases=["frech"])
 async def janin(ctx):
-    for c in "janin ist toll":
+    for c in "faul":
         await ctx.send(str(c), delete_after=7000)
 
 
