@@ -43,7 +43,7 @@ async def event(ctx, *, event):
 async def shot(ctx):
     """Erhöht den Shot-Counter um 1"""
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
-        newcount: int = await persistent_counter()
+        newcount = await persistent_counter()
         await ctx.send(f'Shot-Counter: {newcount}')
     else:
         await ctx.send('Jonas haut dich <:knast:731290033046159460>', delete_after=60)
@@ -56,26 +56,26 @@ async def persistent_counter(caller="all"):
     # data stored like this: 'userid:shotcount'
     # shared counter with id 'all'
     found = False
+    number: int = 0
     print("looking for caller " + caller)
     for line in fileinput.input(r"data", inplace=True):
         if line.__contains__(caller):
             found = True
             try:
-                number: int = int(line.split(':').__getitem__(1))
+                number = int(line.split(':').__getitem__(1))
             except ValueError:
                 number: int = 0
             number = number + 1
             newline = caller + ":" + str(number)
             print(newline.strip())
             fileinput.close()
-            return number
         else:
             print(line.strip())
     fileinput.close()
     if not found:
         data = open(r"data", "a")
         data.write(caller + ":0")
-        return 0
+    return number
 
 
 @bot.command(aliases=["hacker"])
