@@ -61,7 +61,6 @@ async def persistent_counter(caller="all"):
     # shared counter with id 'all'
 
     if caller == "resetAll":
-        number: int = 0
         for line in fileinput.input(r"data", inplace=True):
             if line.__contains__("all"):
                 newline = "all:0"
@@ -70,28 +69,28 @@ async def persistent_counter(caller="all"):
                 print(line.strip())
         fileinput.close()
         return 0
-
-    found = False
-    number: int = 0
-    print("looking for caller " + caller)
-    for line in fileinput.input(r"data", inplace=True):
-        if line.__contains__(caller):
-            found = True
-            try:
-                number = int(line.split(':').__getitem__(1))
-            except ValueError:
-                number = 0
-            number = number + 1
-            newline = caller + ":" + str(number)
-            print(newline.strip())
-        else:
-            print(line.strip())
-    fileinput.close()
-    if not found:
-        data = open(r"data", "a")
-        data.write(caller + ":0")
-        return -1
-    return number
+    else:
+        found = False
+        number: int = 0
+        print("looking for caller " + caller)
+        for line in fileinput.input(r"data", inplace=True):
+            if line.__contains__(caller):
+                found = True
+                try:
+                    number = int(line.split(':').__getitem__(1))
+                except ValueError:
+                    number = 0
+                number = number + 1
+                newline = caller + ":" + str(number)
+                print(newline.strip())
+            else:
+                print(line.strip())
+        fileinput.close()
+        if not found:
+            data = open(r"data", "a")
+            data.write(caller + ":0")
+            return -1
+        return number
 
 
 @bot.command(aliases=["hacker"])
