@@ -50,6 +50,7 @@ async def shot(ctx):
 
 
 async def persistent_counter(caller="all"):
+    # premium function
     # hilfsfunktion für shotcounter, wenn ohne argument globaler shared counter
     # evtl in Zukunft für persönliche Counter nutzbar: user-ID als parameter String
 
@@ -64,7 +65,7 @@ async def persistent_counter(caller="all"):
             try:
                 number = int(line.split(':').__getitem__(1))
             except ValueError:
-                number: int = 0
+                number = 0
             number = number + 1
             newline = caller + ":" + str(number)
             print(newline.strip())
