@@ -40,7 +40,7 @@ async def event(ctx, *, event):
 
 
 @bot.command(aliases=["rip", "suizid", "lost"])
-async def shot(ctx, command=None):
+async def shot(ctx, *, command=None):
     """Erhöht den Shot-Counter um 1"""
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
         if command == "reset":
