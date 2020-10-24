@@ -96,7 +96,7 @@ async def persistent_counter(caller="all"):
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
-    await ctx.send('Chrisi macht Bot kaputt und ist ein dummer Hacker!!')
+    await ctx.send('Chrissi macht Bot kaputt und ist ein dummer Hacker!!')
 
 
 @bot.command(aliases=["frech"])
