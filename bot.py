@@ -74,7 +74,6 @@ async def persistent_counter(caller="all"):
     else:
         found = False
         number: int = 0
-        print("looking for caller " + caller)
         for line in fileinput.input(r"data", inplace=True):
             if line.__contains__(caller):
                 found = True
@@ -91,7 +90,7 @@ async def persistent_counter(caller="all"):
         if not found:
             data = open(r"data", "a")
             data.write(caller + ":0")
-            return -1
+            return 0
         return number
 
 
