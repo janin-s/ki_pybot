@@ -68,13 +68,13 @@ async def persistent_counter(caller="all"):
             number = number + 1
             newline = caller + ":" + str(number)
             print(newline.strip())
-            fileinput.close()
         else:
             print(line.strip())
     fileinput.close()
     if not found:
         data = open(r"data", "a")
         data.write(caller + ":0")
+        return -1
     return number
 
 
