@@ -165,6 +165,7 @@ async def nils(ctx):
 
 @bot.command()
 async def zitat(ctx, length=1):
+    """!zitat [x]; zitiert die letze[n x] Nachricht[en] und speichert sie in Relikte"""
     zitat: str = ""
     message_list = []
     async for message in ctx.channel.history(limit=length + 1):
