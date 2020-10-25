@@ -166,7 +166,6 @@ async def nils(ctx):
 @bot.command()
 async def zitat(ctx, length=1):
     zitat: str = ""
-    command_msg = ctx.message
     message_list = []
     async for message in ctx.channel.history(limit=length + 1):
         message_list.append(message)
@@ -175,7 +174,6 @@ async def zitat(ctx, length=1):
         zitat += message_list[i].author.display_name + ": \"" + message_list[i].content + "\"\n"
     relikte = await bot.fetch_channel(705427122151227442)
     await relikte.send(zitat)
-    await ctx.send(zitat)
 
 
 @bot.command()
