@@ -117,19 +117,22 @@ async def chrissi(ctx):
 @bot.command()
 async def gumo(ctx):
     """KI wünscht allen einen guten Morgen"""
-    await ctx.send('Ich wünsche allen einen GuMo!')
+    user_name = ctx.message.author.display_name
+    await ctx.send(user_name +' wünscht allen einen GuMo!')
 
 
 @bot.command()
 async def gumi(ctx):
     """KI wünscht allen einen guten Mittag"""
-    await ctx.send('Ich wünsche allen einen GuMi!')
+    user_name = ctx.message.author.display_name
+    await ctx.send(user_name + ' wünscht allen einen GuMi!')
 
 
 @bot.command()
 async def guna(ctx):
     """KI wünscht allen eine gute Nacht"""
-    await ctx.send('Ich wünsche allen eine GuNa!')
+    user_name = ctx.message.author.display_name
+    await ctx.send(user_name + ' wünscht allen eine GuNa!')
 
 
 @bot.command()
