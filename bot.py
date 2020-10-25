@@ -166,7 +166,7 @@ async def react(ctx, reaction):
 
         await ctx.send('\ '.strip() + "U000" + (str(unicode_id)))
         lol = '\ '.strip() + "U000" + (str(unicode_id))
-        await ctx.message.add_reaction(lol)
+        await ctx.message.add_reaction("<:a:bbe8ae762f831966587a35010ed46f67>")
 
 
 async def getUnicodeId(c):
