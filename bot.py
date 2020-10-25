@@ -20,7 +20,7 @@ async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
         await ctx.send('KI dummdumm :(')
     else:
-        await ctx.send("KI nix verstehi ._.")
+        await ctx.send("KI nix verstehi ._." + str(error))
 
 
 @bot.command()
@@ -164,14 +164,15 @@ async def react(ctx, reaction):
         unicode_id: str = await getUnicodeId(letter)
         unicode_id: str = unicode_id.upper()
 
-        await ctx.message.add_reaction(str('\ ').strip() + r'U0001F1E6')
+        await ctx.send(unicode_id + " vs " + "\U0001F1E7" + str(unicode_id == "\U0001F1E7"))
+        await ctx.message.add_reaction(unicode_id)
 
 
 async def getUnicodeId(c):
     id_dec: int = 127462 + ((ord(c) - 65) if c.isupper() else (ord(c) - 97))
     id_hex: str = hex(id_dec)[2:]
 
-    return id_hex
+    return "\\U000" + id_hex
 
 
 async def areCharactersUnique(s):
