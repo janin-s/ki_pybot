@@ -176,13 +176,13 @@ async def react(ctx, reaction, message_id=0):
     if message_id != 0:
         try:
             message = await ctx.fetch_message(message_id)
-            await ctx.channel.purge(1)
+            await ctx.channel.purge(limit=1)
         except discord.NotFound:
             await ctx.send("message weg, oh no 1")
             return
     else:
         try:
-            await ctx.channel.purge(1)
+            await ctx.channel.purge(limit=1)
             message = await ctx.fetch_message(ctx.channel.last_message_id)
         except discord.NotFound:
             await ctx.send("message weg, oh no 2")
