@@ -118,7 +118,7 @@ async def chrissi(ctx):
 async def gumo(ctx):
     """KI wünscht allen einen guten Morgen"""
     user_name = ctx.message.author.display_name
-    await ctx.send(user_name +' wünscht allen einen GuMo!')
+    await ctx.send(user_name + ' wünscht allen einen GuMo!')
 
 
 @bot.command()
@@ -161,6 +161,18 @@ async def lukas(ctx):
 async def nils(ctx):
     """Nils und Johannes sind behindert"""
     await ctx.send('https://de.wikihow.com/Mit-gemeinen-Menschen-richtig-umgehen')
+
+
+@bot.command()
+async def zitat(ctx, length=1):
+    zitat: str = ""
+    command_msg = ctx.message
+    async for message in ctx.channel.history(limit=length + 1, oldest_first=True):
+        if message == command_msg:
+            pass
+        else:
+            zitat += "\"" + message.content + "\"" + " - " + message.author.display_name + "\n"
+    await ctx.send(zitat)
 
 
 @bot.command()
