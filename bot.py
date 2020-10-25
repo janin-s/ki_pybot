@@ -177,18 +177,17 @@ async def react(ctx, reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
 
-    reaction_list = list(reaction)
-
-    for letter in reaction_list:
-        unicode_id: str = await getUnicodeId(letter)
-        await ctx.message.add_reaction(unicode_id)
+    letter_list = list(reaction)
+    id_list = map(getUnicodeId, letter_list)
+    for letter in id_list:
+        # unicode_id: str = await getUnicodeId(letter)
+        await ctx.message.add_reaction(letter)
 
 
 async def getUnicodeId(c):
     id_dec: int = 127462 + ((ord(c) - 65) if c.isupper() else (ord(c) - 97))
     id_hex: str = hex(id_dec)[2:]
-    return "\\U000"+id_hex
-
+    return "\\U000" + id_hex
 
 
 async def areCharactersUnique(s):
