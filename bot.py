@@ -18,7 +18,7 @@ letter_dict = {'A': '\U0001f1e6', 'B': '\U0001f1e7', 'C': '\U0001f1e8', 'D': '\U
                'j': '\U0001f1ef', 'k': '\U0001f1f0', 'l': '\U0001f1f1', 'm': '\U0001f1f2', 'n': '\U0001f1f3',
                'o': '\U0001f1f4', 'p': '\U0001f1f5', 'q': '\U0001f1f6', 'r': '\U0001f1f7', 's': '\U0001f1f8',
                't': '\U0001f1f9', 'u': '\U0001f1fa', 'v': '\U0001f1fb', 'w': '\U0001f1fc', 'x': '\U0001f1fd',
-               'y': '\U0001f1fe', 'z': '\U0001f1ff'}
+               'y': '\U0001f1fe', 'z': '\U0001f1ff', '8': '\U00000038\U000020E3'}
 
 
 @bot.event
@@ -174,7 +174,7 @@ async def react(ctx, reaction):
     for letter in letter_list:
         unicode_id: str = letter_dict.get(letter)
         unicode_id: str = unicode_id.upper()
-
+        await ctx.send('\U00000038\U000020E3')
         await ctx.message.add_reaction(unicode_id)
 
 
