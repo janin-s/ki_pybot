@@ -200,7 +200,7 @@ async def react(ctx, reaction, message_id=0):
             await ctx.send("message weg, oh no")
             return
     if (len(message.reactions)+len(reaction)) > 20:
-        ctx.send("Nils ist behindert")
+        await ctx.send("Nils ist behindert")
         return
     letter_list = list(reaction)
     for letter in letter_list:
