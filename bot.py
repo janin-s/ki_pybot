@@ -20,7 +20,7 @@ async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
         await ctx.send('KI dummdumm :(')
     else:
-        await ctx.send("KI nix verstehi ._." + error)
+        await ctx.send("KI nix verstehi ._." + str(error))
 
 
 @bot.command()
