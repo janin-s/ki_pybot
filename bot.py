@@ -182,9 +182,9 @@ async def react(ctx, reaction):
     # id_list = map(getUnicodeId, letter_list)
     for letter in letter_list:
         unicode_id: str = await getUnicodeId(letter)
-        unicode_id = unicode_id.upper()
+        unicode_id: str = unicode_id.upper()
         await ctx.send(unicode_id)
-        await ctx.message.add_reaction("\U0001F1E7")
+        await ctx.message.add_reaction(unicode_id.strip())
 
 
 async def getUnicodeId(c):
