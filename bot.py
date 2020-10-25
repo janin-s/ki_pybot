@@ -167,17 +167,32 @@ async def nils(ctx):
 
 
 @bot.command()
-async def react(ctx, reaction):
+async def react(ctx, reaction, message_id=0):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
     if not await are_characters_unique(reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
+    message = ctx.message
+    if message_id != 0:
+        try:
+            message = await ctx.fetch_message(message_id)
+            await ctx.channel.purge(1)
+        except discord.NotFound:
+            await ctx.send("message weg, oh no 1")
+            return
+    else:
+        try:
+            await ctx.channel.purge(1)
+            message = await ctx.fetch_message(ctx.channel.last_message_id)
+        except discord.NotFound:
+            await ctx.send("message weg, oh no 2")
+            return
 
     letter_list = list(reaction)
     for letter in letter_list:
         unicode_id: str = letter_dict.get(letter)
         unicode_id: str = unicode_id.upper()
-        await ctx.message.add_reaction(unicode_id)
+        await message.add_reaction(unicode_id)
 
 
 async def are_characters_unique(s):
