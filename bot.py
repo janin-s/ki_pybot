@@ -164,7 +164,6 @@ async def react(ctx, reaction):
         unicode_id: str = await getUnicodeId(letter)
         unicode_id: str = unicode_id.upper()
 
-        await ctx.send(unicode_id + " vs " + "\U0001F1E7" + str(unicode_id == "\U0001F1E7"))
         await ctx.message.add_reaction(unicode_id)
 
 
