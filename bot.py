@@ -159,13 +159,11 @@ async def react(ctx, reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
 
+    list = ["\U0001F1E7", "\U0001F1E8"]
     # id_list = map(getUnicodeId, letter_list)
-    for letter in list(reaction):
-        unicode_id: str = await getUnicodeId(letter)
-        unicode_id: str = unicode_id.upper()
+    for letter in list:
 
-        await ctx.send(unicode_id + " vs " + "\U0001F1E7" + str(unicode_id == "\U0001F1E7"))
-        await ctx.message.add_reaction(unicode_id)
+        await ctx.message.add_reaction(letter)
 
 
 async def getUnicodeId(c):
