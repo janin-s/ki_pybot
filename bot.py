@@ -1,5 +1,6 @@
 import fileinput
 import random
+from typing import Any, Coroutine, Iterator
 
 import discord
 from discord.ext import commands
@@ -178,10 +179,11 @@ async def react(ctx, reaction):
         return
 
     letter_list = list(reaction)
-    id_list = map(getUnicodeId, letter_list)
-    for letter in id_list:
-        # unicode_id: str = await getUnicodeId(letter)
-        await ctx.message.add_reaction(letter)
+    # id_list = map(getUnicodeId, letter_list)
+    for letter in letter_list:
+        unicode_id: str = await getUnicodeId(letter)
+        await ctx.send(unicode_id)
+        await ctx.message.add_reaction(unicode_id)
 
 
 async def getUnicodeId(c):
