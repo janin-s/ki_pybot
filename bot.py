@@ -173,7 +173,7 @@ async def nils(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    if not areCharactersUnique(reaction):
+    if not await areCharactersUnique(reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
 
