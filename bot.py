@@ -165,13 +165,13 @@ async def react(ctx, reaction):
         unicode_id: str = unicode_id.upper()
 
         await ctx.send(unicode_id)
-        await ctx.message.add_reaction("\U0001F1E7")
+        await ctx.message.add_reaction(str(unicode_id))
 
 
 async def getUnicodeId(c):
     id_dec: int = 127462 + ((ord(c) - 65) if c.isupper() else (ord(c) - 97))
     id_hex: str = hex(id_dec)[2:]
-    return "\\U000" + id_hex
+    return "\U000" + id_hex
 
 
 async def areCharactersUnique(s):
