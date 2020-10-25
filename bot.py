@@ -172,7 +172,7 @@ async def getUnicodeId(c):
     id_dec: int = 127462 + ((ord(c) - 65) if c.isupper() else (ord(c) - 97))
     id_hex: str = hex(id_dec)[2:]
 
-    return id_hex
+    return "\\U000" + id_hex
 
 
 async def areCharactersUnique(s):
