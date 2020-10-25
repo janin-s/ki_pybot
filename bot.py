@@ -165,12 +165,13 @@ async def react(ctx, reaction):
         unicode_id: str = unicode_id.upper()
 
         await ctx.send(unicode_id)
-        await ctx.message.add_reaction('\ '.strip() + "U000" + (str(unicode_id))
+        await ctx.message.add_reaction('\ '.strip() + "U000" + (str(unicode_id)))
 
 
 async def getUnicodeId(c):
     id_dec: int = 127462 + ((ord(c) - 65) if c.isupper() else (ord(c) - 97))
     id_hex: str = hex(id_dec)[2:]
+
     return id_hex
 
 
