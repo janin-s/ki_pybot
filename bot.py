@@ -164,7 +164,7 @@ async def react(ctx, reaction):
         unicode_id: str = await getUnicodeId(letter)
         unicode_id: str = unicode_id.upper()
 
-        await ctx.message.add_reaction(r'\U000' + unicode_id)
+        await ctx.message.add_reaction(r'\U0001F1E6')
 
 
 async def getUnicodeId(c):
