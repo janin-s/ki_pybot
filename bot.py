@@ -185,7 +185,7 @@ async def react(ctx, reaction, message_id=0):
             await ctx.channel.purge(limit=1)
             message = await ctx.fetch_message(ctx.channel.last_message_id)
         except discord.NotFound:
-            await ctx.send("message weg, oh no 2")
+            await ctx.send("message (" + str(ctx.channel.last_message_id) + ") weg, oh no")
             return
 
     letter_list = list(reaction)
