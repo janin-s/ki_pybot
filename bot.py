@@ -8,25 +8,6 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix='!', case_insensitive=True)
 shot_counter = 0
 
-letter_dict = {'A': 'regional_indicator_a', 'B': 'regional_indicator_b', 'C': 'regional_indicator_c',
-               'D': 'regional_indicator_d', 'E': 'regional_indicator_e', 'F': 'regional_indicator_f',
-               'G': 'regional_indicator_g', 'H': 'regional_indicator_h', 'I': 'regional_indicator_i',
-               'J': 'regional_indicator_j', 'K': 'regional_indicator_k', 'L': 'regional_indicator_l',
-               'M': 'regional_indicator_m', 'N': 'regional_indicator_n', 'O': 'regional_indicator_o',
-               'P': 'regional_indicator_p', 'Q': 'regional_indicator_q', 'R': 'regional_indicator_r',
-               'S': 'regional_indicator_s', 'T': 'regional_indicator_t', 'U': 'regional_indicator_u',
-               'V': 'regional_indicator_v', 'W': 'regional_indicator_w', 'X': 'regional_indicator_x',
-               'Y': 'regional_indicator_y', 'Z': 'regional_indicator_z', 'a': 'regional_indicator_a',
-               'b': 'regional_indicator_b', 'c': 'regional_indicator_c', 'd': 'regional_indicator_d',
-               'e': 'regional_indicator_e', 'f': 'regional_indicator_f', 'g': 'regional_indicator_g',
-               'h': 'regional_indicator_h', 'i': 'regional_indicator_i', 'j': 'regional_indicator_j',
-               'k': 'regional_indicator_k', 'l': 'regional_indicator_l', 'm': 'regional_indicator_m',
-               'n': 'regional_indicator_n', 'o': 'regional_indicator_o', 'p': 'regional_indicator_p',
-               'q': 'regional_indicator_q', 'r': 'regional_indicator_r', 's': 'regional_indicator_s',
-               't': 'regional_indicator_t', 'u': 'regional_indicator_u', 'v': 'regional_indicator_v',
-               'w': 'regional_indicator_w', 'x': 'regional_indicator_x', 'y': 'regional_indicator_y',
-               'z': 'regional_indicator_z'}
-
 
 @bot.event
 async def on_ready():
@@ -39,7 +20,7 @@ async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
         await ctx.send('KI dummdumm :(')
     else:
-        await ctx.send("KI nix verstehi ._.")
+        await ctx.send("KI nix verstehi ._." + error)
 
 
 @bot.command()
@@ -177,9 +158,8 @@ async def react(ctx, reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
 
-    letter_list = list(reaction)
     # id_list = map(getUnicodeId, letter_list)
-    for letter in letter_list:
+    for letter in list(reaction):
         id_dec: int = 127462 + ((ord(letter) - 65) if letter.isupper() else (ord(letter) - 97))
         id_hex: str = hex(id_dec)[2:]
         await ctx.message.add_reaction(str("\\U000" + id_hex))
