@@ -18,7 +18,10 @@ letter_dict = {'A': '\U0001f1e6', 'B': '\U0001f1e7', 'C': '\U0001f1e8', 'D': '\U
                'j': '\U0001f1ef', 'k': '\U0001f1f0', 'l': '\U0001f1f1', 'm': '\U0001f1f2', 'n': '\U0001f1f3',
                'o': '\U0001f1f4', 'p': '\U0001f1f5', 'q': '\U0001f1f6', 'r': '\U0001f1f7', 's': '\U0001f1f8',
                't': '\U0001f1f9', 'u': '\U0001f1fa', 'v': '\U0001f1fb', 'w': '\U0001f1fc', 'x': '\U0001f1fd',
-               'y': '\U0001f1fe', 'z': '\U0001f1ff', '8': '\U00000038\U000020E3'}
+               'y': '\U0001f1fe', 'z': '\U0001f1ff', '0': '\U00000030\U000020E3', '1': '\U00000031\U000020E3',
+               '2': '\U00000032\U000020E3', '3': '\U00000033\U000020E3', '4': '\U00000034\U000020E3',
+               '5': '\U00000035\U000020E3', '6': '\U00000036\U000020E3', '7': '\U00000037\U000020E3',
+               '8': '\U00000038\U000020E3', '9': '\U00000039\U000020E3', '?': '\U00002753', '!': '\U00002757'}
 
 
 @bot.event
@@ -179,23 +182,45 @@ async def react(ctx, reaction):
 
 
 async def are_characters_unique(s):
-    # hilfsfunktion dreist von g4g geklaut
+    # hilfsfunktion dreist von g4g geklaut und wild hässlich gemacht
     # https://www.geeksforgeeks.org/efficiently-check-string-duplicates-without-using-additional-data-structure/
     # An integer to store presence/absence
     # of 26 characters using its 32 bits
     checker = 0
-
+    # 0 to 9, ?, !
+    numbers_and_special = [False, False, False, False, False, False, False, False, False, False, False, False]
     for i in range(len(s)):
+        ascii = ord(s[i])
+        if ascii < 65 or ascii > 90 or ascii < 97 or ascii > 122:
+            if 48 <= ascii <= 57:
+                if numbers_and_special[ascii - 48]:
+                    return False
+                else:
+                    numbers_and_special[ascii - 48] = True
+            else:
+                if ascii == 63:
+                    if numbers_and_special[10]:
+                        return False
+                    else:
+                        numbers_and_special[10] = True
+                        if ascii == 33:
+                            if numbers_and_special[11]:
+                                return False
+                            else:
+                                numbers_and_special[11] = True
+                        else:
+                            return False
 
-        val = ord(s[i]) - ord('a')
+        else:
+            val = ascii - ord('a')
 
-        # If bit corresponding to current
-        # character is already set
-        if (checker & (1 << val)) > 0:
-            return False
+            # If bit corresponding to current
+            # character is already set
+            if (checker & (1 << val)) > 0:
+                return False
 
-        # set bit in checker
-        checker |= (1 << val)
+            # set bit in checker
+            checker |= (1 << val)
 
     return True
 
