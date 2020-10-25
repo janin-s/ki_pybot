@@ -33,7 +33,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
-        await ctx.send('KI dummdumm :(')
+        await ctx.send('KI dummdumm <:eist_moment:768963579973992468>')
     else:
         await ctx.send("KI nix verstehi ._.")
 
@@ -145,7 +145,7 @@ async def bye(ctx):
 @bot.command()
 async def sev(ctx):
     """Sev ist behindert"""
-    await ctx.send('https://de.wikihow.com/Einen-ganzen-Tag-lang-schweigen')
+    await ctx.send('<:cursed:768963579973992468> https://de.wikihow.com/Einen-ganzen-Tag-lang-schweigen')
 
 
 @bot.command()
