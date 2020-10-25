@@ -165,7 +165,7 @@ async def react(ctx, reaction, message_id=0):
     """!react {reaction} [message-id]; nur für Isogramme, Zahlen und !?"""
 
     if not await are_characters_unique(reaction):
-        await ctx.send("uncooles wort, KI will nicht")
+        await ctx.send("Uncooles Wort, KI will nicht >:(")
         return
     message = ctx.message
     if message_id != 0:
@@ -173,7 +173,7 @@ async def react(ctx, reaction, message_id=0):
             message = await ctx.fetch_message(message_id)
             await ctx.channel.purge(limit=1)
         except discord.NotFound:
-            await ctx.send("message (" + str(message_id) + ") weg, oh no")
+            await ctx.send("Message (" + str(message_id) + ") weg, oh no :(")
             return
     else:
         try:
