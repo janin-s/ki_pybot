@@ -166,28 +166,19 @@ async def nils(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    if not await areCharactersUnique(reaction):
+    if not await are_characters_unique(reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
 
     letter_list = list(reaction)
-    # id_list = map(getUnicodeId, letter_list)
     for letter in letter_list:
         unicode_id: str = letter_dict.get(letter)
         unicode_id: str = unicode_id.upper()
 
-        await ctx.send(unicode_id + " vs " + "\U0001F1E7" + str(unicode_id == "\U0001F1E7"))
         await ctx.message.add_reaction(unicode_id)
 
 
-async def getUnicodeId(c):
-    id_dec: int = 127462 + ((ord(c) - 65) if c.isupper() else (ord(c) - 97))
-    id_hex: str = hex(id_dec)[2:]
-
-    return "\\U000" + id_hex
-
-
-async def areCharactersUnique(s):
+async def are_characters_unique(s):
     # hilfsfunktion dreist von g4g geklaut
     # https://www.geeksforgeeks.org/efficiently-check-string-duplicates-without-using-additional-data-structure/
     # An integer to store presence/absence
