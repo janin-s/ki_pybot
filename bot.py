@@ -31,7 +31,7 @@ letter_dict = {'A': 'regional_indicator_a', 'B': 'regional_indicator_b', 'C': 'r
 @bot.event
 async def on_ready():
     print(f'{bot.user} ist online')
-    await bot.change_presence(activity=discord.Game('Exmatrikulation kickt'), status=discord.Status.online)
+    await bot.change_presence(activity=discord.Game('Semesterstart kickt'), status=discord.Status.online)
 
 
 @bot.event
@@ -44,7 +44,7 @@ async def on_command_error(ctx, error, force=False):
 
 @bot.command()
 async def clear(ctx, amount=1):
-    """Lösche die übergebene Anzahl an Messages (default == 1) mit !clear {amount}*"""
+    """Löscht die übergebene Anzahl an Messages (default == 1) mit !clear {amount}*"""
     if ctx.channel.id == 705427122151227442:
         await ctx.channel.purge(limit=1)
         await ctx.send('Pseudohistorie wird hier nicht geduldet!', delete_after=60)
@@ -170,21 +170,13 @@ async def nils(ctx):
     await ctx.send('https://de.wikihow.com/Mit-gemeinen-Menschen-richtig-umgehen')
 
 
-# !react bruh
 @bot.command()
-async def react(ctx, reaction):
-    """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-    if not await areCharactersUnique(reaction):
-        await ctx.send("uncooles wort, KI will nicht")
-        return
+async def react(ctx, letter):
 
-    letter_list = list(reaction)
-    # id_list = map(getUnicodeId, letter_list)
-    # for letter in letter_list:
-    unicode_id: str = await getUnicodeId(letter_list.pop())
+    unicode_id: str = await getUnicodeId(letter)
     unicode_id: str = unicode_id.upper()
 
-    await ctx.send(unicode_id)
+    await ctx.send("lol" + unicode_id)
     await ctx.message.add_reaction(unicode_id)
 
 
