@@ -8,6 +8,18 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix='!', case_insensitive=True)
 shot_counter = 0
 
+letter_dict = {'A': '\U0001f1e6', 'B': '\U0001f1e7', 'C': '\U0001f1e8', 'D': '\U0001f1e9', 'E': '\U0001f1ea',
+               'F': '\U0001f1eb', 'G': '\U0001f1ec', 'H': '\U0001f1ed', 'I': '\U0001f1ee', 'J': '\U0001f1ef',
+               'K': '\U0001f1f0', 'L': '\U0001f1f1', 'M': '\U0001f1f2', 'N': '\U0001f1f3', 'O': '\U0001f1f4',
+               'P': '\U0001f1f5', 'Q': '\U0001f1f6', 'R': '\U0001f1f7', 'S': '\U0001f1f8', 'T': '\U0001f1f9',
+               'U': '\U0001f1fa', 'V': '\U0001f1fb', 'W': '\U0001f1fc', 'X': '\U0001f1fd', 'Y': '\U0001f1fe',
+               'Z': '\U0001f1ff', 'a': '\U0001f1e6', 'b': '\U0001f1e7', 'c': '\U0001f1e8', 'd': '\U0001f1e9',
+               'e': '\U0001f1ea', 'f': '\U0001f1eb', 'g': '\U0001f1ec', 'h': '\U0001f1ed', 'i': '\U0001f1ee',
+               'j': '\U0001f1ef', 'k': '\U0001f1f0', 'l': '\U0001f1f1', 'm': '\U0001f1f2', 'n': '\U0001f1f3',
+               'o': '\U0001f1f4', 'p': '\U0001f1f5', 'q': '\U0001f1f6', 'r': '\U0001f1f7', 's': '\U0001f1f8',
+               't': '\U0001f1f9', 'u': '\U0001f1fa', 'v': '\U0001f1fb', 'w': '\U0001f1fc', 'x': '\U0001f1fd',
+               'y': '\U0001f1fe', 'z': '\U0001f1ff'}
+
 
 @bot.event
 async def on_ready():
@@ -154,14 +166,14 @@ async def nils(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
-
     if not await areCharactersUnique(reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
 
+    letter_list = list(reaction)
     # id_list = map(getUnicodeId, letter_list)
-    for letter in list(reaction):
-        unicode_id: str = await getUnicodeId(letter)
+    for letter in letter_list:
+        unicode_id: str = letter_dict.get(letter)
         unicode_id: str = unicode_id.upper()
 
         await ctx.send(unicode_id + " vs " + "\U0001F1E7" + str(unicode_id == "\U0001F1E7"))
