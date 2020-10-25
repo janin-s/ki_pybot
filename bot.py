@@ -182,7 +182,7 @@ async def react(ctx, reaction, message_id=0):
             return
     else:
         try:
-            await ctx.channel.purge(limit=1)
+            # await ctx.channel.purge(limit=1)
             message = await ctx.fetch_message(ctx.channel.last_message_id)
         except discord.NotFound:
             await ctx.send("message (" + str(ctx.channel.last_message_id) + ") weg, oh no")
