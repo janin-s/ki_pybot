@@ -154,15 +154,18 @@ async def nils(ctx):
 @bot.command()
 async def react(ctx, reaction):
     """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
+
     if not await areCharactersUnique(reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
 
     # id_list = map(getUnicodeId, letter_list)
     for letter in list(reaction):
-        id_dec: int = 127462 + ((ord(letter) - 65) if letter.isupper() else (ord(letter) - 97))
-        id_hex: str = hex(id_dec)[2:]
-        await ctx.message.add_reaction(str("\\U000" + id_hex))
+        unicode_id: str = await getUnicodeId(letter)
+        unicode_id: str = unicode_id.upper()
+
+        await ctx.send(unicode_id)
+        await ctx.message.add_reaction(unicode_id)
 
 
 async def getUnicodeId(c):
