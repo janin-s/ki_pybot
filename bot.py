@@ -180,10 +180,17 @@ async def react(ctx, reaction):
     reaction_list = list(reaction)
     # TODO do this
     for letter in reaction_list:
-        await ctx.message.add_reaction(letter_dict.get(letter))
+        await ctx.message.add_reaction(getUnicodeId(letter))
 
 
-def areCharactersUnique(s):
+async def getUnicodeId(c):
+    id_dec: int = 127462 + ((ord(c) - 65) if c.isupper() else (ord(c) - 97))
+    id_hex: str = hex(id_dec)[2:]
+    return "\\U000"+id_hex
+
+
+
+async def areCharactersUnique(s):
     # hilfsfunktion dreist von g4g geklaut
     # https://www.geeksforgeeks.org/efficiently-check-string-duplicates-without-using-additional-data-structure/
     # An integer to store presence/absence
