@@ -171,7 +171,7 @@ async def zitat(ctx, length=1):
     async for message in ctx.channel.history(limit=length + 1):
         message_list.append(message)
     message_list.reverse()
-    for i in range(0, len(message_list)-1):
+    for i in range(0, len(message_list) - 1):
         zitat += message_list[i].author.display_name + ": \"" + message_list[i].content + "\"\n"
     relikte = await bot.fetch_channel(705427122151227442)
     await relikte.send(zitat)
@@ -199,8 +199,8 @@ async def react(ctx, reaction, message_id=0):
         except discord.HTTPException:
             await ctx.send("message weg, oh no")
             return
-    if (len(message.reactions)+len(reaction)) > 20:
-        await ctx.send("Nils ist behindert")
+    if (len(message.reactions) + len(reaction)) > 20:
+        await ctx.send("Nils ist behindert", delete_after=10)
         return
     letter_list = list(reaction)
     for letter in letter_list:
