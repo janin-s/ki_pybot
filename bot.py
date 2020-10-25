@@ -33,7 +33,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
-        await ctx.send('KI dummdumm <:eist_moment:768963579973992468>')
+        await ctx.send('KI dummdumm <731293248324370483>')
     else:
         await ctx.send("KI nix verstehi ._.")
 
