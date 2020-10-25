@@ -183,8 +183,10 @@ async def react(ctx, reaction, message_id=0):
     else:
         try:
             # await ctx.channel.purge(limit=1)
-            message = await ctx.fetch_message(ctx.channel.last_message_id)
-        except discord.NotFound:
+            async for message_loop in ctx.channel.history(limit=2):
+                message = message_loop
+            # message = await ctx.fetch_message(ctx.channel.last_message_id)
+        except discord.HTTPException:
             await ctx.send("message (" + str(ctx.channel.last_message_id) + ") weg, oh no")
             return
 
