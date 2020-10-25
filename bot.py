@@ -167,11 +167,13 @@ async def nils(ctx):
 async def zitat(ctx, length=1):
     zitat: str = ""
     command_msg = ctx.message
-    async for message in ctx.channel.history(limit=length + 1, oldest_first=True):
-        if message == command_msg:
-            pass
-        else:
-            zitat += "\"" + message.content + "\"" + " - " + message.author.display_name + "\n"
+    message_list = []
+    async for message in ctx.channel.history(limit=length + 1):
+        message_list.append(message)
+    message_list.reverse()
+    for i in range(0, len(message_list)-1):
+        zitat += "\"" + message_list[i].content + "\"" + " - " + message_list[i].author.display_name + "\n"
+
     await ctx.send(zitat)
 
 
