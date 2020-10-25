@@ -178,9 +178,10 @@ async def react(ctx, reaction):
         return
 
     reaction_list = list(reaction)
-    # TODO do this
+
     for letter in reaction_list:
-        await ctx.message.add_reaction(getUnicodeId(letter))
+        unicode_id: str = await getUnicodeId(letter)
+        await ctx.message.add_reaction(unicode_id)
 
 
 async def getUnicodeId(c):
