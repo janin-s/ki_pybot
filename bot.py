@@ -114,12 +114,6 @@ async def chrissi(ctx):
     await ctx.send('Chrissi macht Bot kaputt und ist ein dummer Hacker!!')
 
 
-@bot.command(aliases=["frech"])
-async def janin(ctx):
-    for c in "faul":
-        await ctx.send(str(c), delete_after=7000)
-
-
 @bot.command()
 async def gumo(ctx):
     """KI wünscht allen einen guten Morgen"""
@@ -168,7 +162,10 @@ async def nils(ctx):
 
 @bot.command()
 async def react(ctx, reaction, message_id=0):
-    """KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction}"""
+    """Nur für Isogramme, Zahlen und !?,
+    KI reagiert auf die zuletzt geschriebene Nachricht mit {reaction},
+    KI reagiert auf gewünschte Nachricht mit {reaction, message-ID}"""
+
     if not await are_characters_unique(reaction):
         await ctx.send("uncooles wort, KI will nicht")
         return
