@@ -162,7 +162,7 @@ async def nils(ctx):
 
 @bot.command()
 async def react(ctx, reaction, message_id=0):
-    """Nur für Isogramme, Zahlen und !?, !react reaction [message-id]"""
+    """!react {reaction} [message-id]; nur für Isogramme, Zahlen und !?"""
 
     if not await are_characters_unique(reaction):
         await ctx.send("uncooles wort, KI will nicht")
