@@ -177,7 +177,6 @@ async def react(ctx, reaction):
     for letter in letter_list:
         unicode_id: str = letter_dict.get(letter)
         unicode_id: str = unicode_id.upper()
-        await ctx.send('\U00000038\U000020E3')
         await ctx.message.add_reaction(unicode_id)
 
 
@@ -203,13 +202,14 @@ async def are_characters_unique(s):
                         return False
                     else:
                         numbers_and_special[10] = True
-                        if ascii == 33:
-                            if numbers_and_special[11]:
-                                return False
-                            else:
-                                numbers_and_special[11] = True
-                        else:
+                else:
+                    if ascii == 33:
+                        if numbers_and_special[11]:
                             return False
+                        else:
+                            numbers_and_special[11] = True
+                    else:
+                        return False
 
         else:
             val = ascii - ord('a')
