@@ -188,31 +188,31 @@ async def are_characters_unique(s):
     checker = 0
     # 0 to 9, ?, !
     numbers_and_special = [False, False, False, False, False, False, False, False, False, False, False, False]
+    s = s.lower()
     for i in range(len(s)):
-        ascii = ord(s[i])
-        if ascii < 65 or ascii > 90 or ascii < 97 or ascii > 122:
-            if 48 <= ascii <= 57:
-                if numbers_and_special[ascii - 48]:
+        ascii_value = ord(s[i])
+        if ascii_value < 97 or ascii_value > 122:
+            if 48 <= ascii_value <= 57:
+                if numbers_and_special[ascii_value - 48]:
                     return False
                 else:
-                    numbers_and_special[ascii - 48] = True
+                    numbers_and_special[ascii_value - 48] = True
             else:
-                if ascii == 63:
+                if ascii_value == 63:
                     if numbers_and_special[10]:
                         return False
                     else:
                         numbers_and_special[10] = True
                 else:
-                    if ascii == 33:
+                    if ascii_value == 33:
                         if numbers_and_special[11]:
                             return False
                         else:
                             numbers_and_special[11] = True
                     else:
                         return False
-
         else:
-            val = ascii - ord('a')
+            val = ascii_value - ord('a')
 
             # If bit corresponding to current
             # character is already set
