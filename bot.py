@@ -180,7 +180,6 @@ async def zitat(ctx, length=1):
 @bot.command()
 async def react(ctx, reaction, message_id=0):
     """!react {reaction} [message-id]; nur für Isogramme, Zahlen und !?"""
-
     if not await are_characters_unique(reaction):
         await ctx.send("Uncooles Wort, KI will nicht <:sad2:731291939571499009>")
         return
@@ -200,7 +199,9 @@ async def react(ctx, reaction, message_id=0):
         except discord.HTTPException:
             await ctx.send("message weg, oh no")
             return
-
+    if (len(message.reactions)+len(reaction)) > 20:
+        ctx.send("Nils ist behindert")
+        return
     letter_list = list(reaction)
     for letter in letter_list:
         unicode_id: str = letter_dict.get(letter)
