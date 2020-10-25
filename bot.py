@@ -35,7 +35,7 @@ async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
         await ctx.send('KI dummdumm :(')
     else:
-        await ctx.send("KI nix verstehi ._." + str(error))
+        await ctx.send("KI nix verstehi ._.")
 
 
 @bot.command()
@@ -178,16 +178,15 @@ async def react(ctx, reaction, message_id=0):
             message = await ctx.fetch_message(message_id)
             await ctx.channel.purge(limit=1)
         except discord.NotFound:
-            await ctx.send("message weg, oh no 1")
+            await ctx.send("message (" + str(message_id) + ") weg, oh no")
             return
     else:
         try:
-            # await ctx.channel.purge(limit=1)
             async for message_loop in ctx.channel.history(limit=2):
                 message = message_loop
-            # message = await ctx.fetch_message(ctx.channel.last_message_id)
+            await ctx.channel.purge(limit=1)
         except discord.HTTPException:
-            await ctx.send("message (" + str(ctx.channel.last_message_id) + ") weg, oh no")
+            await ctx.send("message weg, oh no")
             return
 
     letter_list = list(reaction)
