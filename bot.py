@@ -193,8 +193,9 @@ async def react(ctx, reaction, message_id=0):
             return
     else:
         try:
-            async for message_loop in ctx.channel.history(limit=2):
-                message = message_loop
+            message = await ctx.channel.history(limit=1, before=ctx.channel.last_message_id).get()
+            '''   async for message_loop in ctx.channel.history(limit=1, before=ctx.channel.last_message_id):
+                message = message_loop'''
             await ctx.channel.purge(limit=1)
         except discord.HTTPException:
             await ctx.send("message weg, oh no")
