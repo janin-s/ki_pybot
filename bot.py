@@ -35,7 +35,7 @@ async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
         await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
     else:
-        await ctx.send("KI nix verstehi ._.")
+        await ctx.send("KI nix verstehi ._." + str(error))
 
 
 @bot.command()
