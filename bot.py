@@ -258,9 +258,9 @@ def get_unicode_id(c):
         return chr(127462 + (o - 97))
     if 48 <= o <= 57:
         return c + chr(8419)
-    if c == 63:
+    if o == 63:
         return '\U00002753'
-    if c == 33:
+    if o == 33:
         return '\U00002757'
     return '\U00002753'
 
