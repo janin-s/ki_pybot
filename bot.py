@@ -7,6 +7,7 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix='!', case_insensitive=True)
 user_roles: dict = dict()
+user_nicks: dict = dict()
 
 
 @bot.event
@@ -29,7 +30,10 @@ async def on_member_join(member):
     if member.id in user_roles:
         await bot.fetch_channel(705425949541269668).send("member: " + str(member.id) + " bekommt rollen!")
         for role in user_roles[member.id]:
-            member.add_roles(role)
+            await member.add_roles(role)
+    if member.id in user_nicks:
+        await bot.fetch_channel(705425949541269668).send("member: " + str(member.id) + " bekommt nick!")
+        await member.edit(nick=user_nicks[member.id])
 
 
 @bot.command()
@@ -279,9 +283,11 @@ async def punish(ctx):
     for user in user_list:
         current_id = user.id
         current_roles = user.roles
+        nick = user.display_name
         user_roles[current_id] = current_roles
+        user_nicks[current_id] = nick
         dm_channel = user.dm_channel
-        ctx.send("bestrafe user: " + str(current_id) + " der die Rollen " + str(current_roles) + " hat")
+        await ctx.send("bestrafe user: " + str(current_id) + " der die Rollen " + str(current_roles) + " hat")
         invite = await ctx.channel.create_invite(max_uses=1)
         if dm_channel is None:
             dm_channel = await user.create_dm()
