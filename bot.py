@@ -6,6 +6,7 @@ import discord
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='!', case_insensitive=True)
+user_roles: dict
 
 
 @bot.event
@@ -20,6 +21,13 @@ async def on_command_error(ctx, error, force=False):
         await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
     else:
         await ctx.send("KI nix verstehi ._." + str(error))
+
+
+@bot.event
+async def on_member_join(member):
+    if member.id in user_roles:
+        for role in user_roles[member.id]:
+            member.add_roles(role)
 
 
 @bot.command()
@@ -267,6 +275,9 @@ async def punish(ctx):
     """bestraft alle mentioned user"""
     user_list = ctx.message.mentions
     for user in user_list:
+        current_id = user.id
+        current_roles = user.roles
+        user_roles[current_id] = current_roles
         dm_channel = user.dm_channel
         invite = await ctx.channel.create_invite(max_uses=1)
         if dm_channel is None:
