@@ -262,6 +262,10 @@ def get_unicode_id(c):
         return '\U00002753'
     if o == 33:
         return '\U00002757'
+    if o == 43:
+        return '\U00002795'
+    if o == 45:
+        return '\U00002796'
     return '\U00002753'
 
 
