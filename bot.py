@@ -5,7 +5,7 @@ from typing import Any, Coroutine, Iterator, Union
 import discord
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix='!', case_insensitive=True)
+bot = commands.Bot(command_prefix='!', case_insensitive=True, intents=discord.Intents.all())
 user_roles: dict = dict()
 user_nicks: dict = dict()
 
