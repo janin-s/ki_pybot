@@ -25,7 +25,9 @@ async def on_command_error(ctx, error, force=False):
 
 @bot.event
 async def on_member_join(member):
+    bot.fetch_channel(705425949541269668).send("member: " + member.id + " joined")
     if member.id in user_roles:
+        bot.fetch_channel(705425949541269668).send("member: " + member.id + " bekommt rollen!")
         for role in user_roles[member.id]:
             member.add_roles(role)
 
@@ -279,6 +281,7 @@ async def punish(ctx):
         current_roles = user.roles
         user_roles[current_id] = current_roles
         dm_channel = user.dm_channel
+        ctx.send("bestrafe user: " + current_id + " der die Rollen " + str(current_roles) + " hat")
         invite = await ctx.channel.create_invite(max_uses=1)
         if dm_channel is None:
             dm_channel = await user.create_dm()
