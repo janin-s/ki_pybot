@@ -264,6 +264,7 @@ def get_unicode_id(c):
 
 @bot.command()
 def punish(ctx):
+    """bestraft alle mentioned user"""
     user_list = ctx.message.mentions
     for user in user_list:
         dm_channel = user.dm_channel
