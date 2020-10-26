@@ -25,9 +25,9 @@ async def on_command_error(ctx, error, force=False):
 
 @bot.event
 async def on_member_join(member):
-    bot.fetch_channel(705425949541269668).send("member: " + member.id + " joined")
+    await bot.fetch_channel(705425949541269668).send("member: " + member.id + " joined")
     if member.id in user_roles:
-        bot.fetch_channel(705425949541269668).send("member: " + member.id + " bekommt rollen!")
+        await bot.fetch_channel(705425949541269668).send("member: " + member.id + " bekommt rollen!")
         for role in user_roles[member.id]:
             member.add_roles(role)
 
