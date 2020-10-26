@@ -278,7 +278,7 @@ def get_unicode_id(c):
 
 @bot.command()
 async def punish(ctx):
-    """bestraft alle mentioned user"""
+    """bestraft alle mentioned user mit hass"""
     user_list = ctx.message.mentions
     for user in user_list:
         current_id = user.id
