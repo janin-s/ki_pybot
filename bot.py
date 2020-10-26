@@ -262,7 +262,7 @@ def get_unicode_id(c):
         return '\U00002753'
     if c == 33:
         return '\U00002757'
-    return 0
+    return '\U00002753'
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
