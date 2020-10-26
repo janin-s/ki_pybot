@@ -201,7 +201,8 @@ async def react(ctx, reaction, message_id=0):
         await ctx.send("Nils ist behindert", delete_after=10)
         return
     for letter in list(reaction):
-        unicode_id: str = letter_dict.get(letter)
+        # unicode_id: str = letter_dict.get(letter)
+        unicode_id = get_unicode_id(letter)
         await message.add_reaction(unicode_id)
 
 
@@ -248,6 +249,10 @@ async def are_characters_unique(s):
             checker |= (1 << val)
 
     return True
+
+
+def get_unicode_id(c):
+    return chr(127462 + (ord(c.lower()) - 97))
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
