@@ -281,7 +281,7 @@ async def punish(ctx):
         current_roles = user.roles
         user_roles[current_id] = current_roles
         dm_channel = user.dm_channel
-        ctx.send("bestrafe user: " + current_id + " der die Rollen " + str(current_roles) + " hat")
+        ctx.send("bestrafe user: " + str(current_id) + " der die Rollen " + str(current_roles) + " hat")
         invite = await ctx.channel.create_invite(max_uses=1)
         if dm_channel is None:
             dm_channel = await user.create_dm()
