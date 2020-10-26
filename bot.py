@@ -1,6 +1,6 @@
 import fileinput
 import random
-from typing import Any, Coroutine, Iterator
+from typing import Any, Coroutine, Iterator, Union
 
 import discord
 from discord.ext import commands
@@ -178,7 +178,7 @@ async def zitat(ctx, length=1):
 
 
 @bot.command()
-async def react(ctx, reaction, message_id=0):
+async def react(ctx, reaction, message_id: Union[int, str] = 0):
     """!react {reaction} [message-id]; nur für Isogramme, Zahlen und !?"""
     if type(message_id) is not int or not await are_characters_unique(reaction):
         await ctx.send("Uncooles Wort, KI will nicht <:sad2:731291939571499009>")
