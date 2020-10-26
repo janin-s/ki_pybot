@@ -180,7 +180,7 @@ async def zitat(ctx, length=1):
 @bot.command()
 async def react(ctx, reaction, message_id=0):
     """!react {reaction} [message-id]; nur für Isogramme, Zahlen und !?"""
-    if not await are_characters_unique(reaction):
+    if type(message_id) is not int or not await are_characters_unique(reaction):
         await ctx.send("Uncooles Wort, KI will nicht <:sad2:731291939571499009>")
         return
     if message_id != 0:
