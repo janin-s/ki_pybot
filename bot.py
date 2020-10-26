@@ -33,7 +33,6 @@ async def on_member_join(member):
     if member.id in user_roles:
         for role_id in user_roles[member.id]:
             role = discord.utils.get(member.guild.roles, id=role_id)
-            print(role.name)
             if role.name == "@everyone":
                 pass
             else:
