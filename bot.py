@@ -269,13 +269,13 @@ def punish(ctx):
         invite = await ctx.channel.create_invite(max_uses=1)
         if dm_channel is None:
             dm_channel = await user.create_dm()
+        for i in range(10):
+            await dm_channel.send("shame!")
+        await dm_channel.send(invite.url)
         try:
             await user.kick(reason="Bestrafung")
         except discord.Forbidden:
             await ctx.send("KI nicht mächtig genug")
-        for i in range(10):
-            await dm_channel.send("shame!")
-        await dm_channel.send(invite.url)
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
