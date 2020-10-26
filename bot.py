@@ -29,13 +29,17 @@ async def on_command_error(ctx, error, force=False):
 @bot.event
 async def on_member_join(member):
     spam = await bot.fetch_channel(705425949541269668)
-    await spam.send("member: " + str(member.id) + " joined")
+
     if member.id in user_roles:
-        await spam.send("member: " + str(member.id) + " bekommt rollen!")
-        for role in user_roles[member.id]:
-            await member.add_roles(role)
+        for role_id in user_roles[member.id]:
+            role = discord.utils.get(member.guild.roles, id=role_id)
+            print(role.name)
+            if role.name == "@everyone":
+                pass
+            else:
+                await member.add_roles(role)
+
     if member.id in user_nicks:
-        await spam.send("member: " + str(member.id) + " bekommt nick!")
         await member.edit(nick=user_nicks[member.id])
 
 
@@ -285,16 +289,16 @@ async def punish(ctx):
     user_list = ctx.message.mentions
     for user in user_list:
         current_id = user.id
-        current_roles = user.roles
+        current_roles = map(lambda x: x.id, user.roles)
         nick = user.display_name
         user_roles[current_id] = current_roles
         user_nicks[current_id] = nick
         dm_channel = user.dm_channel
-        await ctx.send("bestrafe user: " + str(current_id) + " der die Rollen " + str(current_roles) + " hat")
+        await ctx.send(nick + " soll sich schämen gehen")
         invite = await ctx.channel.create_invite(max_uses=1)
         if dm_channel is None:
             dm_channel = await user.create_dm()
-        for i in range(10):
+        for i in range(4):
             await dm_channel.send("shame!")
         await dm_channel.send(invite.url)
         try:
