@@ -183,7 +183,6 @@ async def react(ctx, reaction, message_id=0):
     if not await are_characters_unique(reaction):
         await ctx.send("Uncooles Wort, KI will nicht <:sad2:731291939571499009>")
         return
-    message = ctx.message
     if message_id != 0:
         try:
             message = await ctx.fetch_message(message_id)
@@ -194,8 +193,6 @@ async def react(ctx, reaction, message_id=0):
     else:
         try:
             message = await ctx.channel.history(limit=1, before=ctx.channel.last_message).get()
-            '''   async for message_loop in ctx.channel.history(limit=1, before=ctx.channel.last_message_id):
-                message = message_loop'''
             await ctx.channel.purge(limit=1)
         except discord.HTTPException:
             await ctx.send("message weg, oh no")
@@ -203,10 +200,8 @@ async def react(ctx, reaction, message_id=0):
     if (len(message.reactions) + len(reaction)) > 20:
         await ctx.send("Nils ist behindert", delete_after=10)
         return
-    letter_list = list(reaction)
-    for letter in letter_list:
+    for letter in list(reaction):
         unicode_id: str = letter_dict.get(letter)
-        unicode_id: str = unicode_id.upper()
         await message.add_reaction(unicode_id)
 
 
@@ -217,7 +212,7 @@ async def are_characters_unique(s):
     # of 26 characters using its 32 bits
     checker = 0
     # 0 to 9, ?, !
-    numbers_and_special = [False, False, False, False, False, False, False, False, False, False, False, False]
+    numbers_and_special = list(map(lambda x: False, range(0, 13)))
     s = s.lower()
     for i in range(len(s)):
         ascii_value = ord(s[i])
