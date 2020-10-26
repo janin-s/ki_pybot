@@ -297,11 +297,15 @@ async def punish(ctx):
         dm_channel = user.dm_channel
         await ctx.send(nick + " soll sich schämen gehen")
         invite = await ctx.channel.create_invite(max_uses=1)
-        if dm_channel is None:
-            dm_channel = await user.create_dm()
-        for i in range(4):
-            await dm_channel.send("shame!")
-        await dm_channel.send(invite.url)
+        try:
+            if dm_channel is None:
+                dm_channel = await user.create_dm()
+            for i in range(4):
+                await dm_channel.send("shame!")
+            await dm_channel.send("https://media.giphy.com/media/vX9WcCiWwUF7G/giphy.gif")
+            await dm_channel.send(invite.url)
+        except discord.Forbidden:
+            pass
         try:
             await user.kick(reason="Bestrafung")
         except discord.Forbidden:
