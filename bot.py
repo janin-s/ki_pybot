@@ -252,7 +252,17 @@ async def are_characters_unique(s):
 
 
 def get_unicode_id(c):
-    return chr(127462 + (ord(c.lower()) - 97))
+    c = c.lower()
+    o = ord(c)
+    if o < 97 or o > 122:
+        return chr(127462 + (o - 97))
+    if 48 <= o <= 57:
+        return c + chr(8419)
+    if c == 63:
+        return '\U00002753'
+    if c == 33:
+        return '\U00002757'
+    return 0
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
