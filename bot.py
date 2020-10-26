@@ -28,8 +28,6 @@ async def on_command_error(ctx, error, force=False):
 
 @bot.event
 async def on_member_join(member):
-    spam = await bot.fetch_channel(705425949541269668)
-
     if member.id in user_roles:
         for role_id in user_roles[member.id]:
             role = discord.utils.get(member.guild.roles, id=role_id)
