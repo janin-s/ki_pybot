@@ -254,7 +254,7 @@ async def are_characters_unique(s):
 def get_unicode_id(c):
     c = c.lower()
     o = ord(c)
-    if o < 97 or o > 122:
+    if 97 <= o <= 122:
         return chr(127462 + (o - 97))
     if 48 <= o <= 57:
         return c + chr(8419)
