@@ -28,13 +28,14 @@ async def on_command_error(ctx, error, force=False):
 
 @bot.event
 async def on_member_join(member):
-    await bot.fetch_channel(705425949541269668).send("member: " + str(member.id) + " joined")
+    spam = await bot.fetch_channel(705425949541269668)
+    await spam.send("member: " + str(member.id) + " joined")
     if member.id in user_roles:
-        await bot.fetch_channel(705425949541269668).send("member: " + str(member.id) + " bekommt rollen!")
+        await spam.send("member: " + str(member.id) + " bekommt rollen!")
         for role in user_roles[member.id]:
             await member.add_roles(role)
     if member.id in user_nicks:
-        await bot.fetch_channel(705425949541269668).send("member: " + str(member.id) + " bekommt nick!")
+        await spam.send("member: " + str(member.id) + " bekommt nick!")
         await member.edit(nick=user_nicks[member.id])
 
 
