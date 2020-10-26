@@ -212,8 +212,8 @@ async def are_characters_unique(s):
     # An integer to store presence/absence
     # of 26 characters using its 32 bits
     checker = 0
-    # 0 to 9, ?, !
-    numbers_and_special = list(map(lambda x: False, range(0, 13)))
+    # 0 to 9, ?, !, +, -
+    numbers_and_special = list(map(lambda x: False, range(0, 15)))
     s = s.lower()
     for i in range(len(s)):
         ascii_value = ord(s[i])
@@ -223,20 +223,29 @@ async def are_characters_unique(s):
                     return False
                 else:
                     numbers_and_special[ascii_value - 48] = True
-            else:
-                if ascii_value == 63:
-                    if numbers_and_special[10]:
-                        return False
-                    else:
-                        numbers_and_special[10] = True
+            elif ascii_value == 63:
+                if numbers_and_special[10]:
+                    return False
                 else:
-                    if ascii_value == 33:
-                        if numbers_and_special[11]:
-                            return False
-                        else:
-                            numbers_and_special[11] = True
-                    else:
-                        return False
+                    numbers_and_special[10] = True
+            elif ascii_value == 33:
+                if numbers_and_special[11]:
+                    return False
+                else:
+                    numbers_and_special[11] = True
+            elif ascii_value == 43:
+                if numbers_and_special[12]:
+                    return False
+                else:
+                    numbers_and_special[12] = True
+            elif ascii_value == 45:
+                if numbers_and_special[13]:
+                    return False
+                else:
+                    numbers_and_special[13] = True
+            else:
+                return False
+
         else:
             val = ascii_value - ord('a')
 
