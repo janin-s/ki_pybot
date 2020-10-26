@@ -262,6 +262,7 @@ def get_unicode_id(c):
     return '\U00002753'
 
 
+@bot.command()
 def punish(ctx):
     user_list = ctx.message.mentions
     for user in user_list:
