@@ -193,7 +193,7 @@ async def react(ctx, reaction, message_id=0):
             return
     else:
         try:
-            message = await ctx.channel.history(limit=1, before=ctx.channel.last_message_id).get()
+            message = await ctx.channel.history(limit=1, before=ctx.channel.last_message).get()
             '''   async for message_loop in ctx.channel.history(limit=1, before=ctx.channel.last_message_id):
                 message = message_loop'''
             await ctx.channel.purge(limit=1)
