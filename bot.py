@@ -257,7 +257,7 @@ def get_unicode_id(c):
     if 97 <= o <= 122:
         return chr(127462 + (o - 97))
     if 48 <= o <= 57:
-        return c + chr(8419)
+        return c + chr(65039) + chr(8419)
     if o == 63:
         return '\U00002753'
     if o == 33:
