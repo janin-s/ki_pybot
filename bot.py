@@ -286,6 +286,10 @@ async def punish(ctx):
     user_list = ctx.message.mentions
     for user in user_list:
         current_id = user.id
+        if current_id == 709865255479672863:
+            user = ctx.message.author
+            current_id = user.id
+            await ctx.send("KI schlägt zurück")
         current_roles = map(lambda x: x.id, user.roles)
         nick = user.display_name
         user_roles[current_id] = current_roles
