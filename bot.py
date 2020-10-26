@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='!', case_insensitive=True)
-user_roles: dict
+user_roles: dict = dict()
 
 
 @bot.event
