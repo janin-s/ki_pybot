@@ -355,7 +355,7 @@ async def get_punish_time(member_id: int):
 @bot.command()
 @commands.cooldown(1, 60, commands.BucketType.user)
 async def hug(ctx):
-    """umarmt alle mentioned user privat"""
+    """umarmt alle mentioned user privat. 1 min cooldown"""
     user_list = ctx.message.mentions
 
     for user in user_list:
@@ -372,7 +372,8 @@ async def hug(ctx):
         try:
             if dm_channel is None:
                 dm_channel = await user.create_dm()
-            await dm_channel.send("Liebe! " + name + " sendet dir eine Umarmung! \n https://cdn.makeagif.com/media/5-08-2015/T9UKyg.gif")
+            await dm_channel.send("Liebe! " + name + " sendet dir eine Umarmung!")
+            await dm_channel.send("https://cdn.makeagif.com/media/5-08-2015/T9UKyg.gif")
         except discord.Forbidden:
             pass
     await ctx.message.delete()
