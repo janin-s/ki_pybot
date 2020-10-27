@@ -30,13 +30,6 @@ async def on_command_error(ctx, error, force=False):
         await ctx.send("KI nix verstehi ._." + str(error))
 
 
-@bot.command()
-async def janin(ctx, member):
-    """Für Frauenrechte!"""
-    if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
-        await member.add_roles(705430318131314798)
-
-
 @bot.event
 async def on_member_join(member):
     if member.id in user_roles:
