@@ -350,4 +350,26 @@ async def get_punish_time(member_id: int):
         return t
 
 
+async def hug(ctx):
+    """umarmt alle mentioned user privat"""
+    user_list = ctx.message.mentions
+    for user in user_list:
+
+        current_id = user.id
+
+        if current_id == 709865255479672863:
+            user = ctx.message.author
+            await ctx.send("KI hat dich auch lieb!")
+
+        dm_channel = user.dm_channel
+
+        try:
+            if dm_channel is None:
+                dm_channel = await user.create_dm()
+            await dm_channel.send("Liebe! " + ctx.message.author.display_name + " sendet dir eine Umarmung!")
+            await dm_channel.send("https://cdn.makeagif.com/media/5-08-2015/T9UKyg.gif")
+        except discord.Forbidden:
+            pass
+
+
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
