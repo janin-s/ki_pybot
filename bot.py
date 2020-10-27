@@ -357,9 +357,10 @@ async def hug(ctx):
     for user in user_list:
 
         current_id = user.id
-
+        name = ctx.message.author.display_name
         if current_id == 709865255479672863:
             user = ctx.message.author
+            name = "KI"
             await ctx.send("KI hat dich auch lieb!")
 
         dm_channel = user.dm_channel
@@ -367,7 +368,7 @@ async def hug(ctx):
         try:
             if dm_channel is None:
                 dm_channel = await user.create_dm()
-            await dm_channel.send("Liebe! " + ctx.message.author.display_name + " sendet dir eine Umarmung!")
+            await dm_channel.send("Liebe! " + name + " sendet dir eine Umarmung!")
             await dm_channel.send("https://cdn.makeagif.com/media/5-08-2015/T9UKyg.gif")
         except discord.Forbidden:
             pass
