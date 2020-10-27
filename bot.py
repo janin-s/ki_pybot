@@ -350,6 +350,7 @@ async def get_punish_time(member_id: int):
         return t
 
 
+@bot.command()
 async def hug(ctx):
     """umarmt alle mentioned user privat"""
     user_list = ctx.message.mentions
