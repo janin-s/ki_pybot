@@ -1,5 +1,6 @@
 import fileinput
 import random
+from datetime import datetime, timedelta
 from typing import Any, Coroutine, Iterator, Union
 
 import discord
@@ -10,6 +11,7 @@ intents.members = True
 bot = commands.Bot(command_prefix='!', case_insensitive=True, intents=intents)
 user_roles: dict = dict()
 user_nicks: dict = dict()
+timedelta_12_h = timedelta(hours=12)
 
 
 @bot.event
@@ -290,10 +292,17 @@ async def punish(ctx):
             user = ctx.message.author
             current_id = user.id
             await ctx.send("KI schlägt zurück")
+        else:
+            last_punish: datetime = await get_punish_time(current_id)
+            if (datetime.utcnow() - last_punish) < timedelta_12_h:
+                await ctx.send(user.display_name + " wurde vor kurzem erst bestraft!")
+                continue
+
         current_roles = map(lambda x: x.id, user.roles)
         nick = user.display_name
         user_roles[current_id] = current_roles
         user_nicks[current_id] = nick
+
         dm_channel = user.dm_channel
         await ctx.send(nick + " soll sich schämen gehen")
         invite = await ctx.channel.create_invite(max_uses=1)
@@ -310,6 +319,34 @@ async def punish(ctx):
             await user.kick(reason="Bestrafung")
         except discord.Forbidden:
             await ctx.send("KI nicht mächtig genug")
+        await set_punish_time(current_id, datetime.utcnow())
+
+
+async def set_punish_time(member_id: int, t: datetime):
+    found = False
+    for line in fileinput.input(r"punish_times", inplace=True):
+        if line.__contains__(str(member_id)):
+            found = True
+            newline = str(member_id) + ";" + t.isoformat().strip()
+            print(newline.strip())
+        else:
+            print(line.strip())
+    fileinput.close()
+    if not found:
+        data = open(r"punish_times", "a")
+        data.write(str(member_id) + ";" + t.isoformat().strip())
+
+
+async def get_punish_time(member_id: int):
+    with open(r"punish_times", "r") as file:
+        lines = file.readlines()
+        for line in lines:
+            if line.__contains__(str(member_id)):
+                try:
+                    t: datetime = datetime.fromisoformat(line.split(';').__getitem__(1).strip())
+                except ValueError:
+                    t: datetime = datetime.min
+                return t
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
