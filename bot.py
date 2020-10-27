@@ -24,6 +24,8 @@ async def on_ready():
 async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
         await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
+    elif isinstance(error, commands.errors.CommandOnCooldown):
+        pass
     else:
         await ctx.send("KI nix verstehi ._." + str(error))
 
@@ -358,9 +360,11 @@ async def get_punish_time(member_id: int):
 
 
 @bot.command()
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def hug(ctx):
     """umarmt alle mentioned user privat"""
     user_list = ctx.message.mentions
+    await ctx.send(ctx.message.author.display_name + " versendet eine Umarmung!")
     for user in user_list:
 
         current_id = user.id
