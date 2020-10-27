@@ -294,7 +294,7 @@ async def punish(ctx):
             await ctx.send("KI schlägt zurück")
         else:
             last_punish: datetime = await get_punish_time(current_id)
-            if (datetime.utcnow() - last_punish) < timedelta_12_h:
+            if (datetime.now() - last_punish) < timedelta_12_h:
                 await ctx.send(user.display_name + " wurde vor kurzem erst bestraft!")
                 continue
 
@@ -319,7 +319,7 @@ async def punish(ctx):
             await user.kick(reason="Bestrafung")
         except discord.Forbidden:
             await ctx.send("KI nicht mächtig genug")
-        await set_punish_time(current_id, datetime.utcnow())
+        await set_punish_time(current_id, datetime.now())
 
 
 async def set_punish_time(member_id: int, t: datetime):
@@ -340,13 +340,14 @@ async def set_punish_time(member_id: int, t: datetime):
 async def get_punish_time(member_id: int):
     with open(r"punish_times", "r") as file:
         lines = file.readlines()
+        t = datetime.min
         for line in lines:
             if line.__contains__(str(member_id)):
                 try:
-                    t: datetime = datetime.fromisoformat(line.split(';').__getitem__(1).strip())
+                    t = datetime.fromisoformat(line.split(';').__getitem__(1).strip())
                 except ValueError:
-                    t: datetime = datetime.min
-                return t
+                    t = datetime.min
+        return t
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
