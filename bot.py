@@ -24,6 +24,8 @@ async def on_ready():
 async def on_command_error(ctx, error, force=False):
     if isinstance(error, commands.errors.CommandNotFound):
         await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
+    elif isinstance(error, commands.errors.CommandOnCooldown):
+        pass
     else:
         await ctx.send("KI nix verstehi ._." + str(error))
 
@@ -351,20 +353,22 @@ async def get_punish_time(member_id: int):
 
 
 @bot.command()
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def hug(ctx):
     """umarmt alle mentioned user privat"""
     user_list = ctx.message.mentions
-    for user in user_list:
 
+    for user in user_list:
         current_id = user.id
-        name = ctx.message.author.display_name
         if current_id == 709865255479672863:
             user = ctx.message.author
             name = "KI"
             await ctx.send("KI hat dich auch lieb!")
+        else:
+            name = ctx.message.author.display_name
+        await ctx.send(ctx.message.author.display_name + " versendet eine Umarmung an " + user.display_name + " !")
 
         dm_channel = user.dm_channel
-
         try:
             if dm_channel is None:
                 dm_channel = await user.create_dm()
@@ -372,6 +376,7 @@ async def hug(ctx):
             await dm_channel.send("https://cdn.makeagif.com/media/5-08-2015/T9UKyg.gif")
         except discord.Forbidden:
             pass
+    await ctx.message.delete()
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
