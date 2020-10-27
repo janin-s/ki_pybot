@@ -373,7 +373,7 @@ async def hug(ctx):
             await ctx.send("KI hat dich auch lieb!")
         else:
             name = ctx.message.author.display_name
-        await ctx.send(ctx.message.author.display_name + " versendet eine Umarmung an " + name + " !")
+        await ctx.send(ctx.message.author.display_name + " versendet eine Umarmung an " + user.display_name + " !")
 
         dm_channel = user.dm_channel
         try:
