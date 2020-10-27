@@ -373,14 +373,13 @@ async def hug(ctx):
             await ctx.send("KI hat dich auch lieb!")
         else:
             name = ctx.message.author.display_name
-        await ctx.send(ctx.message.author.display_name + " versendet eine Umarmung an " + user.display_name + " !")
+        await ctx.send(ctx.message.author.display_name + " versendet eine Umarmung an " + user.display_name + "!")
 
         dm_channel = user.dm_channel
         try:
             if dm_channel is None:
                 dm_channel = await user.create_dm()
-            await dm_channel.send("Liebe! " + name + " sendet dir eine Umarmung!")
-            await dm_channel.send("https://cdn.makeagif.com/media/5-08-2015/T9UKyg.gif")
+            await dm_channel.send("Liebe! " + name + " sendet dir eine Umarmung! \n https://cdn.makeagif.com/media/5-08-2015/T9UKyg.gif")
         except discord.Forbidden:
             pass
     await ctx.message.delete()
