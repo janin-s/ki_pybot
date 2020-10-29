@@ -158,6 +158,23 @@ async def sev(ctx):
 
 
 @bot.command()
+async def hausaufgabenhilfe(ctx):
+    """individuelle hausaufgabenhilfe für jeden"""
+    if ctx.message.author.id == 388061626131283968:
+        await ctx.send('https://blog.onlyfans.com/5-steps-for-getting-started-on-onlyfans/')
+    elif ctx.message.author.id == 174900012340215809:
+        await ctx.send("lüg nicht, eh schon alles 100%")
+    else:
+        await ctx.send('Du schaffst das schon! KI glaubt an dich :)')
+
+
+@bot.command()
+async def janin(ctx):
+    """janin ist gemein"""
+    await ctx.send('https://www.wikihow.com/Drop-Out-of-College')
+
+
+@bot.command()
 async def lukas(ctx):
     """Lukas ist behindert"""
     await ctx.send('https://de.wikihow.com/Mit-einer-geistig-behinderten-person-kommunizieren')
