@@ -48,10 +48,16 @@ async def on_member_join(member):
 async def clear(ctx, amount=1):
     """Löscht die übergebene Anzahl an Messages (default == 1) mit !clear {amount}*"""
     if ctx.channel.id == 705427122151227442:
-        await ctx.channel.purge(limit=1)
+        await ctx.message.delete
         await ctx.send('Pseudohistorie wird hier nicht geduldet!', delete_after=60)
     else:
-        await ctx.channel.purge(limit=amount + 1)
+        wichtig = ctx.message.guild.get_role(705430318131314798)
+        if wichtig not in ctx.author.roles:
+            purge_limit = min(amount + 1, 10)
+        else:
+            # zur sicherheit
+            purge_limit = min(amount + 1, 200)
+        await ctx.channel.purge(limit=purge_limit)
 
 
 @bot.command()
