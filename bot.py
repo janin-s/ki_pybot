@@ -26,6 +26,8 @@ async def on_command_error(ctx, error, force=False):
         await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
     elif isinstance(error, commands.errors.CommandOnCooldown):
         pass
+    elif isinstance(error, commands.errors.BotMissingPermissions):
+        await ctx.send("KI nicht mächtig genug :(")
     else:
         await ctx.send("KI nix verstehi ._." + str(error))
 
