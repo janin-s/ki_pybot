@@ -1,7 +1,11 @@
 import random
+
 from helper_functions import *
 from datetime import datetime, timedelta
 from typing import Union
+
+import dateutil
+from dateutil import parser
 
 import discord
 from discord.ext import commands
@@ -203,7 +207,7 @@ async def punish(ctx):
     user_list = ctx.message.mentions
     for user in user_list:
         current_id = user.id
-        if current_id != 453256761906954255 and user.status is discord.Status.offline:
+        if (current_id != 453256761906954255) and (user.status is discord.Status.offline):
             await ctx.send("offline User punishen sehr gemein, lass das :(")
             continue
         if current_id == 709865255479672863:
@@ -265,6 +269,45 @@ async def hug(ctx):
         except discord.Forbidden:
             pass
     await ctx.message.delete()
+
+
+@bot.command()
+async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0):
+    """!raubkopie add ["today"/XX.XX.XX] [link]
+        !raubkopie remove ["today"/XX.XX.XX]
+        !raubkopie get ["list"/"id"/XX.XX.XX] [id]"""
+    r = "nicht gefunden, kp warum :("
+    if command == "add" or command == "remove":
+        if ctx.message.author.id == 174900012340215809 or ctx.message.author.id == 139418002369019905:
+            if param == "today":
+                t: datetime = datetime.now()
+            else:
+                info = dateutil.parser.parserinfo(dayfirst=True)
+                t: datetime = dateutil.parser.parse(str(param), parserinfo=info)
+            print("parsed time: " + t.isoformat())
+            r = add_raubkopie(t, str(param2)) if command == "add" else remove_raubkopie(t)
+        else:
+            await ctx.send("nur chrissi darf das!")
+            return
+    elif command == "get":
+        if param == "id":
+            try:
+                r = await get_raubkopie(int(param2))
+            except ValueError:
+                await ctx.send("id komisch :(")
+                return
+        elif param == "list":
+            r = await get_raubkopie_all()
+        else:
+            try:
+                info = dateutil.parser.parserinfo(dayfirst=True)
+                t: datetime = dateutil.parser.parse(str(param), parserinfo=info)
+                print("parsed time: " + t.isoformat())
+                r = await get_raubkopie(t)
+            except ValueError:
+                await ctx.send("datum komisch, nix verstehi :(")
+                return
+    await ctx.send(r)
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')

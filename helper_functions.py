@@ -1,5 +1,6 @@
 import fileinput
 from datetime import datetime
+from typing import Union
 
 
 async def persistent_counter(caller="all"):
@@ -11,7 +12,7 @@ async def persistent_counter(caller="all"):
     # shared counter with id 'all'
 
     if caller == "resetAll":
-        for line in fileinput.input(r"data", inplace=True):
+        for line in fileinput.input(r"data_files/data", inplace=True):
             if line.__contains__("all"):
                 newline = "all:0"
                 print(newline.strip())
@@ -22,7 +23,7 @@ async def persistent_counter(caller="all"):
     else:
         found = False
         number: int = 0
-        for line in fileinput.input(r"data", inplace=True):
+        for line in fileinput.input(r"data_files/data", inplace=True):
             if line.__contains__(caller):
                 found = True
                 try:
@@ -36,7 +37,7 @@ async def persistent_counter(caller="all"):
                 print(line.strip())
         fileinput.close()
         if not found:
-            data = open(r"data", "a")
+            data = open(r"data_files/data", "a")
             data.write(caller + ":0")
             return 0
         return number
@@ -116,7 +117,7 @@ def get_unicode_id(c):
 
 async def set_punish_time(member_id: int, t: datetime):
     found = False
-    for line in fileinput.input(r"punish_times", inplace=True):
+    for line in fileinput.input(r"data_files/punish_times", inplace=True):
         if line.__contains__(str(member_id)):
             found = True
             newline = str(member_id) + ";" + t.isoformat().strip()
@@ -125,12 +126,12 @@ async def set_punish_time(member_id: int, t: datetime):
             print(line.strip())
     fileinput.close()
     if not found:
-        data = open(r"punish_times", "a")
+        data = open(r"data_files/punish_times", "a")
         data.write(str(member_id) + ";" + t.isoformat().strip())
 
 
 async def get_punish_time(member_id: int):
-    with open(r"punish_times", "r") as file:
+    with open(r"data_files/punish_times", "r") as file:
         lines = file.readlines()
         t = datetime.min
         for line in lines:
@@ -140,3 +141,49 @@ async def get_punish_time(member_id: int):
                 except ValueError:
                     t = datetime.min
         return t
+
+
+# data in raubkopien stored like this:
+# datetime-isostring;link
+
+def add_raubkopie(t: datetime, link):
+    eintrag = t.isoformat(timespec="minutes") + ";" + str(link) + "\n"
+    kopien = open(r"data_files/raubkopien", "a")
+    kopien.write(eintrag)
+    return "added \"" + str(link) + "\" on " + t.isoformat(timespec="minutes")
+
+
+def remove_raubkopie(t: datetime):
+    for line in fileinput.input(r"data_files/raubkopien", inplace=True):
+        if line.__contains__(t.date().isoformat()):
+            continue
+        else:
+            print(line)
+    fileinput.close()
+    return "removed entries from " + t.date().isoformat()
+
+
+async def get_raubkopie_all():
+    with open(r"data_files/raubkopien", "r") as f:
+        lines = f.readlines()
+        output = ""
+        for line in lines:
+            output += str(line).split(';', 1).pop(1) + "\n"
+        return output
+
+
+async def get_raubkopie(param: Union[datetime, int]):
+    with open(r"data_files/raubkopien", "r") as f:
+        lines = f.readlines()
+        if type(param) is int:
+            no = max(0, param - 1)
+            if no >= len(lines):
+                return "id nicht verfügbar"
+            output = lines.pop(no)
+            return output.split(';', 1).pop(1)
+        elif type(param) is datetime:
+            for line in lines:
+                if param.date().isoformat() in line:
+                    output = line
+                    return output.split(';', 1).pop(1)
+            return "Datum nicht gefunden"
