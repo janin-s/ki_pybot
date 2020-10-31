@@ -207,10 +207,10 @@ async def punish(ctx):
     user_list = ctx.message.mentions
     for user in user_list:
         current_id = user.id
-        if (current_id != 453256761906954255) and (user.status is discord.Status.offline):
+        if user.status is discord.Status.offline or user.status == "offline":
             await ctx.send("offline User punishen sehr gemein, lass das :(")
             continue
-        if current_id == 709865255479672863:
+        elif current_id == 709865255479672863:
             user = ctx.message.author
             current_id = user.id
             await ctx.send("KI schlägt zurück")
