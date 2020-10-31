@@ -273,9 +273,8 @@ async def hug(ctx):
 
 @bot.command()
 async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0):
-    """!raubkopie add ["today"/XX.XX.XX] [link]
-        !raubkopie remove ["today"/XX.XX.XX]
-        !raubkopie get ["list"/"id"/XX.XX.XX] [id]"""
+    """!raubkopie add ["today"/XX.XX.XX] [link] \n  !raubkopie remove ["today"/XX.XX.XX] \n !raubkopie get ["list"/"id"/XX.XX.XX] [id] """
+
     r = "nicht gefunden, kp warum :("
     if command == "add" or command == "remove":
         if ctx.message.author.id == 174900012340215809 or ctx.message.author.id == 139418002369019905:
