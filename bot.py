@@ -207,7 +207,7 @@ async def punish(ctx):
     user_list = ctx.message.mentions
     for user in user_list:
         current_id = user.id
-        if user.status is discord.Status.offline or user.status == "offline":
+        if user.raw_status == "offline":
             await ctx.send("offline User punishen sehr gemein, lass das :(")
             continue
         elif current_id == 709865255479672863:
