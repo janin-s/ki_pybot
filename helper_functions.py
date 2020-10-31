@@ -1,5 +1,5 @@
 import fileinput
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 async def persistent_counter(caller="all"):
@@ -140,4 +140,3 @@ async def get_punish_time(member_id: int):
                 except ValueError:
                     t = datetime.min
         return t
-
