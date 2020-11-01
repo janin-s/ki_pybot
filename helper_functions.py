@@ -152,7 +152,7 @@ async def get_punish_time(member_id: int):
 def add_raubkopie(t: datetime, link):
     eintrag = t.isoformat(timespec="minutes") + ";" + str(link)
     kopien = open(r"data_files/raubkopien", "a")
-    kopien.write(eintrag)
+    kopien.write(eintrag + '\n')
     return "added \"" + str(link) + "\" on " + t.isoformat(timespec="minutes")
 
 
@@ -172,10 +172,12 @@ async def get_raubkopie_all():
     with open(r"data_files/raubkopien", "r") as f:
         lines = f.readlines()
         output = ""
+        counter = 1
         for line in lines:
             if line.strip() == "" or line.strip() == "\n":
                 continue
-            output += str(line).split(';', 1).pop(1) + "\n"
+            output += str(counter) + ": " + str(line).split(';', 1).pop(1)
+            counter = counter + 1
         return output if output.strip() != "" and output.strip() != "\n" else "no entries"
 
 
