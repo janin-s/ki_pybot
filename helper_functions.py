@@ -157,13 +157,15 @@ def add_raubkopie(t: datetime, link):
 
 
 def remove_raubkopie(t: datetime):
+    counter = 0
     for line in fileinput.input(r"data_files/raubkopien", inplace=True):
         if line.__contains__(t.date().isoformat()):
+            counter = counter+1
             continue
         else:
             print(line)
     fileinput.close()
-    return "removed entries from " + t.date().isoformat()
+    return "removed " + str(counter) + " entr[y/ies] from " + t.date().isoformat()
 
 
 async def get_raubkopie_all():
@@ -174,7 +176,7 @@ async def get_raubkopie_all():
             if line.strip() == "" or line.strip() == "\n":
                 continue
             output += str(line).split(';', 1).pop(1) + "\n"
-        return output
+        return output if output.strip() != "" and output.strip() != "\n" else "no entries"
 
 
 async def get_raubkopie(param: Union[datetime, int]):
