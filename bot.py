@@ -314,6 +314,9 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
                 return
         elif param == "list":
             r = await get_raubkopie_all()
+            listembed = discord.Embed(title="Aufzeichnungsliste", description = r)
+            await ctx.send(embed=listembed)
+            return
         else:
             try:
                 info = dateutil.parser.parserinfo(dayfirst=True)

@@ -24,24 +24,24 @@ async def persistent_counter(caller="all", increment=True):
         found = False
         number: int = 0
         for line in fileinput.input(r"data_files/data", inplace=True):
-            if line.__contains__(caller):
+            if caller in line:
                 found = True
                 try:
-                    number = int(line.split(':').__getitem__(1))
+                    number = int(line.split(':').pop(1))
                 except ValueError:
                     number = 0
                 if increment:
-                    number = number + 1
+                    number += 1
                 else:
-                    number = number - 1
-                newline = caller + ":" + str(max(number, 0))
+                    number -= 1
+                newline = f"{caller}:{max(number, 0)}"
                 print(newline.strip())
             else:
                 print(line.strip())
         fileinput.close()
         if not found:
-            data = open(r"data_files/data", "a")
-            data.write(caller + ":0")
+            with open(r"data_files/data", "a") as data:
+                data.write(f"{caller}:0")
             return 0
         return number
 
@@ -55,8 +55,8 @@ async def are_characters_unique(s):
     # 0 to 9, ?, !, +, -
     numbers_and_special = list(map(lambda x: False, range(0, 15)))
     s = s.lower()
-    for i in range(len(s)):
-        ascii_value = ord(s[i])
+    for c in s:
+        ascii_value = ord(c)
         if ascii_value < 97 or ascii_value > 122:
             if 48 <= ascii_value <= 57:
                 if numbers_and_special[ascii_value - 48]:
@@ -121,7 +121,7 @@ def get_unicode_id(c):
 async def set_punish_time(member_id: int, t: datetime):
     found = False
     for line in fileinput.input(r"data_files/punish_times", inplace=True):
-        if line.__contains__(str(member_id)):
+        if str(member_id) in line:
             found = True
             newline = str(member_id) + ";" + t.isoformat().strip()
             print(newline.strip())
@@ -129,8 +129,8 @@ async def set_punish_time(member_id: int, t: datetime):
             print(line.strip())
     fileinput.close()
     if not found:
-        data = open(r"data_files/punish_times", "a")
-        data.write(str(member_id) + ";" + t.isoformat().strip())
+        with open(r"data_files/punish_times", "a") as data:
+            data.write(str(member_id) + ";" + t.isoformat().strip())
 
 
 async def get_punish_time(member_id: int):
@@ -140,7 +140,7 @@ async def get_punish_time(member_id: int):
         for line in lines:
             if line.__contains__(str(member_id)):
                 try:
-                    t = datetime.fromisoformat(line.split(';').__getitem__(1).strip())
+                    t = datetime.fromisoformat(line.split(';').pop(1).strip())
                 except ValueError:
                     t = datetime.min
         return t
