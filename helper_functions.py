@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Union
 
 
-async def persistent_counter(caller="all"):
+async def persistent_counter(caller="all", increment=True):
     # premium function
     # hilfsfunktion für shotcounter, wenn ohne argument globaler shared counter
     # evtl in Zukunft für persönliche Counter nutzbar: user-ID als parameter String
@@ -30,8 +30,11 @@ async def persistent_counter(caller="all"):
                     number = int(line.split(':').__getitem__(1))
                 except ValueError:
                     number = 0
-                number = number + 1
-                newline = caller + ":" + str(number)
+                if increment:
+                    number = number + 1
+                else:
+                    number = number - 1
+                newline = caller + ":" + str(max(number, 0))
                 print(newline.strip())
             else:
                 print(line.strip())

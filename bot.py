@@ -79,7 +79,12 @@ async def shot(ctx, *, command=None):
     """Erhöht den Shot-Counter um 1"""
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
         if command == "reset":
-            newcount = await persistent_counter("resetAll")
+            newcount = await persistent_counter(caller="resetAll")
+        elif command == "drink":
+            newcount = await persistent_counter(increment=False)
+            if newcount < 0:
+                await ctx.send("alle shots leergetrunken")
+                return
         else:
             newcount = await persistent_counter()
         await ctx.send(f'Shot-Counter: {newcount}')
