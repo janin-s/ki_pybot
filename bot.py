@@ -1,5 +1,7 @@
 import random
 
+import os
+
 from helper_functions import *
 from datetime import datetime, timedelta
 from typing import Union
@@ -21,6 +23,17 @@ timedelta_12_h = timedelta(hours=12)
 
 @bot.event
 async def on_ready():
+    if not os.path.isdir(r"data_files"):
+        os.makedirs("./data_files")
+    if not os.path.isfile(r"data_files/data"):
+        data = open(r"data_files/data", "w")
+        data.close()
+    if not os.path.isfile(r"data_files/punish_times"):
+        punish_times = open(r"data_files/punish_times", "w")
+        punish_times.close()
+    if not os.path.isfile(r"data_files/raubkopien"):
+        raubkopien = open(r"data_files/raubkopien", "w")
+        raubkopien.close()
     print(f'{bot.user} ist online')
     await bot.change_presence(activity=discord.Game('Semesterstart kickt'), status=discord.Status.online)
 
