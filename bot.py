@@ -12,6 +12,7 @@ from discord.ext import commands
 
 intents = discord.Intents.default()
 intents.members = True
+intents.presences = True
 bot = commands.Bot(command_prefix='!', case_insensitive=True, intents=intents)
 user_roles: dict = dict()
 user_nicks: dict = dict()
@@ -148,13 +149,13 @@ async def janin(ctx):
 
 @bot.command()
 async def lukas(ctx):
-    """Lukas ist behindert"""
+    """Lukas ist nicht nett"""
     await ctx.send('https://de.wikihow.com/Mit-einer-geistig-behinderten-person-kommunizieren')
 
 
 @bot.command(aliases=["johannes", "jojo"])
 async def nils(ctx):
-    """Nils und Johannes sind behindert"""
+    """Nils und Johannes sind nicht nett"""
     await ctx.send('https://de.wikihow.com/Mit-gemeinen-Menschen-richtig-umgehen')
 
 
@@ -207,7 +208,7 @@ async def punish(ctx):
     user_list = ctx.message.mentions
     for user in user_list:
         current_id = user.id
-        if user.raw_status == "offline":
+        if current_id != 453256761906954255 and user.status is discord.Status.offline:
             await ctx.send("offline User punishen sehr gemein, lass das :(")
             continue
         elif current_id == 709865255479672863:
@@ -307,6 +308,17 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
                 await ctx.send("datum komisch, nix verstehi :(")
                 return
     await ctx.send(r)
+
+
+@bot.command()
+async def amongus(ctx):
+    """switches channel limit for Pannekecke from infinity to 99 and back"""
+    pannekecke = await bot.fetch_channel(706617584631677031)
+    current_limit = pannekecke.user_limit
+    if current_limit == 0:
+        await pannekecke.edit(user_limit=99)
+    else:
+        await pannekecke.edit(user_limit=0)
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
