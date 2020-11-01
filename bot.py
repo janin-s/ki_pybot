@@ -317,8 +317,10 @@ async def amongus(ctx):
     current_limit = pannekecke.user_limit
     if current_limit == 0:
         await pannekecke.edit(user_limit=99)
+        await ctx.send("among us modus (user anzahl sichtbar) aktiviert")
     else:
         await pannekecke.edit(user_limit=0)
+        await ctx.send("among us modus (user anzahl sichtbar) deaktiviert")
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
