@@ -318,7 +318,6 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
 @bot.command()
 async def amongus(ctx):
     """switches channel limit for Pannekecke from infinity to 99 and back"""
-    # get channel implementieren
     pannekecke = await bot.fetch_channel(706617584631677031)
     current_limit = pannekecke.user_limit
     if current_limit == 0:
