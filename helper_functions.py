@@ -189,8 +189,9 @@ async def get_raubkopie(param: Union[datetime, int]):
             no = max(0, param - 1)
             if no >= len(lines):
                 return "id nicht verfügbar"
-            output = lines.pop(no)
-            return output.split(';', 1).pop(1)
+            return f"no: {no}, len: {len(lines)}, lines: {lines}"
+            # output = lines.pop(no)
+            # return output.split(';', 1).pop(1)
         elif type(param) is datetime:
             for line in lines:
                 if param.date().isoformat() in line:
