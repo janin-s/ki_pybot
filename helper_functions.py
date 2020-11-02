@@ -1,4 +1,5 @@
 import fileinput
+import os
 from datetime import datetime
 from typing import Union
 
@@ -189,12 +190,16 @@ async def get_raubkopie(param: Union[datetime, int]):
             no = max(0, param - 1)
             if no >= len(lines):
                 return "id nicht verfügbar"
-            return f"no: {no}, len: {len(lines)}, lines: {lines}"
-            # output = lines.pop(no)
-            # return output.split(';', 1).pop(1)
+            output = lines.pop(no)
+            return output.split(';', 1).pop(1)
         elif type(param) is datetime:
             for line in lines:
                 if param.date().isoformat() in line:
                     output = line
                     return output.split(';', 1).pop(1)
             return "Datum nicht gefunden"
+
+
+def reset_file(file: str):
+    with open(file, "w") as f:
+        f.write("")

@@ -305,6 +305,17 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
         else:
             await ctx.send("nur chrissi darf das!")
             return
+    elif command == "reset":
+        if ctx.message.author.id == 174900012340215809 or ctx.message.author.id == 139418002369019905:
+            path = os.path.join("data_files", param)
+            if os.path.isfile(path):
+                reset_file(path)
+            else:
+                await ctx.send("file existiert nicht")
+            return
+        else:
+            await ctx.send("nur chrissi darf das!")
+            return
     elif command == "get":
         if param == "id":
             try:
