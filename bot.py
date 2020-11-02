@@ -10,6 +10,7 @@ import dateutil
 from dateutil import parser
 
 import discord
+import json
 from discord.ext import commands
 
 intents = discord.Intents.default()
@@ -25,15 +26,15 @@ timedelta_12_h = timedelta(hours=12)
 async def on_ready():
     if not os.path.isdir(r"data_files"):
         os.makedirs("./data_files")
-    if not os.path.isfile(r"data_files/data"):
-        data = open(r"data_files/data", "w")
-        data.close()
-    if not os.path.isfile(r"data_files/punish_times"):
-        punish_times = open(r"data_files/punish_times", "w")
-        punish_times.close()
-    if not os.path.isfile(r"data_files/raubkopien"):
-        raubkopien = open(r"data_files/raubkopien", "w")
-        raubkopien.close()
+    if not os.path.isfile(r"data_files/data.json"):
+        with open(r"data_files/data.json", "w") as data:
+            json.dump({}, data, separators=(',', ': '), indent=4)
+    if not os.path.isfile(r"data_files/punish_times.json"):
+        with open(r"data_files/punish_times.json", "w") as punish_times:
+            json.dump({}, punish_times, separators=(',', ': '), indent=4)
+    if not os.path.isfile(r"data_files/raubkopien.json"):
+        with open(r"data_files/raubkopien.json", "w") as raubkopien:
+            json.dump({}, raubkopien, separators=(',', ': '), indent=4)
     print(f'{bot.user} ist online')
     await bot.change_presence(activity=discord.Game('Semesterstart kickt'), status=discord.Status.online)
 
@@ -92,14 +93,21 @@ async def shot(ctx, *, command=None):
     """Erhöht den Shot-Counter um 1"""
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
         if command == "reset":
-            newcount = await persistent_counter(caller="resetAll")
+            # newcount = await persistent_counter(caller="resetAll")
+            await add_entry("data", "all", 0)
+            newcount = 0
         elif command == "drink":
-            newcount = await persistent_counter(increment=False)
-            if newcount < 0:
+            # newcount = await persistent_counter(increment=False)
+            current = int(get_entry("data", "all")[1])
+            if current <= 0:
                 await ctx.send("alle shots leergetrunken")
-                return
+            newcount = current-1
+            await add_entry("data", "all", newcount)
         else:
-            newcount = await persistent_counter()
+            # newcount = await persistent_counter()
+            current = int(get_entry("data", "all")[1])
+            newcount = current+1
+            await add_entry("data", "all", current+1)
         await ctx.send(f'Shot-Counter: {newcount}')
     else:
         await ctx.send('Jonas haut dich <:knast:731290033046159460>')
@@ -233,7 +241,7 @@ async def punish(ctx, *members: discord.Member):
             current_id = user.id
             await ctx.send("KI schlägt zurück")
         else:
-            last_punish: datetime = await get_punish_time(current_id)
+            last_punish: datetime = datetime.fromisoformat(get_entry("punish_times.json", current_id)[1])
             if (datetime.now() - last_punish) < timedelta_12_h:
                 await ctx.send(user.display_name + " wurde vor kurzem erst bestraft!")
                 continue
@@ -259,7 +267,7 @@ async def punish(ctx, *members: discord.Member):
             await user.kick(reason="Bestrafung")
         except discord.Forbidden:
             await ctx.send("KI nicht mächtig genug")
-        await set_punish_time(current_id, datetime.now())
+        await add_entry("punish_times.json", str(current_id), datetime.now().isoformat())
 
 
 @bot.command()
@@ -288,11 +296,12 @@ async def hug(ctx, *members: discord.Member):
     await ctx.message.delete()
 
 
-@bot.command()
+@bot.command(aliases=["raubkopien"])
 async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0):
     """!raubkopie get ["list"/"id"/XX.XX.XX] [id]; !raubkopie add ["today"/XX.XX.XX] [link]"""
 
     r = "nicht gefunden, kp warum :("
+    r1 = "r1 not found :("
     if command == "add" or command == "remove":
         if ctx.message.author.id == 174900012340215809 or ctx.message.author.id == 139418002369019905:
             if param == "today":
@@ -301,7 +310,8 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
                 info = dateutil.parser.parserinfo(dayfirst=True)
                 t: datetime = dateutil.parser.parse(str(param), parserinfo=info)
             print("parsed time: " + t.isoformat())
-            r = add_raubkopie(t, str(param2)) if command == "add" else remove_raubkopie(t)
+            # r = add_raubkopie(t, str(param2)) if command == "add" else remove_raubkopie(t)
+            r1 = await add_entry("raubkopien.json", str(t.date().isoformat()), str(param2)) if command == "add" else await remove_entry("raubkopien.json", str(t.date().isoformat()))
         else:
             await ctx.send("nur chrissi darf das!")
             return
@@ -320,25 +330,33 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
     elif command == "get":
         if param == "id":
             try:
-                r = await get_raubkopie(int(param2))
+                await ctx.send("Dieses Feature folgt bald, vielen Dank für Ihre Geduld!")
+                return
+                # TODO entries nach datum sortieren und id nutzen
+                # r1 = get_entry("test", param2)
             except ValueError:
-                await ctx.send("id komisch :(")
+                await ctx.send("id komisch lokal :(")
                 return
         elif param == "list":
-            r = await get_raubkopie_all()
-            listembed = discord.Embed(title="Aufzeichnungsliste", description = r)
-            await ctx.send(embed=listembed)
+            # r = await get_raubkopie_all()
+            r1_dict = get_file("raubkopien.json")
+            r1 = str(r1_dict)
+            # listembed = discord.Embed(title="Aufzeichnungsliste", description=r)
+            listembed2 = discord.Embed(title="Aufzeichnungsliste", description=str(r1))
+            # await ctx.send(embed=listembed)
+            await ctx.send(embed=listembed2)
             return
         else:
             try:
                 info = dateutil.parser.parserinfo(dayfirst=True)
                 t: datetime = dateutil.parser.parse(str(param), parserinfo=info)
                 print("parsed time: " + t.isoformat())
-                r = await get_raubkopie(t)
-            except ValueError:
-                await ctx.send("datum komisch, nix verstehi :(")
+                # r = await get_raubkopie(t)
+                r1 = get_entry("raubkopien.json", t.date().isoformat())
+            except ValueError as e:
+                await ctx.send("datum komisch, nix verstehi :( " + str(e))
                 return
-    await ctx.send(r)
+    await ctx.send(f"r1: {r1}")
 
 
 @bot.command()

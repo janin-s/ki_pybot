@@ -1,50 +1,10 @@
 import fileinput
 import os
+import json
 from datetime import datetime
 from typing import Union
 
-
-async def persistent_counter(caller="all", increment=True):
-    # premium function
-    # hilfsfunktion für shotcounter, wenn ohne argument globaler shared counter
-    # evtl in Zukunft für persönliche Counter nutzbar: user-ID als parameter String
-
-    # data stored like this: 'userid:shotcount'
-    # shared counter with id 'all'
-
-    if caller == "resetAll":
-        for line in fileinput.input(r"data_files/data", inplace=True):
-            if line.__contains__("all"):
-                newline = "all:0"
-                print(newline.strip())
-            else:
-                print(line.strip())
-        fileinput.close()
-        return 0
-    else:
-        found = False
-        number: int = 0
-        for line in fileinput.input(r"data_files/data", inplace=True):
-            if caller in line:
-                found = True
-                try:
-                    number = int(line.split(':').pop(1))
-                except ValueError:
-                    number = 0
-                if increment:
-                    number += 1
-                else:
-                    number -= 1
-                newline = f"{caller}:{max(number, 0)}"
-                print(newline.strip())
-            else:
-                print(line.strip())
-        fileinput.close()
-        if not found:
-            with open(r"data_files/data", "a") as data:
-                data.write(f"{caller}:0")
-            return 0
-        return number
+DIR = "data_files"
 
 
 async def are_characters_unique(s):
@@ -53,37 +13,42 @@ async def are_characters_unique(s):
     # An integer to store presence/absence
     # of 26 characters using its 32 bits
     checker = 0
-    # 0 to 9, ?, !, +, -
-    numbers_and_special = list(map(lambda x: False, range(0, 15)))
+    num_checker = 0
+    # ?, !, +, -
+    special = list(map(lambda x: False, range(0, 4)))
     s = s.lower()
     for c in s:
         ascii_value = ord(c)
         if ascii_value < 97 or ascii_value > 122:
             if 48 <= ascii_value <= 57:
-                if numbers_and_special[ascii_value - 48]:
+                val1 = ascii_value - ord('0')
+                # If bit corresponding to current
+                # character is already set
+                if (num_checker & (1 << val1)) > 0:
                     return False
-                else:
-                    numbers_and_special[ascii_value - 48] = True
+                # set bit in checker
+                num_checker |= (1 << val1)
+
             elif ascii_value == 63:
-                if numbers_and_special[10]:
+                if special[0]:
                     return False
                 else:
-                    numbers_and_special[10] = True
+                    special[0] = True
             elif ascii_value == 33:
-                if numbers_and_special[11]:
+                if special[1]:
                     return False
                 else:
-                    numbers_and_special[11] = True
+                    special[1] = True
             elif ascii_value == 43:
-                if numbers_and_special[12]:
+                if special[2]:
                     return False
                 else:
-                    numbers_and_special[12] = True
+                    special[2] = True
             elif ascii_value == 45:
-                if numbers_and_special[13]:
+                if special[3]:
                     return False
                 else:
-                    numbers_and_special[13] = True
+                    special[3] = True
             else:
                 return False
 
@@ -119,87 +84,47 @@ def get_unicode_id(c):
     return '\U00002753'
 
 
-async def set_punish_time(member_id: int, t: datetime):
-    found = False
-    for line in fileinput.input(r"data_files/punish_times", inplace=True):
-        if str(member_id) in line:
-            found = True
-            newline = str(member_id) + ";" + t.isoformat().strip()
-            print(newline.strip())
-        else:
-            print(line.strip())
-    fileinput.close()
-    if not found:
-        with open(r"data_files/punish_times", "a") as data:
-            data.write(str(member_id) + ";" + t.isoformat().strip())
-
-
-async def get_punish_time(member_id: int):
-    with open(r"data_files/punish_times", "r") as file:
-        lines = file.readlines()
-        t = datetime.min
-        for line in lines:
-            if line.__contains__(str(member_id)):
-                try:
-                    t = datetime.fromisoformat(line.split(';').pop(1).strip())
-                except ValueError:
-                    t = datetime.min
-        return t
-
-
-# data in raubkopien stored like this:
-# datetime-isostring;link
-
-def add_raubkopie(t: datetime, link):
-    eintrag = t.isoformat(timespec="minutes") + ";" + str(link)
-    kopien = open(r"data_files/raubkopien", "a")
-    kopien.write(eintrag + '\n')
-    return "added \"" + str(link) + "\" on " + t.isoformat(timespec="minutes")
-
-
-def remove_raubkopie(t: datetime):
-    counter = 0
-    for line in fileinput.input(r"data_files/raubkopien", inplace=True):
-        if line.__contains__(t.date().isoformat()):
-            counter = counter+1
-            continue
-        else:
-            print(line)
-    fileinput.close()
-    return "removed " + str(counter) + " entr[y/ies] from " + t.date().isoformat()
-
-
-async def get_raubkopie_all():
-    with open(r"data_files/raubkopien", "r") as f:
-        lines = f.readlines()
-        output = ""
-        counter = 1
-        for line in lines:
-            if line.strip() == "" or line.strip() == "\n":
-                continue
-            output += str(counter) + ": " + str(line).split(';', 1).pop(1)
-            counter = counter + 1
-        return output if output.strip() != "" and output.strip() != "\n" else "no entries"
-
-
-async def get_raubkopie(param: Union[datetime, int]):
-    with open(r"data_files/raubkopien", "r") as f:
-        lines = f.readlines()
-        # test
-        if type(param) is int:
-            no = max(0, param - 1)
-            if no >= len(lines):
-                return "id nicht verfügbar"
-            output = lines.pop(no)
-            return output.split(';', 1).pop(1)
-        elif type(param) is datetime:
-            for line in lines:
-                if param.date().isoformat() in line:
-                    output = line
-                    return output.split(';', 1).pop(1)
-            return "Datum nicht gefunden"
-
-
 def reset_file(file: str):
     with open(file, "w") as f:
-        f.write("")
+        json.dump({}, f)
+
+
+def get_file(file: str):
+    file_path = os.path.join(DIR, file)
+    with open(file_path, "r") as f:
+        file_dict = json.load(f)
+    return file_dict
+
+
+async def add_entry(file: str, key: Union[int, str], line: Union[int, str]):
+    file_path = os.path.join(DIR, file)
+    with open(file_path, "r+") as f:
+        file_dict: dict = json.load(f)
+        file_dict[str(key)] = str(line)
+        json.dump(file_dict, f, separators=(',', ': '), indent=4)
+
+    return f"added line {line} with key {key} to {file}"
+
+
+def get_entry(file: str, key: Union[int, str]):
+    file_path = os.path.join(DIR, file)
+    with open(file_path, "r+") as f:
+        file_dict: dict = json.load(f)
+        try:
+            entry = file_dict[str(key)]
+        except KeyError:
+            entry = "no entry for this key"
+        output = (str(key), str(entry))
+    return output
+
+
+async def remove_entry(file: str, key: Union[int, str]):
+    file_path = os.path.join(DIR, file)
+    with open(file_path, "r+") as f:
+        file_dict: dict = json.load(f)
+        try:
+            entry = file_dict.pop(str(key))
+        except KeyError:
+            entry = "not found"
+        json.dump(file_dict, f, separators=(',', ': '), indent=4)
+    return f"removed entry {entry} with key {key} from {file}"
