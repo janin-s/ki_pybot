@@ -241,7 +241,11 @@ async def punish(ctx, *members: discord.Member):
             current_id = user.id
             await ctx.send("KI schlägt zurück")
         else:
-            last_punish: datetime = datetime.fromisoformat(get_entry("punish_times.json", current_id)[1])
+            last_punish_string = get_entry("punish_times.json", current_id)[1]
+            try:
+                last_punish: datetime = datetime.fromisoformat(last_punish_string)
+            except ValueError:
+                last_punish: datetime = datetime.min
             if (datetime.now() - last_punish) < timedelta_12_h:
                 await ctx.send(user.display_name + " wurde vor kurzem erst bestraft!")
                 continue
