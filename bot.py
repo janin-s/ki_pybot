@@ -310,6 +310,7 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
             path = os.path.join("data_files", param)
             if os.path.isfile(path):
                 reset_file(path)
+                await ctx.send("cleared file")
             else:
                 await ctx.send("file existiert nicht")
             return
