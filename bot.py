@@ -1,7 +1,5 @@
 import random
 
-import os
-
 from helper_functions import *
 from datetime import datetime, timedelta
 from typing import Union
@@ -304,7 +302,6 @@ async def hug(ctx, *members: discord.Member):
 async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0):
     """!raubkopie get ["list"/"id"/XX.XX.XX] [id]; !raubkopie add ["today"/XX.XX.XX] [link]"""
 
-    r = "nicht gefunden, kp warum :("
     r1 = "r1 not found :("
     if command == "add" or command == "remove":
         if ctx.message.author.id == 174900012340215809 or ctx.message.author.id == 139418002369019905:

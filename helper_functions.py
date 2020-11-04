@@ -1,7 +1,5 @@
-import fileinput
 import os
 import json
-from datetime import datetime
 from typing import Union
 
 DIR = "data_files"
@@ -136,3 +134,10 @@ async def remove_entry(file: str, key: Union[int, str]):
     with open(file_path, "w") as fw:
         json.dump(file_dict, fw, separators=(',', ': '), indent=4)
     return f"removed entry {entry} with key {key} from {file}"
+
+
+def print_dict(dic: dict) -> str:
+    output: str = ""
+    for key, value in dic.items():
+        output += f"{key} | {value}\n"
+    return output
