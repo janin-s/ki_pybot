@@ -185,7 +185,7 @@ async def lukas(ctx):
 @bot.command(aliases=["johannes", "jojo"])
 async def nils(ctx):
     """Nils und Johannes sind nicht nett"""
-    await ctx.send('https://de.wikihow.com/Mit-gemeinen-Menschen-richtig-umgehen')
+    await ctx.send('https://www.muenchen-heilpraktiker-psychotherapie.de/blog-2/selbstbewusstsein/10-anzeichen-dass-sie-zu-nett-sind-fuer-diese-welt.html')
 
 
 @bot.command()
