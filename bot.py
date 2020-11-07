@@ -114,7 +114,7 @@ async def shot(ctx, *, command=None):
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
     """Chrissi ist gemein und wird deshalb gemobbt"""
-    await ctx.send('Chrissi macht Bot kaputt und ist ein dummer Hacker!!')
+    await ctx.send('Chrissi ist so ein Lieber!')
 
 
 @bot.command()
