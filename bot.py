@@ -170,6 +170,11 @@ async def janin(ctx):
     """janin ist gemein"""
     await ctx.send('https://www.wikihow.com/Drop-Out-of-College')
 
+    
+@bot.command()
+async def jan(ctx):
+    await ctx.send('Jan ist sehr nett und lieb!')
+
 
 @bot.command()
 async def lukas(ctx):
