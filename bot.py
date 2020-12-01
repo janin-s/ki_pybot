@@ -128,7 +128,7 @@ async def gumo(ctx):
 async def gumi(ctx):
     """KI wünscht allen einen guten Mittag"""
     user_name = ctx.message.author.display_name
-    await ctx.send(user_name + ' wünscht allen einen GuMi!')
+    await ctx.send(user_name + ' wünscht allen einen Guten Mittach!')
 
 
 @bot.command()
