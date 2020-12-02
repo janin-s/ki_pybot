@@ -371,33 +371,39 @@ async def amongus(ctx):
 async def votekick(ctx):
     users = ctx.message.mentions
     amount: int = 1
-    for user in users:
+    user = None
+    if len(users) >= 1:
+        user = users[0]
+    else:
+        return
+    current_id = user.id
+    name = ctx.message.author.display_name
+    if current_id == 709865255479672863:
+        name = "Jesus"
+        user = ctx.message.author
         current_id = user.id
-        if current_id == 709865255479672863:
-            user = ctx.message.author
-            current_id = user.id
-            await ctx.send("KI wird nicht gekickt!")
-            amount = sys.maxsize
+        await ctx.send("KI wird nicht gekickt!")
+        amount = sys.maxsize
 
-        current_votes = get_entry("votekick.json", current_id)[1]
-        try:
-            new_votes = int(current_votes) + amount
-        except ValueError:
-            new_votes = amount
-        await ctx.send(f"{ctx.message.author.display_name} will {user.display_name} endlich weg haben ({new_votes}/{VOTEKICK_NO} voted)")
-        if new_votes >= VOTEKICK_NO:
-            await ctx.send("Das ist genug Hass für nen Kick. Winke Winke")
-            await add_entry("votekick.json", str(current_id), 0)
-            await kick_with_invite_and_roles(ctx, user, current_id)
-        else:
-            if new_votes == 1:
-                timer = threading.Timer(119.0, reset_vote, args=[ctx, current_id])
-                timer.start()
-                print("started timer for id: " + str(current_id))
-            await ctx.send("Das ist nicht genug Hass für nen Kick")
-            await add_entry("votekick.json", str(current_id), str(new_votes))
+    current_votes = get_entry("votekick.json", current_id)[1]
+    try:
+        new_votes = int(current_votes) + amount
+    except ValueError:
+        new_votes = amount
+    await ctx.send(f"{name} will {user.display_name} endlich weg haben ({new_votes}/{VOTEKICK_NO} voted)")
+    if new_votes >= VOTEKICK_NO:
+        await ctx.send("Das ist genug Hass für nen Kick. Winke Winke")
+        await add_entry("votekick.json", str(current_id), 0)
+        await kick_with_invite_and_roles(ctx, user, current_id)
+    else:
+        if new_votes == 1:
+            timer = threading.Timer(119.0, reset_vote, args=[ctx, current_id])
+            timer.start()
+            print("started timer for id: " + str(current_id))
+        await ctx.send("Das ist nicht genug Hass für nen Kick")
+        await add_entry("votekick.json", str(current_id), str(new_votes))
 
-
+# weil chrisl bot putt macht hat
 def reset_vote(ctx, current_id):
     add_entry_unsync("votekick.json", str(current_id), 0)
 
