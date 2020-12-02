@@ -386,7 +386,7 @@ async def votekick(ctx):
             new_votes = amount
         await ctx.send(f"{ctx.message.author.display_name} will {user.display_name} endlich weg haben ({new_votes}/{VOTEKICK_NO} voted)")
         if new_votes >= VOTEKICK_NO:
-            await ctx.send("Das ist genug Hass für nen kick. Winke Winke")
+            await ctx.send("Das ist genug Hass für nen Kick. Winke Winke")
             await add_entry("votekick.json", str(current_id), 0)
             await kick_with_invite_and_roles(ctx, user, current_id)
         else:
@@ -394,7 +394,7 @@ async def votekick(ctx):
                 timer = threading.Timer(119.0, reset_vote, args=[ctx, current_id])
                 timer.start()
                 print("started timer for id: " + str(current_id))
-            await ctx.send("Das ist nicht genug Hass für nen kick")
+            await ctx.send("Das ist nicht genug Hass für nen Kick")
             await add_entry("votekick.json", str(current_id), str(new_votes))
 
 
