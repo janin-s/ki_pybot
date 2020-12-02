@@ -4,6 +4,7 @@ import sys
 from helper_functions import *
 from datetime import datetime, timedelta
 from typing import Union
+import threading
 
 import dateutil
 from dateutil import parser
@@ -20,6 +21,7 @@ bot = commands.Bot(command_prefix='!', case_insensitive=True, intents=intents)
 user_roles: dict = dict()
 user_nicks: dict = dict()
 timedelta_12_h = timedelta(hours=12)
+VOTEKICK_NO = 4
 
 
 @bot.event
@@ -365,8 +367,9 @@ async def amongus(ctx):
 
 
 @bot.command()
+@commands.cooldown(1, 120, commands.BucketType.user)
 async def votekick(ctx):
-    users = ctx.message.mentions()
+    users = ctx.message.mentions
     amount: int = 1
     for user in users:
         current_id = user.id
@@ -377,15 +380,32 @@ async def votekick(ctx):
             amount = sys.maxsize
 
         current_votes = get_entry("votekick.json", current_id)[1]
-        new_votes = current_votes + amount
-        await ctx.send(f"{new_votes} Leute wollen{user.display_name}endlich weg haben")
-        if new_votes >= 4:
+        try:
+            new_votes = int(current_votes) + amount
+        except ValueError:
+            new_votes = amount
+        await ctx.send(f"{ctx.message.author.display_name} will {user.display_name} endlich weg haben ({new_votes}/{VOTEKICK_NO} voted)")
+        if new_votes >= VOTEKICK_NO:
             await ctx.send("Das ist genug Hass für nen kick. Winke Winke")
             await add_entry("votekick.json", str(current_id), 0)
             await kick_with_invite_and_roles(ctx, user, current_id)
         else:
-            await ctx.send("Das ist nicht genug Hass für nen kick. Winke Winke")
-            await add_entry("votekick.json", str(current_id), current_votes)
+            if new_votes == 1:
+                timer = threading.Timer(119.0, reset_vote, args=[ctx, current_id])
+                timer.start()
+                print("started timer for id: " + str(current_id))
+            await ctx.send("Das ist nicht genug Hass für nen kick")
+            await add_entry("votekick.json", str(current_id), str(new_votes))
+
+
+def reset_vote(ctx, current_id):
+    add_entry_unsync("votekick.json", str(current_id), 0)
+
+
+@bot.command()
+async def reset_vote_cmd(ctx, current_id):
+    await ctx.send("reset")
+    await add_entry("votekick.json", str(current_id), 0)
 
 
 async def kick_with_invite_and_roles(ctx, user, user_id):

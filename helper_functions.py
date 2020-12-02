@@ -107,6 +107,19 @@ async def add_entry(file: str, key: Union[int, str], line: Union[int, str]):
     return f"added line {line} with key {key} to {file}"
 
 
+def add_entry_unsync(file: str, key: Union[int, str], line: Union[int, str]):
+    file_path = os.path.join(DIR, file)
+    with open(file_path, "r") as fr:
+        file_dict: dict = json.load(fr)
+
+    file_dict[str(key)] = str(line)
+
+    with open(file_path, "w") as fw:
+        json.dump(file_dict, fw, separators=(',', ': '), indent=4)
+
+    return f"added line {line} with key {key} to {file}"
+
+
 def get_entry(file: str, key: Union[int, str]):
     file_path = os.path.join(DIR, file)
     with open(file_path, "r+") as f:
@@ -141,3 +154,5 @@ def print_dict(dic: dict) -> str:
     for key, value in dic.items():
         output += f"{key} | {value}\n"
     return output
+
+
