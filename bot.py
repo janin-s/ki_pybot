@@ -11,7 +11,6 @@ from dateutil import parser
 
 import discord
 import json
-import sqlite3
 from discord.ext import commands
 
 intents = discord.Intents.default()
