@@ -1,4 +1,5 @@
 import random
+import sys
 
 from helper_functions import *
 from datetime import datetime, timedelta
@@ -9,6 +10,7 @@ from dateutil import parser
 
 import discord
 import json
+import sqlite3
 from discord.ext import commands
 
 intents = discord.Intents.default()
@@ -33,6 +35,9 @@ async def on_ready():
     if not os.path.isfile(r"data_files/raubkopien.json"):
         with open(r"data_files/raubkopien.json", "w") as raubkopien:
             json.dump({}, raubkopien, separators=(',', ': '), indent=4)
+    if not os.path.isfile(r"data_files/votekick.json"):
+        with open(r"data_files/votekick.json", "w") as votekick:
+            json.dump({}, votekick, separators=(',', ': '), indent=4)
     print(f'{bot.user} ist online')
     await bot.change_presence(activity=discord.Game('Semesterstart kickt'), status=discord.Status.online)
 
@@ -253,27 +258,7 @@ async def punish(ctx, *members: discord.Member):
                 await ctx.send(user.display_name + " wurde vor kurzem erst bestraft!")
                 continue
 
-        current_roles = map(lambda x: x.id, user.roles)
-        nick = user.display_name
-        user_roles[current_id] = current_roles
-        user_nicks[current_id] = nick
-
-        dm_channel = user.dm_channel
-        await ctx.send(nick + " soll sich schämen gehen")
-        invite = await ctx.channel.create_invite(max_uses=1)
-        try:
-            if dm_channel is None:
-                dm_channel = await user.create_dm()
-            for i in range(4):
-                await dm_channel.send("shame!")
-            await dm_channel.send("https://media.giphy.com/media/vX9WcCiWwUF7G/giphy.gif")
-            await dm_channel.send(invite.url)
-        except discord.Forbidden:
-            pass
-        try:
-            await user.kick(reason="Bestrafung")
-        except discord.Forbidden:
-            await ctx.send("KI nicht mächtig genug")
+        await kick_with_invite_and_roles(ctx, user, current_id)
         await add_entry("punish_times.json", str(current_id), datetime.now().isoformat())
 
 
@@ -377,6 +362,54 @@ async def amongus(ctx):
     else:
         await pannekecke.edit(user_limit=0)
         await ctx.send("among us modus (user anzahl sichtbar) deaktiviert")
+
+
+@bot.command()
+async def votekick(ctx):
+    users = ctx.message.mentions()
+    amount: int = 1
+    for user in users:
+        current_id = user.id
+        if current_id == 709865255479672863:
+            user = ctx.message.author
+            current_id = user.id
+            await ctx.send("KI wird nicht gekickt!")
+            amount = sys.maxsize
+
+        current_votes = get_entry("votekick.json", current_id)[1]
+        new_votes = current_votes + amount
+        await ctx.send(f"{new_votes} Leute wollen{user.display_name}endlich weg haben")
+        if new_votes >= 4:
+            await ctx.send("Das ist genug Hass für nen kick. Winke Winke")
+            await add_entry("votekick.json", str(current_id), 0)
+            await kick_with_invite_and_roles(ctx, user, current_id)
+        else:
+            await ctx.send("Das ist nicht genug Hass für nen kick. Winke Winke")
+            await add_entry("votekick.json", str(current_id), current_votes)
+
+
+async def kick_with_invite_and_roles(ctx, user, user_id):
+    current_roles = map(lambda x: x.id, user.roles)
+    nick = user.display_name
+    user_roles[user_id] = current_roles
+    user_nicks[user_id] = nick
+
+    dm_channel = user.dm_channel
+    await ctx.send(nick + " soll sich schämen gehen")
+    invite = await ctx.channel.create_invite(max_uses=1)
+    try:
+        if dm_channel is None:
+            dm_channel = await user.create_dm()
+        for i in range(4):
+            await dm_channel.send("shame!")
+        await dm_channel.send("https://media.giphy.com/media/vX9WcCiWwUF7G/giphy.gif")
+        await dm_channel.send(invite.url)
+    except discord.Forbidden:
+        pass
+    try:
+        await user.kick(reason="Bestrafung")
+    except discord.Forbidden:
+        await ctx.send("KI nicht mächtig genug")
 
 
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
