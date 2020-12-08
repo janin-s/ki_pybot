@@ -470,7 +470,19 @@ async def add_user_wichtellist(ctx):
 
 @bot.command()
 async def wichtel(ctx):
-    user = ctx.message.author
+    if ctx.message.author.id != 139418002369019905:
+        await ctx.send("nur der Wichtel Meister darf das")
+        return
+
+    with open("data_files/wichtel_list.json", "r") as fr:
+        inhalt: list = json.load(fr)
+    count_users = len(inhalt)
+    for i in range(count_users):
+        await wichtel_pair(ctx, inhalt[i])
+
+
+async def wichtel_pair(ctx, user_id):
+    user = await bot.fetch_user(user_id)
     with open("data_files/has_wichtel_partner.json", "r") as pr:
         has_partner = json.load(pr)
     try:
