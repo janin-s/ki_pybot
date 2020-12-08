@@ -470,9 +470,6 @@ async def add_user_wichtellist(ctx):
 
 @bot.command()
 async def wichtel(ctx):
-    if ctx.message.author.id != 139418002369019905:
-        await ctx.send("nur der Wichtel Meister darf das")
-        return
     user = ctx.message.author
     with open("data_files/has_wichtel_partner.json", "r") as pr:
         has_partner = json.load(pr)
