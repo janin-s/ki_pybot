@@ -44,7 +44,7 @@ async def on_ready():
             json.dump([], wichtel, separators=(',', ': '), indent=4)
     if not os.path.isfile(r"data_files/has_wichtel_partner.json"):
         with open(r"data_files/has_wichtel_partner.json", "w") as partner:
-            json.dump({}, wichtel, separators=(',', ': '), indent=4)
+            json.dump({}, partner, separators=(',', ': '), indent=4)
     print(f'{bot.user} ist online')
     await bot.change_presence(activity=discord.Game('Semesterstart kickt'), status=discord.Status.online)
 
