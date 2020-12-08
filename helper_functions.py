@@ -83,6 +83,10 @@ def get_unicode_id(c):
 
 
 def reset_file(file: str):
+    if file == "data_files/wichtel_list.json":
+        with open(file, "w") as f:
+            json.dump([], f)
+        return
     with open(file, "w") as f:
         json.dump({}, f)
 

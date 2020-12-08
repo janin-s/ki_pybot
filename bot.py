@@ -39,6 +39,12 @@ async def on_ready():
     if not os.path.isfile(r"data_files/votekick.json"):
         with open(r"data_files/votekick.json", "w") as votekick:
             json.dump({}, votekick, separators=(',', ': '), indent=4)
+    if not os.path.isfile(r"data_files/wichtel_list.json"):
+        with open(r"data_files/wichtel_list.json", "w") as wichtel:
+            json.dump([], wichtel, separators=(',', ': '), indent=4)
+    if not os.path.isfile(r"data_files/has_wichtel_partner.json"):
+        with open(r"data_files/has_wichtel_partner.json", "w") as partner:
+            json.dump({}, wichtel, separators=(',', ': '), indent=4)
     print(f'{bot.user} ist online')
     await bot.change_presence(activity=discord.Game('Semesterstart kickt'), status=discord.Status.online)
 
@@ -437,4 +443,70 @@ async def kick_with_invite_and_roles(ctx, user, user_id):
         await ctx.send("KI nicht mächtig genug")
 
 
+@bot.command()
+async def add_user_wichtellist(ctx):
+    if ctx.message.author.id != 139418002369019905:
+        await ctx.send("nur der Wichtel Meister darf das")
+    else:
+        wichtler = ctx.message.mentions
+        ids = [user.id for user in wichtler]
+        with open("data_files/wichtel_list.json", "r") as fr:
+            inhalt: list = json.load(fr)
+        for id in ids:
+            if id not in inhalt:
+                inhalt.append(id)
+
+                with open("data_files/has_wichtel_partner.json", "r") as pr:
+                    has_partner = json.load(pr)
+                has_partner[id] = False
+                with open("data_files/has_wichtel_partner.json", "w") as pw:
+                    json.dump(has_partner, pw, separators=(',', ': '), indent=4)
+
+        with open("data_files/wichtel_list.json", "w") as fw:
+            json.dump(inhalt, fw, separators=(',', ':'), indent=4)
+
+        await ctx.send(f"added ids: {ids}")
+
+
+@bot.command()
+async def wichtel(ctx):
+    if ctx.message.author.id != 139418002369019905:
+        await ctx.send("nur der Wichtel Meister darf das")
+        return
+    user = ctx.message.author
+    with open("data_files/has_wichtel_partner.json", "r") as pr:
+        has_partner = json.load(pr)
+    try:
+        has_partner_current = has_partner[user.id]
+    except KeyError:
+        has_partner_current = False
+
+    if not has_partner_current:
+        with open("data_files/wichtel_list.json", "r") as fr:
+            wichtler: list = json.load(fr)
+
+        index = random.randrange(len(wichtler))
+        partner_id = wichtler.pop(index)
+        partner = await bot.fetch_user(partner_id)
+        dm_channel = user.dm_channel
+        await ctx.send(user.display_name + " hat einen Wichtelpartner erhalten")
+        try:
+            if dm_channel is None:
+                dm_channel = await user.create_dm()
+            await dm_channel.send("Dein Wichtelpartner ist: " + partner.display_name)
+
+            with open("data_files/has_wichtel_partner.json", "r") as pr:
+                has_partner = json.load(pr)
+            has_partner[user.id] = True
+            with open("data_files/has_wichtel_partner.json", "w") as pw:
+                json.dump(has_partner, pw, separators=(',', ': '), indent=4)
+
+        except discord.Forbidden:
+            wichtler.append(partner_id)
+            await ctx.send("nvm, du ehrenloser hast PMs aus :(")
+
+        with open("data_files/wichtel_list.json", "w") as fw:
+            json.dump(wichtler, fw, separators=(',', ':'), indent=4)
+    else:
+        await ctx.send("Du hast bereits einen Partner!")
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')
