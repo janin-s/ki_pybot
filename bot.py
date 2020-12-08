@@ -484,8 +484,12 @@ async def wichtel(ctx):
     if not has_partner_current:
         with open("data_files/wichtel_list.json", "r") as fr:
             wichtler: list = json.load(fr)
-
         index = random.randrange(len(wichtler))
+        while wichtler[index] == user.id:
+            if len(wichtler) == 1:
+                await ctx.send("wichtelprozess ist gefickt")
+                return
+            index = random.randrange(len(wichtler))
         partner_id = wichtler.pop(index)
         partner = await bot.fetch_user(partner_id)
         dm_channel = user.dm_channel
