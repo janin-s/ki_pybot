@@ -202,8 +202,8 @@ async def nils(ctx):
 
 @bot.command()
 async def piep(ctx):
-    """janin ist gemein"""
-    await ctx.send("piep piep, wir ham uns alle lieb! :liebruh:")
+    """nur liebe auf diesem server"""
+    await ctx.send("piep piep, wir ham uns alle lieb! <:liebruht:786730613327134790>")
 
 @bot.command()
 async def zitat(ctx, length=1):
