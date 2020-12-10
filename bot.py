@@ -201,6 +201,11 @@ async def nils(ctx):
 
 
 @bot.command()
+async def piep(ctx):
+    """janin ist gemein"""
+    await ctx.send("piep piep, wir ham uns alle lieb! :liebruh:")
+
+@bot.command()
 async def zitat(ctx, length=1):
     """!zitat [x]; zitiert die letze[n x] Nachricht[en] und speichert sie in Relikte"""
     zitat: str = ""
