@@ -244,8 +244,9 @@ async def react(ctx, reaction, message_id: Union[int, str] = 0):
 
 
 @bot.command()
-async def punish(ctx, *members: discord.Member):
+async def punish(ctx):
     """bestraft alle mentioned user mit hass"""
+    members = ctx.message.mentions
     for user in members:
         current_id = user.id
         if current_id != 453256761906954255 and user.status is discord.Status.offline:
@@ -271,9 +272,9 @@ async def punish(ctx, *members: discord.Member):
 
 @bot.command()
 @commands.cooldown(1, 60, commands.BucketType.user)
-async def hug(ctx, *members: discord.Member):
+async def hug(ctx):
     """umarmt alle mentioned user privat. 1 min cooldown"""
-    # user_list = ctx.message.mentions
+    members = ctx.message.mentions
     for user in members:
         current_id = user.id
         if current_id == 709865255479672863:
