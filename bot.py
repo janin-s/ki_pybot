@@ -206,6 +206,11 @@ async def piep(ctx):
     await ctx.send("piep piep, wir ham uns alle lieb! <:liebruh:731289435886583951>")
 
 @bot.command()
+async def amen(ctx):
+    """beten macht spaß"""
+    await ctx.send("vater unser da oben, wir wollen dich loben\nhier steht ganz viel dreck, mach die sünden weg\namen")
+
+@bot.command()
 async def zitat(ctx, length=1):
     """!zitat [x]; zitiert die letze[n x] Nachricht[en] und speichert sie in Relikte"""
     zitat: str = ""
