@@ -122,6 +122,11 @@ async def shot(ctx, *, command=None):
     else:
         await ctx.send('Jonas haut dich <:knast:731290033046159460>')
 
+        
+@bot.command()
+async def catanverbot(ctx):
+    """Catan spielen nur dofis"""
+    await ctx.send('Bembl komm CS spielen!')
 
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
