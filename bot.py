@@ -147,7 +147,12 @@ async def gumi(ctx):
     user_name = ctx.message.author.display_name
     await ctx.send(user_name + ' wünscht allen einen Guten Mittach!')
 
-
+@bot.command()
+async def guab(ctx):
+    """KI wünscht allen einen guten Abend"""
+    user_name = ctx.message.author.display_name
+    await ctx.send(user_name + ' wünscht allen einen Guten Abend!')
+    
 @bot.command()
 async def guna(ctx):
     """KI wünscht allen eine gute Nacht"""
