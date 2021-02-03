@@ -163,11 +163,11 @@ async def guna(ctx):
 @bot.command()
 async def bye(ctx):
     """KI verabschiedet sich"""
-    bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßi Müsli!", "Tschüßli Müsli!",
+    bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßli Müsli!",
            "Bis Spätersilie!", "San Frantschüssko!", "Bis Baldrian!", "Bye mit Ei!", "Tschau mit au!", "Tschö mit ö!",
            "Hau Rheinwald!", "Schalömmchen!", "Schönes Knochenende!", "Tschüssikowski!", "Tüdelü in aller Früh!"]
 
-    await ctx.send(bye[random.randint(0, 15)])
+    await ctx.send(bye[random.randint(0, len(bye)-1)])
 
 
 @bot.command()
