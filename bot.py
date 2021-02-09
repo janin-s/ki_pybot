@@ -104,20 +104,20 @@ async def shot(ctx, *, command=None):
     if ctx.message.author.id == 388061626131283968 or ctx.message.author.id == 295927454562779139:
         if command == "reset":
             # newcount = await persistent_counter(caller="resetAll")
-            await add_entry("data", "all", 0)
+            await add_entry("data.json", "all", 0)
             newcount = 0
         elif command == "drink":
             # newcount = await persistent_counter(increment=False)
-            current = int(get_entry("data", "all")[1])
+            current = int(get_entry("data.json", "all")[1])
             if current <= 0:
                 await ctx.send("alle shots leergetrunken")
             newcount = current-1
-            await add_entry("data", "all", newcount)
+            await add_entry("data.json", "all", newcount)
         else:
             # newcount = await persistent_counter()
-            current = int(get_entry("data", "all")[1])
+            current = int(get_entry("data.json", "all")[1])
             newcount = current+1
-            await add_entry("data", "all", current+1)
+            await add_entry("data.json", "all", current+1)
         await ctx.send(f'Shot-Counter: {newcount}')
     else:
         await ctx.send('Jonas haut dich <:knast:731290033046159460>')
