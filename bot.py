@@ -218,7 +218,7 @@ async def piep(ctx):
 @bot.command()
 async def amen(ctx):
     """beten macht spaß"""
-    await ctx.send("menül ebrrrr da oben, wir wollen dich loben\nhier steht ganz viel dreck, mach die sünden weg\namen")
+    await ctx.send("Vater unser da oben, wir wollen dich loben\nhier steht ganz viel dreck, mach die sünden weg\namen")
 
 @bot.command()
 async def zitat(ctx, length=1):
