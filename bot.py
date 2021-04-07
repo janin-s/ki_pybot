@@ -163,9 +163,7 @@ async def guna(ctx):
 async def gugebu(ctx):
     persons = ctx.message.mentions
     for person in persons:
-        await ctx.send('Alles Gute ' + person.display_name + '!')
-
-
+        await ctx.send("Alles Gute " + person.display_name + "!")
 
 @bot.command()
 async def bye(ctx):
