@@ -27,23 +27,23 @@ VOTEKICK_NO = 4
 async def on_ready():
     if not os.path.isdir(r"data_files"):
         os.makedirs("./data_files")
-    if not os.path.isfile(r"data_files/data.json"):
-        with open(r"data_files/data.json", "w") as data:
+    if not os.path.isfile(r"data/data.json"):
+        with open(r"data/data.json", "w") as data:
             json.dump({}, data, separators=(',', ': '), indent=4)
-    if not os.path.isfile(r"data_files/punish_times.json"):
-        with open(r"data_files/punish_times.json", "w") as punish_times:
+    if not os.path.isfile(r"data/punish_times.json"):
+        with open(r"data/punish_times.json", "w") as punish_times:
             json.dump({}, punish_times, separators=(',', ': '), indent=4)
-    if not os.path.isfile(r"data_files/raubkopien.json"):
-        with open(r"data_files/raubkopien.json", "w") as raubkopien:
+    if not os.path.isfile(r"data/raubkopien.json"):
+        with open(r"data/raubkopien.json", "w") as raubkopien:
             json.dump({}, raubkopien, separators=(',', ': '), indent=4)
-    if not os.path.isfile(r"data_files/votekick.json"):
-        with open(r"data_files/votekick.json", "w") as votekick:
+    if not os.path.isfile(r"data/votekick.json"):
+        with open(r"data/votekick.json", "w") as votekick:
             json.dump({}, votekick, separators=(',', ': '), indent=4)
-    if not os.path.isfile(r"data_files/wichtel_list.json"):
-        with open(r"data_files/wichtel_list.json", "w") as wichtel:
+    if not os.path.isfile(r"data/wichtel_list.json"):
+        with open(r"data/wichtel_list.json", "w") as wichtel:
             json.dump([], wichtel, separators=(',', ': '), indent=4)
-    if not os.path.isfile(r"data_files/has_wichtel_partner.json"):
-        with open(r"data_files/has_wichtel_partner.json", "w") as partner:
+    if not os.path.isfile(r"data/has_wichtel_partner.json"):
+        with open(r"data/has_wichtel_partner.json", "w") as partner:
             json.dump({}, partner, separators=(',', ': '), indent=4)
     print(f'{bot.user} ist online')
     await bot.change_presence(activity=discord.Game('Semesterstart kickt'), status=discord.Status.online)
@@ -476,19 +476,19 @@ async def add_user_wichtellist(ctx):
     else:
         wichtler = ctx.message.mentions
         ids = [user.id for user in wichtler]
-        with open("data_files/wichtel_list.json", "r") as fr:
+        with open("data/wichtel_list.json", "r") as fr:
             inhalt: list = json.load(fr)
         for id in ids:
             if id not in inhalt:
                 inhalt.append(id)
 
-                with open("data_files/has_wichtel_partner.json", "r") as pr:
+                with open("data/has_wichtel_partner.json", "r") as pr:
                     has_partner = json.load(pr)
                 has_partner[id] = False
-                with open("data_files/has_wichtel_partner.json", "w") as pw:
+                with open("data/has_wichtel_partner.json", "w") as pw:
                     json.dump(has_partner, pw, separators=(',', ': '), indent=4)
 
-        with open("data_files/wichtel_list.json", "w") as fw:
+        with open("data/wichtel_list.json", "w") as fw:
             json.dump(inhalt, fw, separators=(',', ':'), indent=4)
 
         await ctx.send(f"added ids: {ids}")
@@ -500,7 +500,7 @@ async def wichtel(ctx):
         await ctx.send("nur der Wichtel Meister darf das")
         return
 
-    with open("data_files/wichtel_list.json", "r") as fr:
+    with open("data/wichtel_list.json", "r") as fr:
         inhalt: list = json.load(fr)
     count_users = len(inhalt)
     for i in range(count_users):
@@ -509,7 +509,7 @@ async def wichtel(ctx):
 
 async def wichtel_pair(ctx, user_id):
     user = await bot.fetch_user(user_id)
-    with open("data_files/has_wichtel_partner.json", "r") as pr:
+    with open("data/has_wichtel_partner.json", "r") as pr:
         has_partner = json.load(pr)
     try:
         has_partner_current = has_partner[user.id]
@@ -517,7 +517,7 @@ async def wichtel_pair(ctx, user_id):
         has_partner_current = False
 
     if not has_partner_current:
-        with open("data_files/wichtel_list.json", "r") as fr:
+        with open("data/wichtel_list.json", "r") as fr:
             wichtler: list = json.load(fr)
         index = random.randrange(len(wichtler))
         while wichtler[index] == user.id:
@@ -534,17 +534,17 @@ async def wichtel_pair(ctx, user_id):
                 dm_channel = await user.create_dm()
             await dm_channel.send("Dein Wichtelpartner ist: " + partner.display_name)
 
-            with open("data_files/has_wichtel_partner.json", "r") as pr:
+            with open("data/has_wichtel_partner.json", "r") as pr:
                 has_partner = json.load(pr)
             has_partner[user.id] = True
-            with open("data_files/has_wichtel_partner.json", "w") as pw:
+            with open("data/has_wichtel_partner.json", "w") as pw:
                 json.dump(has_partner, pw, separators=(',', ': '), indent=4)
 
         except discord.Forbidden:
             wichtler.append(partner_id)
             await ctx.send("nvm, du ehrenloser hast PMs aus :(")
 
-        with open("data_files/wichtel_list.json", "w") as fw:
+        with open("data/wichtel_list.json", "w") as fw:
             json.dump(wichtler, fw, separators=(',', ':'), indent=4)
     else:
         await ctx.send("Du hast bereits einen Partner!")
