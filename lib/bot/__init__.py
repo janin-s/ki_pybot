@@ -34,7 +34,8 @@ class Bot(BotBase):
         super().__init__(
             command_prefix=PREFIX,
             owner_id=OWNER_ID,
-            intents=Intents.all()
+            intents=Intents.all(),
+            case_insensitive=True
         )
 
     # loading cogs
