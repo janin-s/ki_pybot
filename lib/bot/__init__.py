@@ -1,16 +1,34 @@
+from asyncio import sleep
+
 from discord.ext.commands import Bot as BotBase
 from discord.ext import commands
-from discord import Intents
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from discord import Intents, File
+from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
+from glob import glob
 
 PREFIX = "!"
 OWNER_ID = 388061626131283968
+COGS = [path.split("\\")[-1][:-3] for path in glob("./lib/cogs/*.py")]  # wtf
+
+
+class Ready(object):
+    def __init__(self):
+        for cog in COGS:
+            setattr(self, cog, False)
+
+    def ready_up(self, cog):
+        setattr(self, cog, True)
+        print(f"{cog} cog ready")
+
+    def all_ready(self):
+        return all([getattr(self, cog) for cog in COGS])
 
 
 class Bot(BotBase):
     def __init__(self):
         self.PREFIX = PREFIX
         self.ready = False
+        self.cogs_ready = Ready()
         self.guild = None
         self.scheduler = AsyncIOScheduler()
         super().__init__(
@@ -19,8 +37,18 @@ class Bot(BotBase):
             intents=Intents.all()
         )
 
+    # loading cogs
+    def setup(self):
+        for cog in COGS:
+            self.load_extension(f"lib.cogs.{cog}")
+            print(f"{cog} cog loaded")
+
+        print("setup complete")
+
     def run(self, version):
         self.VERSION = version
+
+        self.setup()
 
         with open("./lib/bot/token", "r", encoding="utf-8") as tf:
             self.TOKEN = tf.read()
@@ -51,13 +79,19 @@ class Bot(BotBase):
 
     async def on_ready(self, version):
         if not self.ready:
-            self.ready = True
             self.guild = self.get_guild(705425948996272210)
+
+            #wait for cogs to be ready
+            while not self.cogs_ready.all_ready():
+                await sleep(0.5)
+
+            self.ready = True
             print("bot ready")
         else:
             print("bot reconnected")
 
     async def on_message(self, message):
         pass
+
 
 bot = Bot()
