@@ -1,3 +1,4 @@
+import discord
 from discord.ext.commands import Cog
 from discord.ext.commands import command
 
@@ -13,8 +14,10 @@ class Event(Cog):
             print("event cog ready")
 
     @command(name="event")
-    async def event(self, ctx):
-        pass
+    async def event(self, ctx, *, event):
+        """Setze ein neues Event mit !event {event}"""
+        await ctx.send(f" Changed current event to: {event}")
+        await self.bot.change_presence(activity=discord.Game(f'{event}'), status=discord.Status.online)
 
 
 def setup(bot):
