@@ -27,6 +27,19 @@ class Misc(Cog):
             await channel.edit(user_limit=99)
             await ctx.send("among us modus (user anzahl sichtbar) deaktiviert")
 
+    @command()
+    async def zitat(self, ctx, length=1):
+        """!zitat [x]; zitiert die letze[n x] Nachricht[en] und speichert sie in Relikte"""
+        zitat: str = ""
+        message_list = []
+        async for message in ctx.channel.history(limit=length + 1):
+            message_list.append(message)
+        message_list.reverse()
+        for m in message_list:
+            zitat += m.autohr.display_name + ": \"" + m.content + "\"\n"
+        relikte = await self.bot.fetch_channel(705427122151227442)
+        await relikte.send(zitat)
+
 
 def setup(bot):
     bot.add_cog(Misc(bot))

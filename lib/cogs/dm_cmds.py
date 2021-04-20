@@ -17,6 +17,7 @@ class DMCmds(Cog):
     @command(name="hug")
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def hug(self, ctx):
+        """umarmt alle mentioned user privat. 1 min cooldown"""
         users = ctx.message.mentions
         for user in users:
             current_id = user.id

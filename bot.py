@@ -225,48 +225,6 @@ async def amen(ctx):
     """beten macht spaß"""
     await ctx.send("Vater unser da oben, wir wollen dich loben\nhier steht ganz viel dreck, mach die sünden weg\namen")
 
-@bot.command()
-async def zitat(ctx, length=1):
-    """!zitat [x]; zitiert die letze[n x] Nachricht[en] und speichert sie in Relikte"""
-    zitat: str = ""
-    message_list = []
-    async for message in ctx.channel.history(limit=length + 1):
-        message_list.append(message)
-    message_list.reverse()
-    for i in range(0, len(message_list) - 1):
-        zitat += message_list[i].author.display_name + ": \"" + message_list[i].content + "\"\n"
-    relikte = await bot.fetch_channel(705427122151227442)
-    await relikte.send(zitat)
-
-
-@bot.command()
-async def react(ctx, reaction, message_id: Union[int, str] = 0):
-    """!react {reaction} [message-id]; nur für Isogramme, Zahlen und !?"""
-    if type(message_id) is not int or not await are_characters_unique(reaction):
-        await ctx.send("Uncooles Wort, KI will nicht <:sad2:731291939571499009>")
-        return
-    if message_id != 0:
-        try:
-            message = await ctx.fetch_message(message_id)
-            await ctx.message.delete()
-        except discord.NotFound:
-            await ctx.send("Message (" + str(message_id) + ") weg, oh no :(")
-            return
-    else:
-        try:
-            message = await ctx.channel.history(limit=1, before=ctx.channel.last_message).get()
-            await ctx.message.delete()
-        except discord.HTTPException:
-            await ctx.send("message weg, oh no")
-            return
-    if (len(message.reactions) + len(reaction)) > 20:
-        await ctx.send("Nils ist behindert", delete_after=10)
-        return
-    for letter in list(reaction):
-        # unicode_id: str = letter_dict.get(letter)
-        unicode_id = get_unicode_id(letter)
-        await message.add_reaction(unicode_id)
-
 
 @bot.command()
 async def punish(ctx):
@@ -293,32 +251,6 @@ async def punish(ctx):
 
         await kick_with_invite_and_roles(ctx, user, current_id)
         await add_entry("punish_times.json", str(current_id), datetime.now().isoformat())
-
-
-@bot.command()
-@commands.cooldown(1, 60, commands.BucketType.user)
-async def hug(ctx):
-    """umarmt alle mentioned user privat. 1 min cooldown"""
-    members = ctx.message.mentions
-    for user in members:
-        current_id = user.id
-        if current_id == 709865255479672863:
-            user = ctx.message.author
-            name = "KI"
-            await ctx.send("KI hat dich auch lieb!")
-        else:
-            name = ctx.message.author.display_name
-        await ctx.send(name + " versendet eine Umarmung an " + user.display_name + "!")
-
-        dm_channel = user.dm_channel
-        try:
-            if dm_channel is None:
-                dm_channel = await user.create_dm()
-            await dm_channel.send("Liebe! " + name + " sendet dir eine Umarmung!")
-            await dm_channel.send("https://i.pinimg.com/originals/e2/f7/2a/e2f72a771865ea0d74895cb2c2199a83.gif")
-        except discord.Forbidden:
-            pass
-    await ctx.message.delete()
 
 
 @bot.command(aliases=["raubkopien"])
@@ -381,20 +313,6 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
                 await ctx.send("datum komisch, nix verstehi :( " + str(e))
                 return
     await ctx.send(f"r1: {r1}")
-
-
-@bot.command()
-async def amongus(ctx):
-    """switches channel limit for Pannekecke from infinity to 99 and back"""
-    # maybe noch channel von caller fetchen, kp wie aber
-    pannekecke = await bot.fetch_channel(706617584631677031)
-    current_limit = pannekecke.user_limit
-    if current_limit == 0:
-        await pannekecke.edit(user_limit=99)
-        await ctx.send("among us modus (user anzahl sichtbar) aktiviert")
-    else:
-        await pannekecke.edit(user_limit=0)
-        await ctx.send("among us modus (user anzahl sichtbar) deaktiviert")
 
 
 @bot.command()
