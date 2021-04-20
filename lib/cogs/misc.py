@@ -1,5 +1,6 @@
 from discord.ext.commands import Cog
 from discord.ext.commands import command
+from discord import Game, Status
 
 
 class Misc(Cog):
@@ -11,6 +12,12 @@ class Misc(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("misc")
             print("misc cog ready")
+
+    @command()
+    async def event(self, ctx, *, event):
+        """Setze ein neues Event mit !event {event}"""
+        await ctx.send(f'Current event changed to {event}')
+        await self.bot.change_presence(activity=Game(f'{event}'), status=Status.online)
 
     @command()
     async def amongus(self, ctx):

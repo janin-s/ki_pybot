@@ -91,13 +91,6 @@ async def clear(ctx, amount=1):
         await ctx.channel.purge(limit=purge_limit)
 
 
-@bot.command()
-async def event(ctx, *, event):
-    """Setze ein neues Event mit !event {event}"""
-    await ctx.send(f'Current event changed to {event}')
-    await bot.change_presence(activity=discord.Game(f'{event}'), status=discord.Status.online)
-
-
 @bot.command(aliases=["rip", "suizid", "lost"])
 async def shot(ctx, *, command=None):
     """Erhöht den Shot-Counter um 1"""
