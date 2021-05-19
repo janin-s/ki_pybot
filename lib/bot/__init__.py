@@ -3,7 +3,7 @@ from asyncio import sleep
 
 from discord.ext.commands import Bot as BotBase
 from discord.ext import commands
-from discord import Intents, File
+from discord import Intents
 from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
 
 from lib.db import db
@@ -12,7 +12,6 @@ from lib.utils import MsgNotFound
 
 PREFIX = '!'
 OWNER_ID = 388061626131283968
-#COGS = [path.split("\\")[-1][:-3] for path in glob("./lib/cogs/*.py")]  # wtf
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 
 

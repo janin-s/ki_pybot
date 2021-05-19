@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS punish_times (
     user_id integer NOT NULL,
     guild_id integer NOT NULL,
     punish_time timestamp NOT NULL,
+    PRIMARY KEY (user_id, guild_id)
     FOREIGN KEY (user_id, guild_id)
         REFERENCES users(id, guild_id)
         ON DELETE CASCADE
@@ -45,7 +46,7 @@ CREATE TABLE IF NOT EXISTS roles (
     role_id integer NOT NULL,
     user_id integer NOT NULL,
     guild_id integer NOT NULL,
-    PRIMARY KEY (role_id),
+    PRIMARY KEY (role_id, user_id, guild_id),
     FOREIGN KEY (user_id, guild_id)
         REFERENCES users(id, guild_id)
         ON DELETE CASCADE
@@ -63,6 +64,7 @@ CREATE TABLE IF NOT EXISTS votekick (
     guild_id integer NOT NULL,
     user_id integer NOT NULL,
     votes integer NOT NULL,
+    PRIMARY KEY (guild_id, user_id),
     FOREIGN KEY (guild_id, user_id)
         REFERENCES users (id, guild_id)
         ON DELETE CASCADE
@@ -71,6 +73,7 @@ CREATE TABLE IF NOT EXISTS votekick (
 CREATE TABLE IF NOT EXISTS birthdays (
     user_id integer NOT NULL,
     date text NOT NULL,
+    PRIMARY KEY (user_id),
     FOREIGN KEY (user_id)
         REFERENCES users (id)
         ON DELETE CASCADE
