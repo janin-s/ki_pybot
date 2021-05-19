@@ -1,14 +1,19 @@
+import os
 from asyncio import sleep
 
 from discord.ext.commands import Bot as BotBase
 from discord.ext import commands
 from discord import Intents, File
 from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
-from glob import glob
 
-PREFIX = "!"
+from lib.db import db
+from lib.cogs import msg
+from lib.utils import MsgNotFound
+
+PREFIX = '!'
 OWNER_ID = 388061626131283968
-COGS = [path.split("\\")[-1][:-3] for path in glob("./lib/cogs/*.py")]  # wtf
+#COGS = [path.split("\\")[-1][:-3] for path in glob("./lib/cogs/*.py")]  # wtf
+COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 
 
 class Ready(object):
@@ -31,6 +36,8 @@ class Bot(BotBase):
         self.cogs_ready = Ready()
         self.guild = None
         self.scheduler = AsyncIOScheduler()
+
+        db.autosave(self.scheduler)
         super().__init__(
             command_prefix=PREFIX,
             owner_id=OWNER_ID,
@@ -51,9 +58,8 @@ class Bot(BotBase):
 
         self.setup()
 
-        with open("./lib/bot/token", "r", encoding="utf-8") as tf:
+        with open("./lib/bot/token.0", "r", encoding="utf-8") as tf:
             self.TOKEN = tf.read()
-
         print("running bot...")
         super().run(self.TOKEN, reconnect=True)
 
@@ -70,7 +76,11 @@ class Bot(BotBase):
 
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, commands.errors.CommandNotFound):
-            await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
+            try:
+                await msg.message(ctx=ctx, message=str(exc)[1:])
+            except MsgNotFound:
+                await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
+
         elif isinstance(exc, commands.errors.CommandOnCooldown):
             await ctx.send("nicht so schnell")
         elif isinstance(exc, commands.errors.BotMissingPermissions):
@@ -78,11 +88,11 @@ class Bot(BotBase):
         else:
             await ctx.send("KI nix verstehi ._." + str(exc))
 
-    async def on_ready(self, version):
+    async def on_ready(self):
         if not self.ready:
             self.guild = self.get_guild(705425948996272210)
-
-            #wait for cogs to be ready
+            self.scheduler.start()
+            # wait for cogs to be ready
             while not self.cogs_ready.all_ready():
                 await sleep(0.5)
 
@@ -90,9 +100,6 @@ class Bot(BotBase):
             print("bot ready")
         else:
             print("bot reconnected")
-
-    async def on_message(self, message):
-        pass
 
 
 bot = Bot()

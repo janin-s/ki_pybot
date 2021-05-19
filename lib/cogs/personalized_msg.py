@@ -1,5 +1,4 @@
-from discord.ext.commands import Cog
-from discord.ext.commands import command
+from discord.ext.commands import *
 
 
 class PMsg(Cog):
@@ -10,11 +9,13 @@ class PMsg(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("personalized_msg")
-            print("personalized_msg cog ready")
 
-    @command(name="msg")
+    @command(name="guna")
     async def guna(self, ctx):
-        pass
+        print("guna called")
+        """KI wünscht allen eine gute Nacht"""
+        user_name = ctx.message.author.display_name
+        await ctx.send(user_name + ' wünscht allen eine GuNa!')
 
 
 def setup(bot):

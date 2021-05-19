@@ -1,6 +1,5 @@
 import discord
-from discord.ext.commands import Cog
-from discord.ext.commands import command
+from discord.ext.commands import *
 
 
 class Event(Cog):
@@ -11,7 +10,6 @@ class Event(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("event")
-            print("event cog ready")
 
     @command(name="event")
     async def event(self, ctx, *, event):

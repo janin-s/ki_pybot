@@ -50,18 +50,6 @@ async def on_ready():
 
 
 @bot.event
-async def on_command_error(ctx, error, force=False):
-    if isinstance(error, commands.errors.CommandNotFound):
-        await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
-    elif isinstance(error, commands.errors.CommandOnCooldown):
-        await ctx.send("nicht so schnell")
-    elif isinstance(error, commands.errors.BotMissingPermissions):
-        await ctx.send("KI nicht mächtig genug :(")
-    else:
-        await ctx.send("KI nix verstehi ._." + str(error))
-
-
-@bot.event
 async def on_member_join(member):
     if member.id in user_roles:
         for role_id in user_roles[member.id]:
@@ -104,22 +92,23 @@ async def shot(ctx, *, command=None):
             current = int(get_entry("data.json", "all")[1])
             if current <= 0:
                 await ctx.send("alle shots leergetrunken")
-            newcount = current-1
+            newcount = current - 1
             await add_entry("data.json", "all", newcount)
         else:
             # newcount = await persistent_counter()
             current = int(get_entry("data.json", "all")[1])
-            newcount = current+1
-            await add_entry("data.json", "all", current+1)
+            newcount = current + 1
+            await add_entry("data.json", "all", current + 1)
         await ctx.send(f'Shot-Counter: {newcount}')
     else:
         await ctx.send('Jonas haut dich <:knast:731290033046159460>')
 
-        
+
 @bot.command()
 async def catanverbot(ctx):
     """Catan spielen nur dofis"""
     await ctx.send('Bembl komm CS spielen!')
+
 
 @bot.command(aliases=["hacker"])
 async def chrissi(ctx):
@@ -140,23 +129,20 @@ async def gumi(ctx):
     user_name = ctx.message.author.display_name
     await ctx.send(user_name + ' wünscht allen einen Guten Mittach!')
 
+
 @bot.command()
 async def guab(ctx):
     """KI wünscht allen einen guten Abend"""
     user_name = ctx.message.author.display_name
     await ctx.send(user_name + ' wünscht allen einen Guten Abend!')
-    
-@bot.command()
-async def guna(ctx):
-    """KI wünscht allen eine gute Nacht"""
-    user_name = ctx.message.author.display_name
-    await ctx.send(user_name + ' wünscht allen eine GuNa!')
+
 
 @bot.command()
 async def gugebu(ctx):
     persons = ctx.message.mentions
     for person in persons:
         await ctx.send("Alles Gute " + person.display_name + "!")
+
 
 @bot.command()
 async def bye(ctx):
@@ -165,7 +151,7 @@ async def bye(ctx):
            "Bis Spätersilie!", "San Frantschüssko!", "Bis Baldrian!", "Bye mit Ei!", "Tschau mit au!", "Tschö mit ö!",
            "Hau Rheinwald!", "Schalömmchen!", "Schönes Knochenende!", "Tschüssikowski!", "Tüdelü in aller Früh!"]
 
-    await ctx.send(bye[random.randint(0, len(bye)-1)])
+    await ctx.send(bye[random.randint(0, len(bye) - 1)])
 
 
 @bot.command()
@@ -190,7 +176,7 @@ async def janin(ctx):
     """janin ist gemein"""
     await ctx.send('https://www.wikihow.com/Drop-Out-of-College')
 
-    
+
 @bot.command()
 async def jan(ctx):
     await ctx.send('Jan ist sehr nett und lieb!')
@@ -205,13 +191,15 @@ async def lukas(ctx):
 @bot.command(aliases=["johannes", "jojo"])
 async def nils(ctx):
     """Nils und Johannes sind nicht nett"""
-    await ctx.send('https://www.muenchen-heilpraktiker-psychotherapie.de/blog-2/selbstbewusstsein/10-anzeichen-dass-sie-zu-nett-sind-fuer-diese-welt.html')
+    await ctx.send(
+        'https://www.muenchen-heilpraktiker-psychotherapie.de/blog-2/selbstbewusstsein/10-anzeichen-dass-sie-zu-nett-sind-fuer-diese-welt.html')
 
 
 @bot.command()
 async def piep(ctx):
     """nur liebe auf diesem server"""
     await ctx.send("piep piep, wir ham uns alle lieb! <:liebruh:731289435886583951>")
+
 
 @bot.command()
 async def amen(ctx):
@@ -260,7 +248,9 @@ async def raubkopie(ctx, command="", param: str = "", param2: Union[str, id] = 0
                 t: datetime = dateutil.parser.parse(str(param), parserinfo=info)
             print("parsed time: " + t.isoformat())
             # r = add_raubkopie(t, str(param2)) if command == "add" else remove_raubkopie(t)
-            r1 = await add_entry("raubkopien.json", str(t.date().isoformat()), str(param2)) if command == "add" else await remove_entry("raubkopien.json", str(t.date().isoformat()))
+            r1 = await add_entry("raubkopien.json", str(t.date().isoformat()),
+                                 str(param2)) if command == "add" else await remove_entry("raubkopien.json",
+                                                                                          str(t.date().isoformat()))
         else:
             await ctx.send("nur chrissi darf das!")
             return
@@ -344,6 +334,7 @@ async def votekick(ctx):
             print("started timer for id: " + str(current_id))
         await ctx.send("Das ist nicht genug Hass für nen Kick")
         await add_entry("votekick.json", str(current_id), str(new_votes))
+
 
 # weil chrisl bot putt macht hat
 def reset_vote(ctx, current_id):
@@ -459,4 +450,6 @@ async def wichtel_pair(ctx, user_id):
             json.dump(wichtler, fw, separators=(',', ':'), indent=4)
     else:
         await ctx.send("Du hast bereits einen Partner!")
+
+
 bot.run('NzA5ODY1MjU1NDc5NjcyODYz.XrsH2Q.46qaDs7GDohafDcEe5Ruf5Y7oGY')

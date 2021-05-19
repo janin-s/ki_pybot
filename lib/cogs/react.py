@@ -1,5 +1,4 @@
-from discord.ext.commands import Cog
-from discord.ext.commands import command
+from discord.ext.commands import *
 from discord import NotFound, HTTPException
 
 
@@ -11,7 +10,6 @@ class React(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("react")
-            print("react cog ready")
 
     @command()
     async def react(self, ctx, reaction, message_id=0):

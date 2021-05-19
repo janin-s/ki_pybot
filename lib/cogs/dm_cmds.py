@@ -1,6 +1,5 @@
 import discord
-from discord.ext.commands import Cog
-from discord.ext.commands import command
+from discord.ext.commands import *
 from discord.ext import commands
 
 
@@ -12,7 +11,6 @@ class DMCmds(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("dm_cmds")
-            print("dm_cmds cog ready")
 
     @command(name="hug")
     @commands.cooldown(1, 60, commands.BucketType.user)

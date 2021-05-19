@@ -1,6 +1,7 @@
-from discord.ext.commands import Cog
-from discord.ext.commands import command
+from discord.ext.commands import *
 from discord import Game, Status
+
+from lib.db import db
 
 
 class Misc(Cog):
@@ -11,13 +12,6 @@ class Misc(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("misc")
-            print("misc cog ready")
-
-    @command()
-    async def event(self, ctx, *, event):
-        """Setze ein neues Event mit !event {event}"""
-        await ctx.send(f'Current event changed to {event}')
-        await self.bot.change_presence(activity=Game(f'{event}'), status=Status.online)
 
     @command()
     async def amongus(self, ctx):
@@ -25,13 +19,14 @@ class Misc(Cog):
         if ctx.author.voice and ctx.author.voice.channel:
             channel = ctx.author.voice.channel
         else:
-            channel = await self.bot.fetch_channel(706617584631677031)
+            await ctx.send("not connected to a voice channel!")
+            return
         current_limit = channel.user_limit
         if current_limit == 0:
             await channel.edit(user_limit=99)
             await ctx.send("among us modus (user anzahl sichtbar) aktiviert")
         else:
-            await channel.edit(user_limit=99)
+            await channel.edit(user_limit=0)
             await ctx.send("among us modus (user anzahl sichtbar) deaktiviert")
 
     @command()
@@ -44,8 +39,16 @@ class Misc(Cog):
         message_list.reverse()
         for m in message_list:
             zitat += m.autohr.display_name + ": \"" + m.content + "\"\n"
-        relikte = await self.bot.fetch_channel(705427122151227442)
-        await relikte.send(zitat)
+        quote_channel_id = db.field("SELECT quote_channel FROM server_info WHERE guild_id = ?", ctx.guild)
+        if quote_channel_id is None:
+            quote_channel_id = ctx.channel.id
+        quote_channel = await self.bot.fetch_channel(quote_channel_id)
+        await quote_channel.send(zitat)
+
+    @Cog.listener()
+    async def on_message(self, message):
+        #for debugging
+        print(f"got message: {str(message)}")
 
 
 def setup(bot):

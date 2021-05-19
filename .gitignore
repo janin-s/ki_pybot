@@ -1,6 +1,9 @@
 #data-files
 data_files/
 
+#token
+lib/bot/token.0
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
