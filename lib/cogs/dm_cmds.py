@@ -82,9 +82,7 @@ class DMCmds(Cog):
 async def kick_invite_roles(ctx, user, guild):
     records = [(r.id, user.id, guild.id) for r in user.roles]
     nick = user.display_name
-    insert_roles = """\
-            INSERT OR REPLACE INTO roles(role_id, user_id, guild_id) 
-            VALUES (?, ?, ?)"""
+    insert_roles = "REPLACE INTO roles(role_id, user_id, guild_id) VALUES (?, ?, ?)"
     db.multiexec(insert_roles, records)
     update_nick = """\
             UPDATE users 

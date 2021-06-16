@@ -3,6 +3,8 @@ from discord import User, Embed
 from discord.ext.commands import *
 from discord import Game, Status
 from apscheduler.triggers.cron import CronTrigger
+
+from lib.bot.helper_functions import send_paginated
 from lib.db import db
 from datetime import datetime, timedelta
 from dateutil import parser
@@ -32,7 +34,7 @@ class Birthdays(Cog):
     @birthdays.command()
     async def add(self, ctx, *, birthdate):
         day, month = parse_date(birthdate)
-        if day == 0:
+        if day == 0: # date nor parsable
             await ctx.message.add_reaction('\U0000274C')
             return
         print(f"adding bd of {ctx.message.author.display_name} on day {day} and month {month}")
@@ -48,10 +50,9 @@ class Birthdays(Cog):
             day, month = parse_date(birthdate)
             result = db.records("SELECT user_id, month, day FROM birthdays WHERE guild_id = ? AND day = ? AND month = ?",
                                 ctx.guild.id, day, month)
-        strings = [f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}\n" for (id, m, d) in result]
-        msg = "".join(strings)
-        # TODO paginate
-        await ctx.send(f"```{msg}```")
+        bds = [f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}" for (id, m, d) in result]
+        msg = "\n".join(bds)
+        await send_paginated(ctx, start="```", end="```", content=msg)
 
     async def congratulate(self):
         await asyncio.sleep(1)  # idk how precise CronTrigger is, make sure we have the next day

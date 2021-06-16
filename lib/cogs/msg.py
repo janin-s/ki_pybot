@@ -1,5 +1,5 @@
+from ..bot.helper_functions import send_paginated
 from random import choice
-
 from discord.ext.commands import *
 from re import search
 from ..db import db
@@ -20,17 +20,14 @@ class Msg(Cog):
 
     @command(name="msg", aliases=["message"])
     async def msg(self, ctx):
-        all_msgs = db.execute("SELECT shorthand FROM messages WHERE guild_id = ?", ctx.guild.id)
+        all_msgs = db.column("SELECT DISTINCT shorthand FROM messages WHERE guild_id = ?", ctx.guild.id)
         if len(all_msgs) <= 0:
             await ctx.send("No shorthands available.")
             return
 
-        text = ""
+        text = "Available shorthands:\n" + "\n".join(all_msgs)
 
-        for row in all_msgs:
-            text += f"`{row[0]}`\n"
-
-        await ctx.send(f"Available shorthands:\n{text}")
+        await send_paginated(ctx, start="```", end="```", content=text)
 
     @command(name="set_message")
     @has_permissions(administrator=True)

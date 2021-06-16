@@ -24,10 +24,13 @@ CREATE TABLE IF NOT EXISTS punish_times (
 );
 
 CREATE TABLE IF NOT EXISTS messages (
-    msg_id integer PRIMARY KEY NOT NULL,
-    shorthand text NOT NULL,
-    message text NOT NULL,
-    guild_id integer REFERENCES server_info (guild_id) ON DELETE CASCADE
+   	shorthand text not null,
+	message text not null,
+	guild_id integer
+		references server_info (guild_id)
+			on delete cascade,
+	constraint messages_pk
+		unique (shorthand, message, guild_id)
 );
 
 CREATE TABLE IF NOT EXISTS reminders (
