@@ -38,17 +38,16 @@ class Misc(Cog):
             message_list.append(message)
         message_list.reverse()
         for m in message_list:
-            zitat += m.autohr.display_name + ": \"" + m.content + "\"\n"
+            zitat += m.author.display_name + ": \"" + m.content + "\"\n"
         quote_channel_id = db.field("SELECT quote_channel FROM server_info WHERE guild_id = ?", ctx.guild)
         if quote_channel_id is None:
             quote_channel_id = ctx.channel.id
         quote_channel = await self.bot.fetch_channel(quote_channel_id)
         await quote_channel.send(zitat)
 
-    @Cog.listener()
-    async def on_message(self, message):
-        #for debugging
-        print(f"got message: {str(message)}")
+    #@Cog.listener()
+    #async def on_message(self, message):
+        #for debuggin
 
 
 def setup(bot):

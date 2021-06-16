@@ -105,46 +105,6 @@ async def shot(ctx, *, command=None):
 
 
 @bot.command()
-async def catanverbot(ctx):
-    """Catan spielen nur dofis"""
-    await ctx.send('Bembl komm CS spielen!')
-
-
-@bot.command(aliases=["hacker"])
-async def chrissi(ctx):
-    """Chrissi ist gemein und wird deshalb gemobbt"""
-    await ctx.send('Chrissi ist so ein Lieber!')
-
-
-@bot.command()
-async def gumo(ctx):
-    """KI wünscht allen einen guten Morgen"""
-    user_name = ctx.message.author.display_name
-    await ctx.send(user_name + ' wünscht allen einen GuMo!')
-
-
-@bot.command()
-async def gumi(ctx):
-    """KI wünscht allen einen guten Mittag"""
-    user_name = ctx.message.author.display_name
-    await ctx.send(user_name + ' wünscht allen einen Guten Mittach!')
-
-
-@bot.command()
-async def guab(ctx):
-    """KI wünscht allen einen guten Abend"""
-    user_name = ctx.message.author.display_name
-    await ctx.send(user_name + ' wünscht allen einen Guten Abend!')
-
-
-@bot.command()
-async def gugebu(ctx):
-    persons = ctx.message.mentions
-    for person in persons:
-        await ctx.send("Alles Gute " + person.display_name + "!")
-
-
-@bot.command()
 async def bye(ctx):
     """KI verabschiedet sich"""
     bye = ["Bis denne Antenne!", "Ching Chang Ciao!", "Tschüsseldorf!", "Tschüßli Müsli!",
@@ -152,13 +112,6 @@ async def bye(ctx):
            "Hau Rheinwald!", "Schalömmchen!", "Schönes Knochenende!", "Tschüssikowski!", "Tüdelü in aller Früh!"]
 
     await ctx.send(bye[random.randint(0, len(bye) - 1)])
-
-
-@bot.command()
-async def sev(ctx):
-    """Sev ist behindert"""
-    await ctx.send('<:cursed:768963579973992468> https://de.wikihow.com/Einen-ganzen-Tag-lang-schweigen')
-
 
 @bot.command()
 async def hausaufgabenhilfe(ctx):
@@ -169,42 +122,6 @@ async def hausaufgabenhilfe(ctx):
         await ctx.send("lüg nicht, eh schon alles 100%")
     else:
         await ctx.send('Du schaffst das schon! KI glaubt an dich :)')
-
-
-@bot.command()
-async def janin(ctx):
-    """janin ist gemein"""
-    await ctx.send('https://www.wikihow.com/Drop-Out-of-College')
-
-
-@bot.command()
-async def jan(ctx):
-    await ctx.send('Jan ist sehr nett und lieb!')
-
-
-@bot.command()
-async def lukas(ctx):
-    """Lukas ist nicht nett"""
-    await ctx.send('https://de.wikihow.com/Mit-einer-geistig-behinderten-person-kommunizieren')
-
-
-@bot.command(aliases=["johannes", "jojo"])
-async def nils(ctx):
-    """Nils und Johannes sind nicht nett"""
-    await ctx.send(
-        'https://www.muenchen-heilpraktiker-psychotherapie.de/blog-2/selbstbewusstsein/10-anzeichen-dass-sie-zu-nett-sind-fuer-diese-welt.html')
-
-
-@bot.command()
-async def piep(ctx):
-    """nur liebe auf diesem server"""
-    await ctx.send("piep piep, wir ham uns alle lieb! <:liebruh:731289435886583951>")
-
-
-@bot.command()
-async def amen(ctx):
-    """beten macht spaß"""
-    await ctx.send("Vater unser da oben, wir wollen dich loben\nhier steht ganz viel dreck, mach die sünden weg\namen")
 
 
 @bot.command()

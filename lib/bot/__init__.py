@@ -68,17 +68,17 @@ class Bot(BotBase):
     async def on_disconnect(self):
         print("bot disconnected")
 
-    async def on_error(self, err, *args, **kwargs):
-        if err == "on_command_error":
-            await args[0].send("iwas falsch oh no :(")
-            print("help :(")
+#   async def on_error(self, err, *args, **kwargs):
+#     if err == "on_command_error":
+#            await args[0].send("iwas falsch oh no :(")
+#            print("help :(")
 
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, commands.errors.CommandNotFound):
             try:
-                await msg.message(ctx=ctx, message=str(exc)[1:])
+                await msg.message(ctx=ctx, message=ctx.invoked_with)
             except MsgNotFound:
-                await ctx.send('KI dummdumm <:eist_moment:731293248324370483>')
+                await ctx.send('KI dummdumm v2 <:eist_moment:731293248324370483>')
 
         elif isinstance(exc, commands.errors.CommandOnCooldown):
             await ctx.send("nicht so schnell")

@@ -1,3 +1,5 @@
+from random import choice
+
 from discord.ext.commands import *
 from re import search
 from ..db import db
@@ -30,25 +32,35 @@ class Msg(Cog):
 
         await ctx.send(f"Available shorthands:\n{text}")
 
+    @command(name="set_message")
+    @has_permissions(administrator=True)
+    async def add_message(self, ctx, name, *, content):
+        """assigns content to a shorthand"""
+        # TODO: clean content
+        print(f"adding message {name} to DB")
+        db.execute("""\
+                    INSERT OR REPLACE INTO messages (shorthand, message, guild_id)
+                    VALUES (?, ?, ?)""", name, content, ctx.guild.id)
+
 
 async def message(ctx, message=""):
-
+    print(f"message with shorthand {message}.")
     if message == "" or ctx is None:
         return
     guild_id = ctx.guild.id
 
     msgs = db.column("SELECT message FROM messages WHERE guild_id = ? AND shorthand = ?", guild_id, message)
 
-    for msg in msgs:
-        if msg is not None:
-            msg = str(msg)
-            if REPLACE_SENDER in msg:
-                msg = msg.replace(REPLACE_SENDER, ctx.message.author.display_name)
-            if REPLACE_MENTIONS in msg:
-                msg = msg.replace(REPLACE_MENTIONS, "".join([", "+m.display_name for m in ctx.message.mentions])[2:])
-            await ctx.send(msg)
-        else:
-            raise MsgNotFound
+    if msgs is not None and len(msgs) != 0:
+        msg = choice(msgs)
+        msg = str(msg)
+        if REPLACE_SENDER in msg:
+            msg = msg.replace(REPLACE_SENDER, ctx.message.author.display_name)
+        if REPLACE_MENTIONS in msg:
+            msg = msg.replace(REPLACE_MENTIONS, "".join([", "+m.display_name for m in ctx.message.mentions])[2:])
+        await ctx.send(msg)
+    else:
+        raise MsgNotFound
 
 
 def setup(bot):

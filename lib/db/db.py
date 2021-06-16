@@ -70,4 +70,5 @@ def multiexec(command, valueset):
 
 def scriptexec(path):
     with open(path, "r", encoding="utf-8") as script:
+        print(f"running db script located at {path}")
         cur.executescript(script.read())
