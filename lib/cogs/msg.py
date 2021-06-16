@@ -1,9 +1,8 @@
-from ..bot.helper_functions import send_paginated
 from random import choice
 from discord.ext.commands import *
 from re import search
 from ..db import db
-from ..utils import MsgNotFound
+from ..utils import MsgNotFound, send_paginated
 
 REPLACE_SENDER = "[$SENDER$]"
 REPLACE_MENTIONS = "[$MENTIONS$]"

@@ -1,10 +1,9 @@
 import asyncio
 from discord import User, Embed
 from discord.ext.commands import *
-from discord import Game, Status
 from apscheduler.triggers.cron import CronTrigger
 
-from lib.bot.helper_functions import send_paginated
+from ..utils import send_paginated
 from lib.db import db
 from datetime import datetime, timedelta
 from dateutil import parser
