@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS server_info (
     name text,
     main_channel integer,
     quote_channel integer,
-    birthday_channel integer
+    birthday_channel integer,
+    reminder_channel integer
 );
 
 CREATE TABLE IF NOT EXISTS punish_times (
@@ -34,7 +35,8 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 
 CREATE TABLE IF NOT EXISTS reminders (
-    reminder_id integer NOT NULL,
+    reminder_id integer,
+    job_id text UNIQUE,
     user_id integer NOT NULL,
     guild_id integer NOT NULL,
     time text NOT NULL,
@@ -84,8 +86,8 @@ CREATE TABLE IF NOT EXISTS birthdays (
         ON DELETE CASCADE
 );
 
-INSERT OR IGNORE INTO server_info (guild_id, name, main_channel, quote_channel)
-VALUES (705425948996272210, '10111011 Strassenbande', 705425949541269668, 705427122151227442);
+INSERT OR IGNORE INTO server_info (guild_id, name, main_channel, quote_channel, birthday_channel, reminder_channel)
+VALUES (705425948996272210, '10111011 Strassenbande', 705425949541269668, 705427122151227442, 705425949541269668, 705425949541269668);
 INSERT OR IGNORE INTO messages (shorthand, message, guild_id)
 VALUES  ('catanverbot', 'Bembl komm CS spielen!', 705425948996272210),
         ('chrissi', 'Chrissi ist so ein Lieber!', 705425948996272210),
