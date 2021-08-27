@@ -9,6 +9,7 @@ from lib.db import db
 OFFLINE_PUNISH = True
 PUNISH_INTERVAL = timedelta(hours=12)
 
+
 class DMCmds(Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -45,10 +46,6 @@ class DMCmds(Cog):
 
     @command(name="punish")
     async def punish(self, ctx):
-        pass
-
-    @command(name="punish")
-    async def punish(self, ctx):
         """"bestraft alle mentioned user"""
         users = ctx.message.mentions
         for user in users:
@@ -78,6 +75,12 @@ class DMCmds(Cog):
             db.execute(sql_update_time, datetime.now().isoformat(timespec='seconds'), ctx.guild.id, current_id)
             await kick_invite_roles(ctx, user, ctx.guild)
 
+    @command(name='votekick')
+    @commands.cooldown(1, 120, commands.BucketType.user)
+    async def votekick(self, ctx):
+        # TODO implement votekick with scheduled reset and database
+        pass
+
 
 async def kick_invite_roles(ctx, user, guild):
     records = [(r.id, user.id, guild.id) for r in user.roles]
@@ -97,7 +100,7 @@ async def kick_invite_roles(ctx, user, guild):
     try:
         if dm_channel is None:
             dm_channel = await user.create_dm()
-        await dm_channel.send("shame!\n"*4)
+        await dm_channel.send("shame!\n" * 4)
         await dm_channel.send("https://media.giphy.com/media/vX9WcCiWwUF7G/giphy.gif")
         await dm_channel.send(invite.url)
     except discord.Forbidden:
