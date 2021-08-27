@@ -14,7 +14,8 @@ from datetime import datetime, timedelta
 class Reminders(Cog):
     def __init__(self, bot):
         self.bot = bot
-        # TODO delete reminders in the past
+        # delete invalid reminders in the past
+        db.execute('DELETE FROM reminders WHERE time < ?', datetime.now().isoformat())
 
     @Cog.listener()
     async def on_ready(self):
@@ -52,7 +53,7 @@ class Reminders(Cog):
             new_job: Job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=time, args=[ctx])
             new_job_id = new_job.id
 
-        db.execute('INSERT INTO reminders (job_id, user_id, guild_id, time, message) VALUES (?, ?,?,?,?)',
+        db.execute('INSERT INTO reminders (job_id, user_id, guild_id, time, message) VALUES (?,?,?,?,?)',
                    new_job_id,
                    ctx.message.author.id,
                    ctx.guild.id,
