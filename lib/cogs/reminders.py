@@ -5,7 +5,7 @@ from discord.ext.commands import *
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.job import Job
 
-from ..utils import send_paginated, parse_date, parse_reminder
+from ..utils import send_paginated, parse_datetime
 from lib.db import db
 from dateutil import parser
 from datetime import datetime, timedelta
@@ -27,7 +27,7 @@ class Reminders(Cog):
         """reminder: !remindme DD.MM[.YYYY][;HH:MM] reminds the calling user"""
         # parse the date
         try:
-            time: datetime = parse_reminder(datestring)
+            time: datetime = parse_datetime(datestring)
         except ValueError:
             await ctx.send("invalid date format")
             return

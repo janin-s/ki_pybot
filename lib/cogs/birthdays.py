@@ -4,7 +4,7 @@ from discord import User, Embed
 from discord.ext.commands import *
 from apscheduler.triggers.cron import CronTrigger
 
-from ..utils import send_paginated, parse_date
+from ..utils import send_paginated, parse_datetime
 from lib.db import db
 from dateutil import parser
 from datetime import datetime, timedelta
@@ -25,23 +25,24 @@ class Birthdays(Cog):
         """"Birthdays"""
         embed = Embed(title="Birthdays")
         embed.add_field(name="aliases", value="You can use !birthday, !birthdays oder !bd")
-        embed.add_field(name="add", value="Use !bd add date to add your birthday")
-        embed.add_field(name="list", value="Use !bd list [date] to get a list of some or all birthdays")
+        embed.add_field(name="add", value="Use !bd add <date> to add your birthday")
+        embed.add_field(name="list", value="Use !bd list [<date>] to get a list of some or all birthdays")
         embed.add_field(name="date",
-                        value="Use any recognizable date format, e.g. MM.DD[.YY] etc or 'today' and 'tomorrow'")
+                        value="Use MM.DD[.YYYY] or 'today/heute' and 'tomorrow/morgen'")
         embed.set_thumbnail(
             url="https://sallysbakingaddiction.com/wp-content/uploads/2017/05/ultimate-birthday-cupcakes.jpg")
         await ctx.send(embed=embed)
 
     @birthdays.command()
     async def add(self, ctx, *, birthdate):
-        day, month = parse_date(birthdate)
-        if day == 0:  # date nor parsable
+        try:
+            date = parse_datetime(birthdate)
+        except ValueError:
             await ctx.message.add_reaction('\U0000274C')
             return
-        print(f"adding bd of {ctx.message.author.display_name} on day {day} and month {month}")
+        print(f"adding bd of {ctx.message.author.display_name} on day {date.day} and month {date.month}")
         db.execute("REPLACE INTO birthdays (guild_id, user_id, month, day) VALUES (?,?,?,?)",
-                   ctx.guild.id, ctx.message.author.id, month, day)
+                   ctx.guild.id, ctx.message.author.id, date.month, date.day)
         await ctx.message.add_reaction('\U00002705')
 
     @birthdays.command()
@@ -49,10 +50,13 @@ class Birthdays(Cog):
         if birthdate == "":
             result = db.records("SELECT user_id, month, day FROM birthdays WHERE guild_id = ?", ctx.guild.id)
         else:
-            day, month = parse_date(birthdate)
+            try:
+                date = parse_datetime(birthdate)
+            except ValueError:
+                date = datetime.now()
             result = db.records(
                 "SELECT user_id, month, day FROM birthdays WHERE guild_id = ? AND day = ? AND month = ?",
-                ctx.guild.id, day, month)
+                ctx.guild.id, date.day, date.month)
         bds = [f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}" for (id, m, d) in result]
         msg = "\n".join(bds)
         await send_paginated(ctx, start="```", end="```", content=msg)

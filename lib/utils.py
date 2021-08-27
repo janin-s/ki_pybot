@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from dateutil import parser
 
+
 class MsgNotFound(Exception):
     pass
 
@@ -15,25 +16,10 @@ async def send_paginated(ctx, limit=2000, start="", end="", *, content):
         await ctx.send(chunk)
 
 
-def parse_date(birthdate: str) -> [int, int]:
-    if birthdate == "today":
-        return [datetime.today().day, datetime.today().month]
-
-    if birthdate == "tomorrow":
-        tmrw = datetime.today() + timedelta(days=1)
-        return [tmrw.day, tmrw.month]
-
-    try:
-        # date = parser.parse(birthdate, dayfirst=True, yearfirst=False, fuzzy=True)
-        date = parse_datestr(birthdate)
-    except ValueError:
-        return 0, 0
-
-    return [date.day, date.month]
-
-
-def parse_reminder(s: str) -> datetime:
-    if s == 'morgen':
+def parse_datetime(s: str) -> datetime:
+    if s == 'heute' or s == 'today':
+        return datetime.today()
+    if s == 'morgen' or s == 'tomorrow':
         return datetime.today() + timedelta(days=1)
     if ';' in s:
         time = ';%H:%M'
@@ -47,13 +33,3 @@ def parse_reminder(s: str) -> datetime:
     if year == '':
         parsed = parsed.replace(year=datetime.now().year)
     return parsed
-
-
-def parse_datestr(s: str) -> datetime:
-    splitted = s.split('.')
-    if len(splitted) < 2:
-        raise ValueError
-    yr = datetime.today().year
-    if len(splitted) >= 3:
-        yr = splitted[3]
-    return datetime(year=yr, month=int(splitted[1]), day=int(splitted[0]))
