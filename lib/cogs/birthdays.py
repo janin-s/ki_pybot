@@ -1,12 +1,13 @@
 import asyncio
+
 from discord import User, Embed
 from discord.ext.commands import *
 from apscheduler.triggers.cron import CronTrigger
 
-from ..utils import send_paginated
+from ..utils import send_paginated, parse_date
 from lib.db import db
-from datetime import datetime, timedelta
 from dateutil import parser
+from datetime import datetime, timedelta
 
 
 class Birthdays(Cog):
@@ -19,21 +20,23 @@ class Birthdays(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("birthdays")
 
-    @group(aliases=['birthday', 'bd'], invoke_without_command=True)
+    @group(aliases=['birthday', 'bd', 'bday'], invoke_without_command=True)
     async def birthdays(self, ctx):
         """"Birthdays"""
         embed = Embed(title="Birthdays")
         embed.add_field(name="aliases", value="You can use !birthday, !birthdays oder !bd")
         embed.add_field(name="add", value="Use !bd add date to add your birthday")
         embed.add_field(name="list", value="Use !bd list [date] to get a list of some or all birthdays")
-        embed.add_field(name="date", value="Use any recognizable date format, e.g. MM.DD[.YY] etc or 'today' and 'tomorrow'")
-        embed.set_thumbnail(url="https://sallysbakingaddiction.com/wp-content/uploads/2017/05/ultimate-birthday-cupcakes.jpg")
+        embed.add_field(name="date",
+                        value="Use any recognizable date format, e.g. MM.DD[.YY] etc or 'today' and 'tomorrow'")
+        embed.set_thumbnail(
+            url="https://sallysbakingaddiction.com/wp-content/uploads/2017/05/ultimate-birthday-cupcakes.jpg")
         await ctx.send(embed=embed)
 
     @birthdays.command()
     async def add(self, ctx, *, birthdate):
         day, month = parse_date(birthdate)
-        if day == 0: # date nor parsable
+        if day == 0:  # date nor parsable
             await ctx.message.add_reaction('\U0000274C')
             return
         print(f"adding bd of {ctx.message.author.display_name} on day {day} and month {month}")
@@ -43,12 +46,13 @@ class Birthdays(Cog):
 
     @birthdays.command()
     async def list(self, ctx, *, birthdate=""):
-        if birthdate is "":
+        if birthdate == "":
             result = db.records("SELECT user_id, month, day FROM birthdays WHERE guild_id = ?", ctx.guild.id)
         else:
             day, month = parse_date(birthdate)
-            result = db.records("SELECT user_id, month, day FROM birthdays WHERE guild_id = ? AND day = ? AND month = ?",
-                                ctx.guild.id, day, month)
+            result = db.records(
+                "SELECT user_id, month, day FROM birthdays WHERE guild_id = ? AND day = ? AND month = ?",
+                ctx.guild.id, day, month)
         bds = [f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}" for (id, m, d) in result]
         msg = "\n".join(bds)
         await send_paginated(ctx, start="```", end="```", content=msg)
@@ -74,25 +78,6 @@ class Birthdays(Cog):
                 if user is not None:
                     print(f"User with display name{user.display_name} and name {user.name}")
                     await channel.send(f"Alles Gute {user.mention}!")
-
-
-def parse_date(birthdate: str) -> [int, int]:
-    if birthdate == "today":
-        return [datetime.today().day, datetime.today().month]
-
-    if birthdate == "tomorrow":
-        tmrw = datetime.today() + timedelta(days=1)
-        return [tmrw.day, tmrw.month]
-
-    try:
-        date = parser.parse(birthdate, dayfirst=True, yearfirst=False, fuzzy=True)
-    except ValueError:
-        return 0, 0
-
-    if date.year != datetime.today().year:
-        return 0, 0
-
-    return [date.day, date.month]
 
 
 def setup(bot):
