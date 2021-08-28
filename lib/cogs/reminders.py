@@ -16,6 +16,14 @@ class Reminders(Cog):
         self.bot = bot
         # delete invalid reminders in the past
         db.execute('DELETE FROM reminders WHERE time < ?', datetime.now().isoformat())
+        jobs = self.bot.scheduler.get_jobs()
+        record = db.record(
+                    'SELECT (reminder_id, job_id, time) FROM reminders WHERE time = (SELECT min(time) FROM reminders)')
+        # add job if there is an upcoming reminder and either no jobs or no job_id fitting the upcoming reminder
+        if record is not None and (jobs is None or len(jobs) == 0 or record[1] not in [job.id for job in jobs]):
+            job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=datetime.fromisoformat(record[2]))
+            # update job id for the upcoming reminder that just was scheduled
+            db.execute('UPDATE reminders SET job_id = ? WHERE reminder_id = ?', job.id, record[0])
 
     @Cog.listener()
     async def on_ready(self):
@@ -50,7 +58,7 @@ class Reminders(Cog):
                 self.bot.scheduler.remove_job(next_reminder_job_id)
                 db.execute('UPDATE reminders SET job_id = ? WHERE reminder_id = ?', "", next_reminder_id)
             # add the job for the new earliest reminder
-            new_job: Job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=time, args=[ctx])
+            new_job: Job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=time)
             new_job_id = new_job.id
         user_mentions_string = " ".join([user.mention for user in [ctx.message.author] + ctx.message.mentions])
         role_mentions_string = " ".join([role.mention for role in ctx.message.role_mentions])
@@ -65,7 +73,7 @@ class Reminders(Cog):
         await ctx.send("Ich sag dann bescheid")
 
     # sends the reminder, removes the sent reminder from the DB, adds a job for the next reminder & updates ots job_id
-    async def reminder_call(self, ctx):
+    async def reminder_call(self):
         # fetch the next upcoming reminder
         record = db.record('''SELECT reminder_id, job_id, user_id, guild_id, message, mentions FROM reminders WHERE time = 
                               (SELECT min(time) FROM reminders)''')
@@ -89,7 +97,7 @@ class Reminders(Cog):
             return
         new_reminder_id, new_reminder_time = record2
         time = datetime.fromisoformat(new_reminder_time)
-        new_job: Job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=time, args=[ctx])
+        new_job: Job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=time)
         # update the job id for the upcoming reminder
         db.execute('UPDATE reminders SET job_id = ? WHERE reminder_id = ?', new_job.id, new_reminder_id)
 
