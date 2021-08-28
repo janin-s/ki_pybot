@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import discord
+from discord import Member
 from discord.ext.commands import *
 from discord.ext import commands
 
@@ -71,8 +72,13 @@ class DMCmds(Cog):
                 if (datetime.now() - last_punish) < PUNISH_INTERVAL:
                     await ctx.send(f"{user.display_name} wurde vor kurzem erst bestraft!")
                     continue
-            sql_update_time = "UPDATE punish_times SET punish_time = ? WHERE guild_id = ? AND user_id = ?"
-            db.execute(sql_update_time, datetime.now().isoformat(timespec='seconds'), ctx.guild.id, current_id)
+            sql_update_time = """\
+            INSERT INTO punish_times (user_id, guild_id, punish_time) 
+            VALUES (?,?,?) 
+            ON CONFLICT (user_id, guild_id) DO
+            UPDATE SET punish_time = ? WHERE user_id = ? AND guild_id = ?"""
+            time = datetime.now().isoformat(timespec='seconds')
+            db.execute(sql_update_time, current_id,  ctx.guild.id, time, time, current_id, ctx.guild.id)
             await kick_invite_roles(ctx, user, ctx.guild)
 
     @command(name='votekick')
@@ -84,15 +90,16 @@ class DMCmds(Cog):
 
 async def kick_invite_roles(ctx, user, guild):
     records = [(r.id, user.id, guild.id) for r in user.roles]
-    nick = user.display_name
+    if isinstance(user, Member):
+        nick = user.nick
+    else:
+        nick = user.display_name
+    print(f'kicking user {user.id} with nick {nick} from guild {guild.id}')
     insert_roles = "REPLACE INTO roles(role_id, user_id, guild_id) VALUES (?, ?, ?)"
     db.multiexec(insert_roles, records)
-    update_nick = """\
-            UPDATE users 
-            SET display_name=? 
-            WHERE id = ? AND guild_id = ?"""
 
-    db.execute(update_nick, str(nick), user.id, guild.id)
+    db.execute('REPLACE INTO users (display_name, id, guild_id) VALUES (?,?,?)',
+               str(nick), user.id, guild.id)
 
     dm_channel = user.dm_channel
     await ctx.send(f"{nick} soll sich schämen gehen")
