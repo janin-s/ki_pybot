@@ -3,7 +3,7 @@ from asyncio import sleep
 
 from discord.ext.commands import Bot as BotBase
 from discord.ext import commands
-from discord import Intents
+from discord import Intents, utils
 from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
 
 from lib.db import db
@@ -99,6 +99,21 @@ class Bot(BotBase):
             print("bot ready")
         else:
             print("bot reconnected")
+
+    async def on_member_join(self, member):
+        user_id = member.id
+        guild_id = member.guild.id
+        nick = db.field('SELECT display_name FROM users WHERE id = ? AND guild_id = ?',
+                        user_id, guild_id)
+        if nick is not None:
+            await member.edit(nick=nick)
+        roles = db.column('SELECT role_id FROM roles WHERE user_id = ? AND guild_id = ?',
+                          user_id, guild_id)
+        if roles is not None:
+            for role_id in roles:
+                role = utils.get(member.guild.roles, id=role_id)
+                if role.name != "@everyone":
+                    await member.add_roles(role)
 
 
 bot = Bot()
