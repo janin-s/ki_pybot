@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS reminders (
     guild_id integer NOT NULL,
     time text NOT NULL,
     message text NOT NULL,
+    mentions text NOT NULL,
     PRIMARY KEY (reminder_id),
     FOREIGN KEY (user_id, guild_id)
         REFERENCES users(id, guild_id)
