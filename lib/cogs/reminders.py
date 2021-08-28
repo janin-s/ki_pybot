@@ -52,23 +52,26 @@ class Reminders(Cog):
             # add the job for the new earliest reminder
             new_job: Job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=time, args=[ctx])
             new_job_id = new_job.id
+        user_mentions_string = " ".join([user.mention for user in [ctx.message.author] + ctx.message.mentions])
+        role_mentions_string = " ".join([role.mention for role in ctx.message.role_mentions])
 
-        db.execute('INSERT INTO reminders (job_id, user_id, guild_id, time, message) VALUES (?,?,?,?,?)',
+        db.execute('INSERT INTO reminders (job_id, user_id, guild_id, time, message, mentions) VALUES (?,?,?,?,?,?)',
                    new_job_id,
                    ctx.message.author.id,
                    ctx.guild.id,
                    time.isoformat(),
-                   message)
+                   message,
+                   " ".join([user_mentions_string, role_mentions_string]).strip())
         await ctx.send("Ich sag dann bescheid")
 
     # sends the reminder, removes the sent reminder from the DB, adds a job for the next reminder & updates ots job_id
     async def reminder_call(self, ctx):
         # fetch the next upcoming reminder
-        record = db.record('''SELECT reminder_id, job_id, user_id, guild_id, message FROM reminders WHERE time = 
+        record = db.record('''SELECT reminder_id, job_id, user_id, guild_id, message, mentions FROM reminders WHERE time = 
                               (SELECT min(time) FROM reminders)''')
         if record is None:
             return
-        reminder_id, job_id, user_id, guild_id, message = record
+        reminder_id, job_id, user_id, guild_id, message, mentions = record
         if job_id != "":
             # fetch the user/channel to ping/send to, send the message and delete the corresponding reminder from the DB
             user = await self.bot.fetch_user(user_id)
@@ -77,7 +80,7 @@ class Reminders(Cog):
             print(f'user:{user}, channel:{channel}')
             if user is not None and channel is not None:
                 embed = Embed(title='Reminder', description=message)
-                await channel.send(user.mention, embed=embed)
+                await channel.send(mentions, embed=embed)
             print('deleting reminder')
             db.execute('DELETE FROM reminders WHERE reminder_id = ?', reminder_id)
         # fetch the next upcoming reminder and create a new scheduler job for it
