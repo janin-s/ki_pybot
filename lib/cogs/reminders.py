@@ -18,7 +18,7 @@ class Reminders(Cog):
         db.execute('DELETE FROM reminders WHERE time < ?', datetime.now().isoformat())
         jobs = self.bot.scheduler.get_jobs()
         record = db.record(
-                    'SELECT (reminder_id, job_id, time) FROM reminders WHERE time = (SELECT min(time) FROM reminders)')
+                    'SELECT reminder_id, job_id, time FROM reminders WHERE time=(SELECT min(time) FROM reminders)')
         # add job if there is an upcoming reminder and either no jobs or no job_id fitting the upcoming reminder
         if record is not None and (jobs is None or len(jobs) == 0 or record[1] not in [job.id for job in jobs]):
             job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=datetime.fromisoformat(record[2]))

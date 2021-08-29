@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE TABLE IF NOT EXISTS reminders (
     reminder_id integer,
-    job_id text UNIQUE,
+    job_id text,
     user_id integer NOT NULL,
     guild_id integer NOT NULL,
     time text NOT NULL,
