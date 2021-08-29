@@ -24,7 +24,7 @@ class Birthdays(Cog):
     async def birthdays(self, ctx):
         """"Birthdays"""
         embed = Embed(title="Birthdays")
-        embed.add_field(name="aliases", value="You can use !birthday, !birthdays oder !bd")
+        embed.add_field(name="aliases", value="You can use !birthday, !birthdays or !bd")
         embed.add_field(name="add", value="Use !bd add <date> to add your birthday")
         embed.add_field(name="list", value="Use !bd list [<date>] to get a list of some or all birthdays")
         embed.add_field(name="date",
