@@ -46,13 +46,13 @@ class Reminders(Cog):
         record = db.record('''SELECT reminder_id, job_id, time FROM reminders WHERE time = 
                          (SELECT min(time) FROM reminders)''')
         if record is not None:
-            next_reminder_id, next_reminder_job_id, next_reminder_time = record
+            next_reminder_id, next_reminder_job_id, next_rmd_time = record
         else:
-            next_reminder_id, next_reminder_job_id, next_reminder_time = [0, "", datetime.max.isoformat()]
+            next_reminder_id, next_reminder_job_id, next_rmd_time = [0, "", datetime.max.isoformat()]
 
         new_job_id = ""
         # if the new reminder is the earliest remove the current scheduled job otherwise don't create now job
-        if time.isoformat() < next_reminder_time:
+        if time.isoformat() < next_rmd_time or next_reminder_job_id == "" or next_rmd_time < datetime.now().isoformat():
             if next_reminder_job_id != "":
                 # remove the job of the old earliest reminder if there is such a reminder and set the job_id to ""
                 self.bot.scheduler.remove_job(next_reminder_job_id)
