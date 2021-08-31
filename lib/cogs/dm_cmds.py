@@ -90,7 +90,7 @@ class DMCmds(Cog):
 
 async def kick_invite_roles(ctx, user, guild):
     records = [(r.id, user.id, guild.id) for r in user.roles]
-    if isinstance(user, Member):
+    if isinstance(user, Member) and user.nick is not None:
         nick = user.nick
     else:
         nick = user.display_name
