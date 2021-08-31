@@ -53,7 +53,7 @@ def chars_unique(s):
     for c in s:
         ascii_value = ord(c)
         # letters
-        if ascii_value >= 97 or ascii_value <= 122:
+        if 97 <= ascii_value <= 122:
             val = ascii_value - ord('a')
             # If bit corresponding to current
             # character is already set
@@ -80,6 +80,7 @@ def chars_unique(s):
 
         else:
             return False
+    return True
 
 
 def get_unicode_id(c):
