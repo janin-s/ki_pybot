@@ -21,15 +21,25 @@ def parse_datetime(s: str) -> datetime:
         return datetime.today()
     if s == 'morgen' or s == 'tomorrow':
         return datetime.today() + timedelta(days=1)
+    dots = s.count('.')
+    if dots == 2:
+        date = '%d.%m.%Y'
+    elif dots == 1:
+        date = '%d.%m'
+    else:
+        date = ''
+
     if ';' in s:
         time = ';%H:%M'
+    elif dots == 0:
+        time = '%H:%M'
     else:
         time = ''
-    if s.count('.') == 2:
-        year = ".%Y"
-    else:
-        year = ''
-    parsed = datetime.strptime(s, f'%d.%m{year}{time}')
-    if year == '':
-        parsed = parsed.replace(year=datetime.now().year)
+    parsed = datetime.strptime(s, f'{date}{time}')
+    # if no year was specified set it to the current year
+    now = datetime.now()
+    if dots == 0:
+        parsed = parsed.replace(year=now.year, month=now.month, day=now.day)
+    elif dots == 1:
+        parsed = parsed.replace(year=now.year)
     return parsed

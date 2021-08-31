@@ -44,6 +44,7 @@ class Reminders(Cog):
             await ctx.send("invalid date format")
             return
         if time < datetime.now():
+            await ctx.send("des leider schon vorbei :(")
             return
 
         # fetch the next upcoming reminder to check if the new one is earlier
