@@ -9,6 +9,7 @@ from lib.db import db
 
 OFFLINE_PUNISH = True
 PUNISH_INTERVAL = timedelta(hours=12)
+REQUIRED_VOTES = 2
 
 
 class DMCmds(Cog):
@@ -78,14 +79,27 @@ class DMCmds(Cog):
             ON CONFLICT (user_id, guild_id) DO
             UPDATE SET punish_time = ? WHERE user_id = ? AND guild_id = ?"""
             time = datetime.now().isoformat(timespec='seconds')
-            db.execute(sql_update_time, current_id,  ctx.guild.id, time, time, current_id, ctx.guild.id)
+            db.execute(sql_update_time, current_id, ctx.guild.id, time, time, current_id, ctx.guild.id)
             await kick_invite_roles(ctx, user, ctx.guild)
 
     @command(name='votekick')
     @commands.cooldown(1, 120, commands.BucketType.user)
     async def votekick(self, ctx):
-        # TODO implement votekick with scheduled reset and database
-        pass
+        users = ctx.message.mentions
+        for user in users:
+            votes = db.field('SELECT votes FROM votekick WHERE guild_id = ? AND user_id = ?',
+                             ctx.guild.id, user.id)
+            if votes is None or votes == 0:
+                votes = 0
+                self.bot.scheduler.add_job(reset_votes, 'date', run_date=datetime.now()+timedelta(minutes=5),
+                                           args=(user.id, ctx.guild.id))
+            votes = votes + 1
+            await ctx.send(f'{votes}/{REQUIRED_VOTES} votes')
+            if votes >= REQUIRED_VOTES:
+                await kick_invite_roles(ctx, user, ctx.guild)
+                votes = 0
+            db.execute('REPLACE INTO votekick (guild_id, user_id, votes)  VALUES (?,?,?)',
+                       ctx.guild.id, user.id, votes)
 
 
 async def kick_invite_roles(ctx, user, guild):
@@ -95,8 +109,8 @@ async def kick_invite_roles(ctx, user, guild):
     else:
         nick = user.display_name
     print(f'kicking user {user.id} with nick {nick} from guild {guild.id}')
-    insert_roles = "REPLACE INTO roles(role_id, user_id, guild_id) VALUES (?, ?, ?)"
-    db.multiexec(insert_roles, records)
+    insert_roles_query = "REPLACE INTO roles(role_id, user_id, guild_id) VALUES (?, ?, ?)"
+    db.multiexec(insert_roles_query, records)
 
     db.execute('REPLACE INTO users (display_name, id, guild_id) VALUES (?,?,?)',
                str(nick), user.id, guild.id)
@@ -116,6 +130,10 @@ async def kick_invite_roles(ctx, user, guild):
         await user.kick(reason="punish")
     except discord.Forbidden:
         await ctx.send("KI nicht mächtig genug :(")
+
+
+async def reset_votes(user_id, guild_id):
+    db.execute('REPLACE INTO votekick (guild_id, user_id, votes)  VALUES (?,?,0)', guild_id, user_id)
 
 
 def setup(bot):
