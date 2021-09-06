@@ -19,7 +19,7 @@ class Reminders(Cog):
         db.execute('DELETE FROM reminders WHERE time < ?', datetime.now().isoformat())
         jobs = self.bot.scheduler.get_jobs()
         record = db.record(
-                    'SELECT reminder_id, job_id, time FROM reminders WHERE time=(SELECT min(time) FROM reminders)')
+             'SELECT reminder_id, job_id, time FROM reminders WHERE time=(SELECT min(time) FROM reminders)')
         # add job if there is an upcoming reminder and either no jobs or no job_id fitting the upcoming reminder
         if record is not None and (jobs is None or len(jobs) == 0 or record[1] not in [job.id for job in jobs]):
             job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=datetime.fromisoformat(record[2]))
@@ -31,12 +31,28 @@ class Reminders(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("reminders")
 
-    @command(aliases=['reminder', 'remindme'])
-    async def reminders(self, ctx, datestring=None, *, message='reminding you :)'):
-        """reminder: !remindme DD.MM[.YYYY][;HH:MM] reminds the calling user"""
-        if datestring is None:
-            await reminder_info(ctx)
-            return
+    @group(aliases=['reminder', 'remindme', 'rm'], invoke_without_command=True)
+    async def reminders(self, ctx):
+        """reminder: !reminder add DD.MM[.YYYY][;HH:MM] reminds the calling user"""
+        embed = Embed(title='Reminders')
+        embed.add_field(name='aliases', value='You can use !reminders, !reminder, !remindme or !rm')
+        embed.add_field(name='usage',
+                        value='Use !reminder add <date> [<message>] to get a reminder on the specified date/time')
+        embed.add_field(name='list',
+                        value='Use !reminder list [<mentions>] to get a list of reminders for the mentioned users '
+                              '(all users when nobody mentioned)')
+        embed.add_field(name='mentions',
+                        value='Every user or role mentioned in the message will be pinged by the reminder')
+        embed.add_field(name='date',
+                        value='Use MM.DD[.YYYY][;HH:MM] or \'today/heute\' and \'tomorrow/morgen\'')
+        embed.set_thumbnail(
+            url="https://pngimg.com/uploads/alarm_clock/alarm_clock_PNG2.png")
+        await ctx.send(embed=embed)
+        return
+
+    @reminders.command()
+    async def add(self, ctx, datestring=None, *, message='reminding you :)'):
+        """add reminder"""
         # parse the date
         try:
             time: datetime = parse_datetime(datestring)
@@ -80,11 +96,31 @@ class Reminders(Cog):
                    " ".join([user_mentions_string, role_mentions_string]).strip())
         await ctx.send("Ich sag dann Bescheid")
 
+    @reminders.command()
+    async def list(self, ctx, *mentions):
+        mentioned_ids = [user.id for user in ctx.message.mentions]
+        if mentioned_ids is None or len(mentioned_ids) == 0:
+            reminders = db.records('SELECT user_id, time, message FROM reminders WHERE guild_id = ? ORDER BY time',
+                                   ctx.guild.id)
+        else:
+            var_list = '?,' * (len(mentioned_ids) - 1) + '?'
+            reminders = \
+                db.records(
+                    f'SELECT user_id, time, message FROM reminders WHERE guild_id = ? AND user_id IN ({var_list}) '
+                    f'ORDER BY time',
+                    ctx.guild.id, *mentioned_ids)
+        if reminders is None or len(reminders) == 0:
+            await ctx.send('no reminders found')
+            return
+        rems = [f'{datetime.fromisoformat(time).strftime("%d.%m.%Y %H:%M")}, {ctx.guild.get_member(uid).display_name}'
+                f': {message}' for uid, time, message in reminders]
+        await send_paginated(ctx, start="```", end="```", content='\n'.join(rems))
+
     # sends the reminder, removes the sent reminder from the DB, adds a job for the next reminder & updates ots job_id
     async def reminder_call(self):
         # fetch the next upcoming reminder
-        record = db.record('''SELECT reminder_id, job_id, user_id, guild_id, message, mentions FROM reminders WHERE time = 
-                              (SELECT min(time) FROM reminders)''')
+        record = db.record('''SELECT reminder_id, job_id, user_id, guild_id, message, mentions FROM reminders WHERE 
+                                time = (SELECT min(time) FROM reminders)''')
         if record is None:
             return
         reminder_id, job_id, user_id, guild_id, message, mentions = record
@@ -108,18 +144,6 @@ class Reminders(Cog):
         new_job: Job = self.bot.scheduler.add_job(self.reminder_call, 'date', run_date=time)
         # update the job id for the upcoming reminder
         db.execute('UPDATE reminders SET job_id = ? WHERE reminder_id = ?', new_job.id, new_reminder_id)
-
-
-async def reminder_info(ctx):
-    embed = Embed(title='Reminders')
-    embed.add_field(name='aliases', value='You can use !reminders, !reminder or !remindme')
-    embed.add_field(name='usage', value='Use !remindme <date> <message> to get a reminder on the specified date/time')
-    embed.add_field(name='mentions', value='Every user or role mentioned in the message will be pinged by the reminder')
-    embed.add_field(name='date',
-                    value='Use MM.DD[.YYYY][;HH:MM] or \'today/heute\' and \'tomorrow/morgen\'')
-    embed.set_thumbnail(
-        url="https://pngimg.com/uploads/alarm_clock/alarm_clock_PNG2.png")
-    await ctx.send(embed=embed)
 
 
 def setup(bot):
