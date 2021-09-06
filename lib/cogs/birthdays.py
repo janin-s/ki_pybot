@@ -57,6 +57,8 @@ class Birthdays(Cog):
             result = db.records(
                 "SELECT user_id, month, day FROM birthdays WHERE guild_id = ? AND day = ? AND month = ?",
                 ctx.guild.id, date.day, date.month)
+        if result is None or len(result) is 0:
+            await ctx.send('no birthdays found.')
         bds = [f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}" for (id, m, d) in result]
         msg = "\n".join(bds)
         await send_paginated(ctx, start="```", end="```", content=msg)
