@@ -18,9 +18,9 @@ async def send_paginated(ctx, limit=2000, start="", end="", *, content):
 
 def parse_datetime(s: str) -> datetime:
     if s == 'heute' or s == 'today':
-        return datetime.today()
+        return datetime.today().replace(hour=0, minute=0)
     if s == 'morgen' or s == 'tomorrow':
-        return datetime.today() + timedelta(days=1)
+        return datetime.today().replace(hour=0, minute=0) + timedelta(days=1)
     dots = s.count('.')
     if dots == 2:
         date = '%d.%m.%Y'
