@@ -10,6 +10,7 @@ from dateutil import parser
 from datetime import datetime, timedelta
 from operator import itemgetter
 
+
 class Birthdays(Cog):
     def __init__(self, bot):
         bot.scheduler.add_job(self.congratulate, CronTrigger(hour=0))
