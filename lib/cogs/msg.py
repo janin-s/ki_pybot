@@ -24,7 +24,7 @@ class Msg(Cog):
             await ctx.send("No shorthands available.")
             return
 
-        text = "Available shorthands:\n" + "\n".join(all_msgs)
+        text = "Available shorthands:\n" + "\n".join(sorted(all_msgs))
 
         await send_paginated(ctx, start="```", end="```", content=text)
 
@@ -54,7 +54,7 @@ async def message(ctx, message=""):
             msg = msg.replace(REPLACE_SENDER, ctx.message.author.display_name)
         if REPLACE_MENTIONS in msg:
             msg = msg.replace(REPLACE_MENTIONS, "".join([", "+m.display_name for m in ctx.message.mentions])[2:])
-        await ctx.send(msg)
+        await ctx.send(msg.encode('latin-1', 'ignore').decode('unicode_escape'))
     else:
         raise MsgNotFound
 
