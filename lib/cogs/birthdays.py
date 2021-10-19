@@ -61,9 +61,18 @@ class Birthdays(Cog):
         if result is None or len(result) is 0:
             await ctx.send('no birthdays found')
             return
-        bds = [f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}" for (id, m, d) in
-               sorted(result, key=itemgetter(1, 2))]
-        msg = "\n".join(bds)
+        bds_all1 = sorted(result, key=itemgetter(1, 2))
+        bds_all2 = bds_all1
+        today_day = datetime.today().day
+        today_month = datetime.today().month
+        bds_sorted1 = list(
+            filter(lambda t: int(t[1]) > today_month or (int(t[1]) == today_month and int(t[2]) >= today_day),
+                   bds_all1))
+        bds_sorted2 = list(
+            filter(lambda t: int(t[1]) < today_month or (int(t[1]) == today_month and int(t[2]) < today_day),
+                   bds_all2))
+        bds_all = bds_sorted1 + bds_sorted2
+        msg = "\n".join( [f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}" for (id, m, d) in bds_all])
         await send_paginated(ctx, start="```", end="```", content=msg)
 
     async def congratulate(self):
