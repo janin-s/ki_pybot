@@ -8,7 +8,6 @@ from apscheduler.job import Job
 
 from ..utils import send_paginated, parse_datetime
 from lib.db import db
-from dateutil import parser
 from datetime import datetime, timedelta
 
 

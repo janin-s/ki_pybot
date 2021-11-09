@@ -1,5 +1,8 @@
+import datetime
+
 from discord.ext.commands import *
-from discord import Game, Status
+from discord import Game, Status, Embed, Colour
+import requests, json
 
 from lib.db import db
 
@@ -45,9 +48,38 @@ class Misc(Cog):
         quote_channel = await self.bot.fetch_channel(quote_channel_id)
         await quote_channel.send(zitat)
 
-    #@Cog.listener()
-    #async def on_message(self, message):
-        #for debuggin
+    @command(aliases=['corona', 'trauer'])
+    async def ampel(self, ctx):
+        url = requests.get('https://corona-ampel-bayern.de/data/data.json')
+        text = url.text
+        data = json.loads(text)
+
+        embed = Embed(title='Corona Info')
+
+        if data['officialState'] == "red":
+            embed.add_field(name="Aktuelle Warnstufe", value='ROT', inline=False)
+            embed.colour = Colour.from_rgb(255, 0, 0)
+            embed.set_thumbnail(url='https://www.tigerlilly.de/wp-content/uploads/2019/01/rot.jpg')
+        elif data['officialState'] == "yellow":
+            embed.add_field(name="Aktuelle Warnstufe", value='GELB', inline=False)
+            embed.colour = Colour.from_rgb(255, 255, 0)
+            embed.set_thumbnail(url='https://www.juedische-allgemeine.de/wp-content/uploads/2018/10/25648-1160x580-c'
+                                    '-default.jpg')
+        else:
+            embed.add_field(name="Aktuelle Warnstufe", value='GRüN', inline=False)
+            embed.colour = Colour.from_rgb(0, 255, 0)
+            embed.set_thumbnail(url='https://dm0qx8t0i9gc9.cloudfront.net/thumbnails/video/GTYSdDW/brush-paints-a'
+                                    '-green-screen_bnql9tru_thumbnail-1080_01.png')
+
+        embed.add_field(name="Hospitalization (Last 7 Days):", value=data['hospitalizationLast7Days'])
+        embed.add_field(name='Aktuelle Intensivpatient:innen:', value=data['currentIntensiveCarePatients'])
+        embed.add_field(name='Prozent Gelb / Prozent Rot:', value=f'{data["yellowPercent"]}% / {data["redPercent"]}%')
+        embed.add_field(name='Für entsprechende Regeln siehe:', value="https://corona-ampel-bayern.de/", inline=False)
+        embed.timestamp = datetime.datetime.fromisoformat(data["lastUpdate"][:-1])
+
+
+
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from dateutil import parser
 
 
 class MsgNotFound(Exception):
