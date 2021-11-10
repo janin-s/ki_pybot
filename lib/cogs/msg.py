@@ -37,6 +37,7 @@ class Msg(Cog):
         db.execute("""\
                     INSERT OR REPLACE INTO messages (shorthand, message, guild_id)
                     VALUES (?, ?, ?)""", name, content, ctx.guild.id)
+        await ctx.message.add_reaction('\U00002705')
 
 
 async def message(ctx, message=""):
@@ -54,7 +55,8 @@ async def message(ctx, message=""):
             msg = msg.replace(REPLACE_SENDER, ctx.message.author.display_name)
         if REPLACE_MENTIONS in msg:
             msg = msg.replace(REPLACE_MENTIONS, "".join([", "+m.display_name for m in ctx.message.mentions])[2:])
-        await ctx.send(msg.encode('latin-1', 'ignore').decode('unicode_escape'))
+
+        await ctx.send(msg.replace("\\n", "\n"))
     else:
         raise MsgNotFound
 
