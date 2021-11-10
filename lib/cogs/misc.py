@@ -1,13 +1,16 @@
 import datetime
 
+import json
+import requests
+from discord import Embed, Colour
 from discord.ext.commands import *
-from discord import Game, Status, Embed, Colour
-import requests, json
 
 from lib.db import db
 
 
 class Misc(Cog):
+    quote_age = (0.0, datetime.datetime.min)
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -74,12 +77,33 @@ class Misc(Cog):
         embed.add_field(name="Hospitalization (Last 7 Days):", value=data['hospitalizationLast7Days'])
         embed.add_field(name='Aktuelle Intensivpatient:innen:', value=data['currentIntensiveCarePatients'])
         embed.add_field(name='Prozent Gelb / Prozent Rot:', value=f'{data["yellowPercent"]}% / {data["redPercent"]}%')
+        embed.add_field(name='Impfquote:', value="{:.2f}%".format(self.get_impfquote()))
         embed.add_field(name='Für entsprechende Regeln siehe:', value="https://corona-ampel-bayern.de/", inline=False)
         embed.timestamp = datetime.datetime.fromisoformat(data["lastUpdate"][:-1])
 
-
-
         await ctx.send(embed=embed)
+
+    @command()
+    async def impfe(self, ctx):
+        quote = self.get_impfquote()
+        # jaja kinder und vorerkrankungen bla bla aber eh nur dummer joke also hdm
+        await ctx.send("Aktuell sind {:.2f}% der Deutschen ungeimpfte Idioten :(".format(100. - quote))
+
+    def get_impfquote(self):
+        if datetime.datetime.now() - self.quote_age[1] > datetime.timedelta(hours=6):
+            print('getting new quote')
+            url = requests.get('https://rki-vaccination-data.vercel.app/api/v2')
+            text = url.text
+            data_complete = json.loads(text)
+            data = data_complete['data']
+            for d in data:
+                if d['name'] == 'Deutschland':
+                    de = d
+            quote_once = float(de['vaccinatedAtLeastOnce']['quote'])
+            self.quote_age = (quote_once, datetime.datetime.now())
+            return quote_once
+        else:
+            return self.quote_age[0]
 
 
 def setup(bot):
