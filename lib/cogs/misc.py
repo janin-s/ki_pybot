@@ -1,17 +1,36 @@
 import datetime
 
+import tweepy as tw
 import json
 import requests
+import random
 from discord import Embed, Colour
 from discord.ext.commands import *
+from tweepy import Response
 
 from lib.db import db
 
 
 class Misc(Cog):
     quote_age = (0.0, datetime.datetime.min)
+    api_key = ''
+    api_secret = ''
+    bearer_token = ''
+    api = None
 
     def __init__(self, bot):
+        # with open("../../data/keys/twitter_api_key", "r", encoding="utf-8") as kf:
+        #     self.api_key = kf.read()
+        # with open("../../data/keys/twitter_secret_key", "r", encoding="utf-8") as skf:
+        #    self.api_secret = skf.read()
+        # with open("../../data/keys/bearer_token", "r", encoding="utf-8") as bf:
+        #    self.bearer_token = bf.read()
+        # self.client = tw.Client(bearer_token=self.bearer_token,
+        #                        consumer_key=self.api_key,
+        #                        consumer_secret=self.api_secret,
+        #                        wait_on_rate_limit=True,
+        #                        return_type=Response)
+
         self.bot = bot
 
     @Cog.listener()
@@ -104,6 +123,15 @@ class Misc(Cog):
             return quote_once
         else:
             return self.quote_age[0]
+
+    # @command(aliases=['mülltake'])
+    async def trashtake(self, ctx):
+        id = 0  # TODO
+        response: tw.Response = self.client.get_users_tweets(id=id, exclude=['replies', 'retweets'], max_results=100)
+        tweet = random.choice(response.data)
+        text = tweet.text
+        print(text)
+        await ctx.send(text)
 
 
 def setup(bot):
