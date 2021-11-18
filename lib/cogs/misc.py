@@ -127,7 +127,7 @@ class Misc(Cog):
 
     @command(aliases=['mülltake', 'shittake'])
     async def trashtake(self, ctx):
-        id = 809188392089092097  # TODO
+        id = 809188392089092097
         # if list empty get new tweets
         if self.tweets is None or len(self.tweets) == 0:
             response: tw.Response = self.client.get_users_tweets(id=id, exclude=['replies', 'retweets'],
