@@ -17,19 +17,20 @@ class Misc(Cog):
     api_secret = ''
     bearer_token = ''
     api = None
+    tweets = None
 
     def __init__(self, bot):
-        # with open("../../data/keys/twitter_api_key", "r", encoding="utf-8") as kf:
-        #     self.api_key = kf.read()
-        # with open("../../data/keys/twitter_secret_key", "r", encoding="utf-8") as skf:
-        #    self.api_secret = skf.read()
-        # with open("../../data/keys/bearer_token", "r", encoding="utf-8") as bf:
-        #    self.bearer_token = bf.read()
-        # self.client = tw.Client(bearer_token=self.bearer_token,
-        #                        consumer_key=self.api_key,
-        #                        consumer_secret=self.api_secret,
-        #                        wait_on_rate_limit=True,
-        #                        return_type=Response)
+        with open(r"./data/keys/twitter_api_key", "r", encoding="utf-8") as kf:
+            self.api_key = kf.read()
+        with open(r"./data/keys/twitter_secret_key", "r", encoding="utf-8") as skf:
+            self.api_secret = skf.read()
+        with open(r"./data/keys/bearer_token", "r", encoding="utf-8") as bf:
+            self.bearer_token = bf.read()
+        self.client = tw.Client(bearer_token=self.bearer_token,
+                                consumer_key=self.api_key,
+                                consumer_secret=self.api_secret,
+                                wait_on_rate_limit=True,
+                                return_type=Response)
 
         self.bot = bot
 
@@ -124,14 +125,21 @@ class Misc(Cog):
         else:
             return self.quote_age[0]
 
-    # @command(aliases=['mülltake'])
+    @command(aliases=['mülltake', 'shittake'])
     async def trashtake(self, ctx):
-        id = 0  # TODO
-        response: tw.Response = self.client.get_users_tweets(id=id, exclude=['replies', 'retweets'], max_results=100)
-        tweet = random.choice(response.data)
-        text = tweet.text
-        print(text)
-        await ctx.send(text)
+        id = 809188392089092097  # TODO
+        # if list empty get new tweets
+        if self.tweets is None or len(self.tweets) == 0:
+            response: tw.Response = self.client.get_users_tweets(id=id, exclude=['replies', 'retweets'],
+                                                                 max_results=100)
+            self.tweets = response.data
+
+        # get first tweet in list
+        tweet = self.tweets[0]
+        # remove first tweet from list
+        self.tweets = self.tweets[1:]
+        print(len(self.tweets))
+        await ctx.send(tweet)
 
 
 def setup(bot):
