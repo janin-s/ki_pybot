@@ -138,7 +138,6 @@ class Misc(Cog):
         tweet = self.tweets[0]
         # remove first tweet from list
         self.tweets = self.tweets[1:]
-        print(len(self.tweets))
         await ctx.send(tweet)
 
 
