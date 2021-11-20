@@ -1,8 +1,10 @@
 #data-files
 data_files/
+data/db/database.sqlite3
 
 #token
 lib/bot/token.0
+data/keys
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -32,7 +34,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-
+.idea
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.

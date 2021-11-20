@@ -103,6 +103,24 @@ class Misc(Cog):
 
         await ctx.send(embed=embed)
 
+    @command(aliases=['inzidenzen'])
+    async def inzidenz(self, ctx):
+
+        embed = Embed(title='Wöchentliche Inzidenzen')
+
+        url = requests.get('https://api.corona-zahlen.org/districts/')
+        data = json.loads(url.text)
+
+        districts = ["09184", "09178", "09162", "09175", "09274"]
+        for district in districts:
+            district_data = data["data"][district]
+            embed.add_field(name=district_data["county"], value="{:.2f}".format(district_data["weekIncidence"]))
+
+        embed.set_thumbnail(url='https://image.stern.de/30910696/t/8_/v1/w960/r1.7778/-/markus-soeder-bild-1.jpg')
+        embed.timestamp = datetime.datetime.fromisoformat(data["meta"]["lastUpdate"][:-1])
+
+        await ctx.send(embed=embed)
+
     @command()
     async def impfe(self, ctx):
         quote = self.get_impfquote()
