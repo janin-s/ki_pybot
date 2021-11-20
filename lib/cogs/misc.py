@@ -117,7 +117,7 @@ class Misc(Cog):
             embed.add_field(name=district_data["county"], value="{:.2f}".format(district_data["weekIncidence"]))
 
         embed.set_thumbnail(url='https://image.stern.de/30910696/t/8_/v1/w960/r1.7778/-/markus-soeder-bild-1.jpg')
-        embed.timestamp = datetime.datetime.fromisoformat(data["meta"]["lastCheckedForUpdate"][:-1])
+        embed.timestamp = datetime.datetime.fromisoformat(data["meta"]["lastUpdate"][:-1])
 
         await ctx.send(embed=embed)
 
