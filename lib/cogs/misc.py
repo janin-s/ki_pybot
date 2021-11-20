@@ -106,34 +106,58 @@ class Misc(Cog):
 
     @command(aliases=['inzidenzen'])
     async def inzidenz(self, ctx):
-        embed = Embed(title='Wöchentliche Inzidenzen')
         # total
         germany_incidence = json.loads(requests.get("https://api.corona-zahlen.org/germany").text)["weekIncidence"]
+        germany_last_incidence = json.loads(requests.get("https://api.corona-zahlen.org/germany/history/incidence/2")
+                                            .text)["data"][0]["weekIncidence"]
         # districts
         districts = ["09184", "09178", "09162", "09175", "09274", "05112"]
         url = requests.get('https://api.corona-zahlen.org/districts/')
         data = json.loads(url.text)
         incidences = {}
+        names = {}
         for district in districts:
             district_data = data["data"][district]
-            incidences[district_data["county"]] = district_data["weekIncidence"]
+            incidences[district] = district_data["weekIncidence"]
+            names[district] = district_data["county"]
+        # before
+        url = requests.get('https://api.corona-zahlen.org/districts/history/incidence/2')
+        data_before = json.loads(url.text)
+        incidences_before = {}
+        for district in districts:
+            district_data = data_before["data"][district]
+            incidences_before[district] = district_data["history"][0]["weekIncidence"]
         # sort by incidence and create chart
-        plt.figure()
+        plt.figure(figsize=(8, 5))
         sorted_incidences = sorted(incidences.items(), key=lambda x: x[1])[::-1]
-        container = plt.bar(list(a for a, _ in sorted_incidences), list(b for _, b in sorted_incidences),
+        container = plt.bar(
+            list(names[a] for a, _ in sorted_incidences) + ["Deutschland\n(gesamt)"],
+            list(b for _, b in sorted_incidences) + [germany_incidence],
                             align="center", width=0.3, color="#8ec07c")
         plt.axhline(y=1000, linewidth=1, color='red')
-        plt.bar_label(container=container, fmt="%.2f")
+        plt.bar_label(container=container, labels=list(
+            self.format_incidence_change(v, incidences_before[k]) for k, v in sorted_incidences)
+                      + [self.format_incidence_change(germany_incidence, germany_last_incidence)])
         plt.title("Wöchentliche Inzidenzen")
         plt.xlabel("Zuletzt aktualisert: " + datetime.datetime.fromisoformat(data["meta"]["lastUpdate"][:-1])
-                   .strftime("%d.%m. %H:%M"),
+                   .strftime("%d.%m. %H:%M") + "\n(Veränderungen: täglich)",
                    labelpad=15)
         plt.ylabel("")
+        x1, x2, y1, y2 = plt.axis()
+        plt.axis((x1, x2, y1, y2 + 110))
         plt.subplots_adjust(bottom=-1)
         plt.tight_layout()
         path = "/tmp/incidence.png"
         plt.savefig(path)
         await ctx.send(file=File(path))
+
+    def format_incidence_change(self, incidence, incidence_before):
+        s = "{:.2f}".format(incidence) + "\n("
+        ratio = incidence / incidence_before
+        if ratio > 1.0:
+            s += "+"
+        s += "{:.2%}".format(ratio - 1.0) + ")"
+        return s
 
     @command()
     async def impfe(self, ctx):
