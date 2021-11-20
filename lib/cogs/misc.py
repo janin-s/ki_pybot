@@ -4,9 +4,10 @@ import tweepy as tw
 import json
 import requests
 import random
-from discord import Embed, Colour
+from discord import Embed, Colour, File
 from discord.ext.commands import *
 from tweepy import Response
+import matplotlib.pyplot as plt
 
 from lib.db import db
 
@@ -105,21 +106,34 @@ class Misc(Cog):
 
     @command(aliases=['inzidenzen'])
     async def inzidenz(self, ctx):
-
         embed = Embed(title='Wöchentliche Inzidenzen')
-
+        # total
+        germany_incidence = json.loads(requests.get("https://api.corona-zahlen.org/germany").text)["weekIncidence"]
+        # districts
+        districts = ["09184", "09178", "09162", "09175", "09274", "05112"]
         url = requests.get('https://api.corona-zahlen.org/districts/')
         data = json.loads(url.text)
-
-        districts = ["09184", "09178", "09162", "09175", "09274", "09375"]
+        incidences = {}
         for district in districts:
             district_data = data["data"][district]
-            embed.add_field(name=district_data["county"], value="{:.2f}".format(district_data["weekIncidence"]))
-
-        embed.set_thumbnail(url='https://image.stern.de/30910696/t/8_/v1/w960/r1.7778/-/markus-soeder-bild-1.jpg')
-        embed.timestamp = datetime.datetime.fromisoformat(data["meta"]["lastUpdate"][:-1])
-
-        await ctx.send(embed=embed)
+            incidences[district_data["county"]] = district_data["weekIncidence"]
+        # sort by incidence and create chart
+        plt.figure()
+        sorted_incidences = sorted(incidences.items(), key=lambda x: x[1])[::-1]
+        container = plt.bar(list(a for a, _ in sorted_incidences), list(b for _, b in sorted_incidences),
+                            align="center", width=0.3, color="#8ec07c")
+        plt.axhline(y=1000, linewidth=1, color='red')
+        plt.bar_label(container=container, fmt="%.2f")
+        plt.title("Wöchentliche Inzidenzen")
+        plt.xlabel("Zuletzt aktualisert: " + datetime.datetime.fromisoformat(data["meta"]["lastUpdate"][:-1])
+                   .strftime("%d.%m. %H:%M"),
+                   labelpad=15)
+        plt.ylabel("")
+        plt.subplots_adjust(bottom=-1)
+        plt.tight_layout()
+        path = "/tmp/incidence.png"
+        plt.savefig(path)
+        await ctx.send(file=File(path))
 
     @command()
     async def impfe(self, ctx):
