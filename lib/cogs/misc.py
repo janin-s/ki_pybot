@@ -111,7 +111,7 @@ class Misc(Cog):
         url = requests.get('https://api.corona-zahlen.org/districts/')
         data = json.loads(url.text)
 
-        districts = ["09184", "09178", "09162", "09175", "09274"]
+        districts = ["09184", "09178", "09162", "09175", "09274", "09375"]
         for district in districts:
             district_data = data["data"][district]
             embed.add_field(name=district_data["county"], value="{:.2f}".format(district_data["weekIncidence"]))
