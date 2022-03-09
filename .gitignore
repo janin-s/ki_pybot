@@ -1,10 +1,11 @@
 #data-files
 data_files/
 data/db/database.sqlite3
+data/keys
+data/other/incidence.png
 
 #token
 lib/bot/token.0
-data/keys
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
