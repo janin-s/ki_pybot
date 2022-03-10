@@ -1,16 +1,9 @@
-import copy
-from dataclasses import dataclass
-from sqlite3 import OperationalError
-from typing import Union
 
-from apscheduler.jobstores.base import JobLookupError
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from discord import User, Embed, TextChannel
-from discord.abc import Messageable
+from dataclasses import dataclass
+
+from discord import Embed
 from discord.ext import tasks
 from discord.ext.commands import *
-from apscheduler.triggers.cron import CronTrigger
-from apscheduler.job import Job
 
 from ..utils import send_paginated, parse_datetime
 from lib.db import db
@@ -172,6 +165,7 @@ class Reminders(Cog):
 
     @tasks.loop(minutes=10)
     async def delete_reminders(self):
+        # TODO clean up, delete with where time <=
         records = db.column(f'SELECT reminder_id FROM reminders WHERE time <= ?',
                             (datetime.now() - timedelta(hours=1)).isoformat())
         for reminder_id in records:
