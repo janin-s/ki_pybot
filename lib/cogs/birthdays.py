@@ -6,7 +6,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 from ..utils import send_paginated, parse_datetime
 from lib.db import db
-from datetime import datetime, timedelta
+from datetime import datetime
 from operator import itemgetter
 
 
@@ -28,7 +28,7 @@ class Birthdays(Cog):
         embed.add_field(name="add", value="Use !bd add <date> to add your birthday")
         embed.add_field(name="list", value="Use !bd list [<date>] to get a list of some or all birthdays")
         embed.add_field(name="date",
-                        value="Use MM.DD[.YYYY] or 'today/heute' and 'tomorrow/morgen'")
+                        value="Use DD.MM[.YYYY] or 'today/heute' and 'tomorrow/morgen'")
         embed.set_thumbnail(
             url="https://sallysbakingaddiction.com/wp-content/uploads/2017/05/ultimate-birthday-cupcakes.jpg")
         await ctx.send(embed=embed)
@@ -40,7 +40,6 @@ class Birthdays(Cog):
         except ValueError:
             await ctx.message.add_reaction('\U0000274C')
             return
-        print(f"adding bd of {ctx.message.author.display_name} on day {date.day} and month {date.month}")
         db.execute("REPLACE INTO birthdays (guild_id, user_id, month, day) VALUES (?,?,?,?)",
                    ctx.guild.id, ctx.message.author.id, date.month, date.day)
         await ctx.message.add_reaction('\U00002705')
@@ -78,11 +77,10 @@ class Birthdays(Cog):
         await send_paginated(ctx, start="```", end="```", content=msg)
 
     async def congratulate(self):
-        await asyncio.sleep(1)  # idk how precise CronTrigger is, make sure we have the next day
+        await asyncio.sleep(1)  # make sure we have the next day
         day = datetime.today().day
         month = datetime.today().month
         for guild in self.bot.guilds:
-            print("fetching channels")
             channel_id = db.field("SELECT birthday_channel FROM server_info WHERE guild_id = ?", guild.id)
             if channel_id is None:
                 channel_id = db.field("SELECT main_channel FROM server_info WHERE guild_id = ?", guild.id)
@@ -94,13 +92,12 @@ class Birthdays(Cog):
                 continue
             ids = db.column("SELECT user_id FROM birthdays WHERE month = ? AND day = ? AND guild_id = ?",
                             month, day, guild.id)
-            print(f"found {len(ids)} users for day {day} and month {month}")
-            for id in ids:
-                # maybe use this instead
-                # user: User = self.bot.get_user(id)
-                user: User = await self.bot.fetch_user(id)
+
+            for uid in ids:
+                user: User = self.bot.get_user(uid)
+                if user is None:
+                    user: User = await self.bot.fetch_user(uid)
                 if user is not None:
-                    print(f"User with display name{user.display_name} and name {user.name}")
                     await channel.send(f"Alles Gute {user.mention}!")
 
 
