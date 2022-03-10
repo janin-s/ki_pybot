@@ -81,7 +81,6 @@ class Reminders(Cog):
             return
         reminders = sorted(reminders, key=lambda r: r.time)
         rems = ''
-        # TODO: split into passed/not passed maybe
         for rem in reminders:
             user = ctx.guild.get_member(rem.user_id)
             if user is None:
@@ -165,14 +164,10 @@ class Reminders(Cog):
 
     @tasks.loop(minutes=10)
     async def delete_reminders(self):
-        # TODO clean up, delete with where time <=
-        records = db.column(f'SELECT reminder_id FROM reminders WHERE time <= ?',
-                            (datetime.now() - timedelta(hours=1)).isoformat())
-        for reminder_id in records:
-            if reminder_id is not None:
-                db.execute('DELETE FROM reminders WHERE reminder_id = ?', reminder_id)
+        cutoff = datetime.now() - timedelta(hours=1)
+        db.execute('DELETE FROM reminders WHERE time <= ?', cutoff.isoformat())
 
-        self.reminders = list(filter(lambda r: r.reminder_id not in records, self.reminders))
+        self.reminders = list(filter(lambda r: r.time <= cutoff, self.reminders))
 
     @tasks.loop(minutes=1)
     async def reminder_loop(self):

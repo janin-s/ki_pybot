@@ -33,10 +33,9 @@ class Msg(Cog):
     async def add_message(self, ctx, name, *, content):
         """assigns content to a shorthand"""
         # TODO: clean content
-        print(f"adding message {name} to DB")
-        db.execute("""\
-                    INSERT OR REPLACE INTO messages (shorthand, message, guild_id)
-                    VALUES (?, ?, ?)""", name, content, ctx.guild.id)
+        print(f'adding message {name} to DB')
+        db.execute('''INSERT OR REPLACE INTO messages (shorthand, message, guild_id) VALUES (?, ?, ?)''',
+                   name, content, ctx.guild.id)
         await ctx.message.add_reaction('\U00002705')
 
 

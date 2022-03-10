@@ -56,7 +56,7 @@ class DMCmds(Cog):
                 user = ctx.message.author
                 await ctx.send("KI schlägt zurück")
             elif not OFFLINE_PUNISH and user.status is discord.Status.offline:
-                await ctx.send("offline user puishen sehr fies :(")
+                await ctx.send("offline user punishen sehr fies :(")
                 continue
             else:
                 sql_get_time = "SELECT punish_time FROM punish_times WHERE guild_id = ? AND user_id = ?"
