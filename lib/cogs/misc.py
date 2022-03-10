@@ -1,5 +1,6 @@
 import os.path
 
+import tweepy
 import tweepy as tw
 
 from discord.ext.commands import *
@@ -13,7 +14,7 @@ class Misc(Cog):
     api_secret = ''
     bearer_token = ''
     api = None
-    tweets = None
+    tweets: [tweepy.Tweet] = None
 
     def __init__(self, bot):
         # setup folder for
@@ -75,18 +76,16 @@ class Misc(Cog):
     @command(aliases=['mülltake', 'shittake'])
     async def trashtake(self, ctx):
         """based take on the current political situation"""
-        id = 809188392089092097
+        user_id = 809188392089092097
         # if list empty get new tweets
         if self.tweets is None or len(self.tweets) == 0:
-            response: tw.Response = self.client.get_users_tweets(id=id, exclude=['replies', 'retweets'],
+            response: tw.Response = self.client.get_users_tweets(id=user_id, exclude=['replies', 'retweets'],
                                                                  max_results=100)
             self.tweets = response.data
 
         # get first tweet in list
-        tweet = self.tweets[0]
-        # remove first tweet from list
-        self.tweets = self.tweets[1:]
-        await ctx.send(tweet)
+        tweet: tweepy.Tweet = self.tweets.pop(0)
+        await ctx.send(tweet.text)
 
 
 def setup(bot):
