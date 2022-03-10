@@ -28,7 +28,7 @@ class Admin(Cog):
     @command(name='unload')
     @commands.has_permissions(administrator=True)
     async def unload(self, ctx, cog):
-        """Unloads a previously not loaded Cog"""
+        """Unloads a previously loaded Cog"""
         if cog not in COGS or cog == "admin":
             await ctx.send(f'cog \"{cog}\" not found or invalid')
             return
@@ -39,7 +39,7 @@ class Admin(Cog):
     @command(name='reload')
     @commands.has_permissions(administrator=True)
     async def reload(self, ctx, cog):
-        """Reoads a previously not loaded Cog"""
+        """Reloads a previously loaded Cog"""
         if cog not in COGS:
             await ctx.send(f'cog \"{cog}\" not found')
             return
