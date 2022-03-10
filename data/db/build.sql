@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS server_info (
-    guild_id integer NOT NULL,
+    guild_id integer NOT NULL PRIMARY KEY,
     name text,
     main_channel integer,
     quote_channel integer,
@@ -36,12 +36,12 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE TABLE IF NOT EXISTS reminders (
     reminder_id integer,
-    job_id text,
     user_id integer NOT NULL,
     guild_id integer NOT NULL,
     time text NOT NULL,
     message text NOT NULL,
     mentions text NOT NULL,
+    called boolean default false,
     PRIMARY KEY (reminder_id),
     FOREIGN KEY (user_id, guild_id)
         REFERENCES users(id, guild_id)

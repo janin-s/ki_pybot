@@ -57,7 +57,7 @@ class Birthdays(Cog):
             result = db.records(
                 "SELECT user_id, month, day FROM birthdays WHERE guild_id = ? AND day = ? AND month = ?",
                 ctx.guild.id, date.day, date.month)
-        if result is None or len(result) is 0:
+        if result is None or len(result) == 0:
             await ctx.send('no birthdays found')
             return
         # sort so list starts at next bd and wraps
