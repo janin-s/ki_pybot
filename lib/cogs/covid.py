@@ -110,10 +110,13 @@ class Covid(Cog):
         if datetime.datetime.now() - self.quote_age[1] > datetime.timedelta(hours=6):
             data_complete = json.loads(requests.get('https://rki-vaccination-data.vercel.app/api/v2').text)
             try:
+                de = None
                 data = data_complete['data']
                 for d in data:
                     if d['name'] == 'Deutschland':
                         de = d
+                if de is None:
+                    return self.quote_age[0]
                 quote_once = float(de['vaccinatedAtLeastOnce']['quote'])
                 self.quote_age = (quote_once, datetime.datetime.now())
                 return quote_once
