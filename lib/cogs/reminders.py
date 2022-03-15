@@ -147,8 +147,8 @@ class Reminders(Cog):
 
         reminder_id = db.field('''SELECT reminder_id FROM reminders WHERE
                                 user_id = ? AND
-                                time = (SELECT max(time) FROM reminders WHERE time < ?)''',
-                               user_id, datetime.now().isoformat())
+                                time = (SELECT max(time) FROM reminders WHERE time < ? AND user_id = ?)''',
+                               user_id, datetime.now().isoformat(), user_id)
 
         if reminder_id is None:
             await ctx.send("No reminder to snooze!")
