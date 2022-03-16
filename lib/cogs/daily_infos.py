@@ -21,7 +21,7 @@ class DailyInfos(Cog):
             self.WEATHER_API_KEY = wk.read()
 
         self.bot = bot
-        bot.scheduler.add_job(self.print_daily_infos, CronTrigger(hour=2))
+        bot.scheduler.add_job(self.print_daily_infos, CronTrigger(hour=8))
 
     @Cog.listener()
     async def on_ready(self):
@@ -30,14 +30,18 @@ class DailyInfos(Cog):
 
     @command()
     @has_permissions(administrator=True)
-    async def print_daily_infos(self, ctx=None):
+    async def daily_info(self, ctx):
+        await self.print_daily_infos()
+
+    async def print_daily_infos(self):
         guilds = db.records('SELECT guild_id, name, reminder_channel, quote_channel FROM server_info')
         for _, name, rem_channel, quote_channel in guilds:
             await self.print_daily_infos_for_guild(name, rem_channel, quote_channel)
 
     async def print_daily_infos_for_guild(self, name: str, main_channel_id: int, quote_channel_id: int):
         main_channel: TextChannel = await self.bot.fetch_channel(main_channel_id)
-        main_embed: Embed = Embed(title='Daily Updates!', description='Guten Morgen :)')
+
+        main_embed: Embed = Embed(title=f'Guten Morgen {name}')
         inzidenz_file = get_incidence_image_embed()
         main_embed.set_image(url='attachment://incidence.png')
         await main_channel.send(file=inzidenz_file, embed=main_embed)
@@ -46,7 +50,6 @@ class DailyInfos(Cog):
         weather_embed = get_weather_info_embed(self.WEATHER_API_KEY)
         news_embed = get_news_embed(self.NEWS_API_KEY)
         embeds = [relikte_embed, weather_embed, news_embed]
-
         for e in embeds:
             if e is not None:
                 await main_channel.send(embed=e)
