@@ -32,7 +32,7 @@ class Config:
         except (TypeError, toml.TomlDecodeError) as e:
             print(f"invalid config file: {e}")
         src_dir, _ = path.split(path.realpath(__file__))
-        default_config_file = path.join(src_dir, "../../owo.toml")
+        default_config_file = path.join(src_dir, "../../config.toml")
         self.default_config = None
         if not path.samefile(config_file, default_config_file):
             try:

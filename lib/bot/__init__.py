@@ -29,7 +29,7 @@ class Ready(object):
 
 class Bot(BotBase):
     def __init__(self):
-        config_file = "owo.toml"
+        config_file = "config.toml"
         if len(sys.argv) > 1:
             config_file = sys.argv[1]
         self.config = Config(config_file)
