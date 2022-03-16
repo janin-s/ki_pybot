@@ -1,0 +1,15 @@
+command_prefix = "!"
+
+desc = "hallo wie gehts schlecht :("
+
+owner_id = 42
+
+guild_id = 69
+
+[api_tokens]
+
+discord = "owo"
+
+twitter_api_key = "1"
+twitter_api_secret = "2"
+twitter_bearer_token = "3"
