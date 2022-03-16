@@ -1,0 +1,6 @@
+APScheduler
+discord.py
+requests
+matplotlib
+tweepy
+toml
