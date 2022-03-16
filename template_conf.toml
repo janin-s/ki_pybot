@@ -1,0 +1,16 @@
+command_prefix = "!"
+
+desc = "hallo wie gehts schlecht :("
+
+owner_id = 123
+
+guild_id = 123
+
+[api_tokens]
+
+discord = "abc"
+news_api_key = "abc"
+weather_api_key = "abc"
+twitter_api_key = "abc"
+twitter_api_secret = "abc"
+twitter_bearer_token = "abc"
