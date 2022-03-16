@@ -52,6 +52,8 @@ class Config:
 
         self.discord_token = str(self.get_key("api_tokens", "discord"))
 
+        self.news_api_key = str(self.get_key("api_tokens", "news_api_key"))
+        self.weather_api_key = str(self.get_key("api_tokens", "weather_api_key"))
         self.twitter_api_key = str(self.get_key("api_tokens", "twitter_api_key"))
         self.twitter_api_secret = str(self.get_key("api_tokens", "twitter_api_secret"))
         self.twitter_bearer_token = str(self.get_key("api_tokens", "twitter_bearer_token"))
