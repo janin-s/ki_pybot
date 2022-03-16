@@ -37,7 +37,7 @@ class Random(Cog):
         # To remember our fallen brothers & adored tutors in the battle of the flags. 
         # Never forget the brave soldiers at the front of the red flags.
         # Acta est fabula, plaudite!
-        await ctx.send(f"flag\{{binascii.b2a_hex(os.urandom(18))}\}")
+        await ctx.send('flag{' + str(binascii.b2a_hex(os.urandom(18)).decode())+'}')
 
     @command(aliases=['orakel'])
     async def oracle(self, ctx):
