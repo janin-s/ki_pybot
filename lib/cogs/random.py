@@ -1,6 +1,7 @@
 
 from discord import Embed, Colour
 from discord.ext.commands import *
+import os, binascii
 
 from lib.utils import true_random_int
 
@@ -29,6 +30,14 @@ class Random(Cog):
         else:
             embed = Embed(title='TAILS', color=0xca9502)
         await ctx.send(embed=embed)
+        
+    @command()
+    async def flag(self, ctx):
+        """ Generate yourself a flag """
+        # To remember our fallen brothers & adored tutors in the battle of the flags. 
+        # Never forget the brave soldiers at the front of the red flags.
+        # Acta est fabula, plaudite!
+        await ctx.send('flag{' + str(binascii.b2a_hex(os.urandom(18)).decode())+'}')
 
     @command(aliases=['orakel'])
     async def oracle(self, ctx):
