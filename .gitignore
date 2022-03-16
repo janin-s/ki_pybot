@@ -4,6 +4,9 @@ data/db/database.sqlite3
 data/keys
 data/other/incidence.png
 
+# config (including api keys)
+config.toml
+
 #token
 lib/bot/token.0
 
