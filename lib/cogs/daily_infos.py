@@ -14,13 +14,9 @@ from lib.covid_utils import incidence_image
 
 class DailyInfos(Cog):
     def __init__(self, bot):
-        # load api keys
-        with open(r"./data/keys/news_api_key", "r", encoding="utf-8") as nk:
-            self.NEWS_API_KEY = nk.read()
-        with open(r"./data/keys/weather_api_key", "r", encoding="utf-8") as wk:
-            self.WEATHER_API_KEY = wk.read()
-
         self.bot = bot
+        self.NEWS_API_KEY = self.bot.config.news_api_key
+        self.WEATHER_API_KEY = self.bot.config.weather_api_key
         bot.scheduler.add_job(self.print_daily_infos, CronTrigger(hour=8))
 
     @Cog.listener()
