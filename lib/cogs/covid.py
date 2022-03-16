@@ -7,7 +7,7 @@ import requests
 from discord import Embed, Colour, File
 from discord.ext.commands import *
 
-from lib.cogs.covid_utils import incidence_image
+from lib.covid_utils import incidence_image
 
 
 class Covid(Cog):
