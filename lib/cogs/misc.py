@@ -21,13 +21,10 @@ class Misc(Cog):
         if not os.path.exists('./data/other'):
             os.mkdir('./data/other')
 
-        # load twitter api stuff
-        with open(r"./data/keys/twitter_api_key", "r", encoding="utf-8") as kf:
-            self.api_key = kf.read()
-        with open(r"./data/keys/twitter_secret_key", "r", encoding="utf-8") as skf:
-            self.api_secret = skf.read()
-        with open(r"./data/keys/bearer_token", "r", encoding="utf-8") as bf:
-            self.bearer_token = bf.read()
+        self.api_key = bot.config.twitter_api_key
+        self.api_secret = bot.config.twitter_api_secret
+        self.bearer_token = bot.config.twitter_bearer_token
+
         self.client = tw.Client(bearer_token=self.bearer_token,
                                 consumer_key=self.api_key,
                                 consumer_secret=self.api_secret,

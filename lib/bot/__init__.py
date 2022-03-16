@@ -1,4 +1,5 @@
 import os
+import sys
 from asyncio import sleep
 
 from discord.ext.commands import Bot as BotBase
@@ -6,14 +7,12 @@ from discord.ext import commands
 from discord import Intents, utils, Forbidden
 from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
 
+from lib.bot.config import Config
 from lib.db import db
 from lib.cogs import msg
 from lib.utils import MsgNotFound
 
-PREFIX = '!'
-OWNER_ID = 388061626131283968
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
-
 
 class Ready(object):
     def __init__(self):
@@ -30,7 +29,10 @@ class Ready(object):
 
 class Bot(BotBase):
     def __init__(self):
-        self.PREFIX = PREFIX
+        config_file = "owo.toml"
+        if len(sys.argv) > 1:
+            config_file = sys.argv[1]
+        self.config = Config(config_file)
         self.ready = False
         self.cogs_ready = Ready()
         self.guild = None
@@ -38,9 +40,10 @@ class Bot(BotBase):
 
         db.autosave(self.scheduler)
         super().__init__(
-            command_prefix=PREFIX,
-            owner_id=OWNER_ID,
+            command_prefix=self.config.command_prefix,
+            owner_id=self.config.owner_id,
             intents=Intents.all(),
+            description=self.config.desc,
             case_insensitive=True
         )
 
@@ -52,15 +55,11 @@ class Bot(BotBase):
 
         print("setup complete")
 
-    def run(self, version):
-        self.VERSION = version
-
+    def run(self):
         self.setup()
 
-        with open("./lib/bot/token.0", "r", encoding="utf-8") as tf:
-            self.TOKEN = tf.read()
-        print("running bot...")
-        super().run(self.TOKEN, reconnect=True)
+        print("running bot..")
+        super().run(self.config.discord_token, reconnect=True)
 
     async def on_connect(self):
         print("bot running")
@@ -89,7 +88,7 @@ class Bot(BotBase):
 
     async def on_ready(self):
         if not self.ready:
-            self.guild = self.get_guild(705425948996272210)
+            self.guild = self.get_guild(self.config.guild_id)
             self.scheduler.start()
             # wait for cogs to be ready
             while not self.cogs_ready.all_ready():
