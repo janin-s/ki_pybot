@@ -31,7 +31,7 @@ class Random(Cog):
             embed = Embed(title='TAILS', color=0xca9502)
         await ctx.send(embed=embed)
         
-    @command(aliases=['flag'])
+    @command()
     async def flag(self, ctx):
         """ Generate yourself a flag """
         # To remember our fallen brothers & adored tutors in the battle of the flags. 
