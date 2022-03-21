@@ -24,7 +24,6 @@ class Reminders(Cog):
 
     def __init__(self, bot):
         self.bot = bot
-
         records = db.records('SELECT reminder_id, user_id, guild_id, time, message, mentions, called FROM reminders')
         self.reminder_list = [Reminder(reminder_id=reminder_id,
                                        user_id=user_id,
@@ -75,6 +74,7 @@ class Reminders(Cog):
             reminders = self.reminder_list
         else:
             reminders = list(filter(lambda r: r.user_id in mentioned_ids, self.reminder_list))
+
         if reminders is None or len(reminders) == 0:
             await ctx.send('no reminders found')
             return
@@ -166,14 +166,14 @@ class Reminders(Cog):
         cutoff = datetime.now() - timedelta(hours=1)
         db.execute('DELETE FROM reminders WHERE time <= ?', cutoff.isoformat())
 
-        self.reminder_list = list(filter(lambda r: r.time <= cutoff, self.reminder_list))
+        self.reminder_list = list(filter(lambda r: r.time > cutoff, self.reminder_list))
 
     @tasks.loop(minutes=1)
     async def reminder_loop(self):
         # fetch the next upcoming reminder
         records = db.records('''SELECT guild_id, message, mentions FROM reminders WHERE
                                 time <= ? AND called= ?''', (datetime.now() + timedelta(seconds=15)).isoformat(), False)
-        for  guild_id, message, mentions in records:
+        for guild_id, message, mentions in records:
             channel_id = db.field('SELECT reminder_channel FROM server_info WHERE guild_id = ?', guild_id)
             channel = self.bot.get_channel(channel_id)
             if channel is None:
