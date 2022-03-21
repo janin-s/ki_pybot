@@ -1,6 +1,6 @@
-APScheduler
-discord.py
-requests
-matplotlib
-tweepy
-toml
+APScheduler~=3.9.1
+discord.py~=1.7.3
+requests~=2.27.1
+matplotlib~=3.5.1
+tweepy~=4.7.0
+toml~=0.10.2

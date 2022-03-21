@@ -40,6 +40,7 @@ def field(command, *values):
 
     if (fetch := cur.fetchone()) is not None:
         return fetch[0]
+    return None
 
 
 def record(command, *values):

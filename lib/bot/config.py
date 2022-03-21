@@ -1,5 +1,6 @@
-import os.path as path
+from os import path
 import toml
+
 
 class MissingKeyException(Exception):
     def __init__(self, *keys: str) -> None:
@@ -9,38 +10,38 @@ class MissingKeyException(Exception):
 def _get_key(user, default, *path):
     if user is None and default is None:
         raise MissingKeyException(*path)
-    elif len(path) == 0:
+    if len(path) == 0:
         return user if user is not None else default
-    else:
-        key = path[0]
-        try:
-            return _get_key(
-                user[key] if user is not None and key in user else None,
-                default[key] if default is not None and key in default else None,
-                *(path[1:])
-            )
-        except MissingKeyException:
-            raise MissingKeyException(*path)
+
+    key = path[0]
+    try:
+        return _get_key(
+            user[key] if user is not None and key in user else None,
+            default[key] if default is not None and key in default else None,
+            *(path[1:])
+        )
+    except MissingKeyException as missing_key_ex:
+        raise MissingKeyException(*path) from missing_key_ex
 
 
 class Config:
     def __init__(self, config_file: str):
         try:
             self.config = toml.load(open(config_file, mode="r"))
-        except OSError as e:
-            print(f"unable to open config file {config_file}: {e}")
-        except (TypeError, toml.TomlDecodeError) as e:
-            print(f"invalid config file: {e}")
+        except OSError as ex:
+            print(f"unable to open config file {config_file}: {ex}")
+        except (TypeError, toml.TomlDecodeError) as ex:
+            print(f"invalid config file: {ex}")
         src_dir, _ = path.split(path.realpath(__file__))
         default_config_file = path.join(src_dir, "../../config.toml")
         self.default_config = None
         if not path.samefile(config_file, default_config_file):
             try:
                 self.default_config = toml.load(open(default_config_file, mode="r"))
-            except OSError as e:
-                print(f"unable to open default config file {default_config_file}: {e}")
-            except (TypeError, toml.TomlDecodeError) as e:
-                print(f"invalid default config file: {e}")
+            except OSError as ex:
+                print(f"unable to open default config file {default_config_file}: {ex}")
+            except (TypeError, toml.TomlDecodeError) as ex:
+                print(f"invalid default config file: {ex}")
 
         self.command_prefix = str(self.get_key("command_prefix"))
 

@@ -1,9 +1,8 @@
 import os.path
 
-import tweepy
 import tweepy as tw
 
-from discord.ext.commands import *
+from discord.ext.commands import Cog, command
 from tweepy import Response
 
 from lib.db import db
@@ -14,7 +13,7 @@ class Misc(Cog):
     api_secret = ''
     bearer_token = ''
     api = None
-    tweets: [tweepy.Tweet] = None
+    tweets: [tw.Tweet] = None
 
     def __init__(self, bot):
         # setup folder for
@@ -81,7 +80,7 @@ class Misc(Cog):
             self.tweets = response.data
 
         # get first tweet in list
-        tweet: tweepy.Tweet = self.tweets.pop(0)
+        tweet: tw.Tweet = self.tweets.pop(0)
         await ctx.send(tweet.text)
 
 

@@ -1,7 +1,7 @@
+import os, binascii
 
 from discord import Embed, Colour
-from discord.ext.commands import *
-import os, binascii
+from discord.ext.commands import Cog, command
 
 from lib.utils import true_random_int
 
