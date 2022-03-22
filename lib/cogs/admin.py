@@ -2,7 +2,7 @@ from discord.ext.commands import Cog, command
 from discord.ext import commands
 
 from lib.bot import COGS
-from ..db import db
+from lib.db import db
 
 
 class Admin(Cog):

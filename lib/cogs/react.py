@@ -40,7 +40,7 @@ class React(Cog):
             await message.add_reaction(unicode_id)
 
 
-def chars_unique(s):
+def chars_unique(string):
     checker = 0
     num_checker = 0
     special = {
@@ -49,9 +49,9 @@ def chars_unique(s):
         43: False,
         45: False
     }
-    s = s.lower()
-    for c in s:
-        ascii_value = ord(c)
+    string = string.lower()
+    for char in string:
+        ascii_value = ord(char)
         # letters
         if 97 <= ascii_value <= 122:
             val = ascii_value - ord('a')
@@ -83,20 +83,20 @@ def chars_unique(s):
     return True
 
 
-def get_unicode_id(c):
-    c = c.lower()
-    o = ord(c)
-    if 97 <= o <= 122:
-        return chr(127462 + (o - 97))
-    if 48 <= o <= 57:
-        return c + chr(65039) + chr(8419)
-    if o == 63:
+def get_unicode_id(char):
+    char = char.lower()
+    ascii_val = ord(char)
+    if 97 <= ascii_val <= 122:
+        return chr(127462 + (ascii_val - 97))
+    if 48 <= ascii_val <= 57:
+        return char + chr(65039) + chr(8419)
+    if ascii_val == 63:
         return '\U00002753'
-    if o == 33:
+    if ascii_val == 33:
         return '\U00002757'
-    if o == 43:
+    if ascii_val == 43:
         return '\U00002795'
-    if o == 45:
+    if ascii_val == 45:
         return '\U00002796'
     return '\U00002753'
 

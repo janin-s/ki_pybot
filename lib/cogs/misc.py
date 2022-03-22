@@ -1,10 +1,7 @@
 import os.path
 
 import tweepy as tw
-
 from discord.ext.commands import Cog, command
-from tweepy import Response
-
 from lib.db import db
 
 
@@ -28,7 +25,7 @@ class Misc(Cog):
                                 consumer_key=self.api_key,
                                 consumer_secret=self.api_secret,
                                 wait_on_rate_limit=True,
-                                return_type=Response)
+                                return_type=tw.Response)
 
         self.bot = bot
 
@@ -61,8 +58,8 @@ class Misc(Cog):
         async for message in ctx.channel.history(limit=length + 1):
             message_list.append(message)
         message_list.reverse()
-        for m in message_list:
-            zitat += m.author.display_name + ": \"" + m.content + "\"\n"
+        for msg in message_list:
+            zitat += msg.author.display_name + ": \"" + msg.content + "\"\n"
         quote_channel_id = db.field("SELECT quote_channel FROM server_info WHERE guild_id = ?", ctx.guild)
         if quote_channel_id is None:
             quote_channel_id = ctx.channel.id
@@ -75,7 +72,8 @@ class Misc(Cog):
         user_id = 809188392089092097
         # if list empty get new tweets
         if self.tweets is None or len(self.tweets) == 0:
-            response: tw.Response = self.client.get_users_tweets(id=user_id, exclude=['replies', 'retweets'],
+            response: tw.Response = self.client.get_users_tweets(id=user_id,
+                                                                 exclude=['replies', 'retweets'],
                                                                  max_results=100)
             self.tweets = response.data
 

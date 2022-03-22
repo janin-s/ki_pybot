@@ -51,7 +51,7 @@ class Covid(Cog):
         embed.add_field(name='Hospitalization (Last 7 Days):', value=data['hospitalizationLast7Days'])
         embed.add_field(name='Aktuelle Intensivpatient:innen:', value=data['currentIntensiveCarePatients'])
         embed.add_field(name='Prozent Gelb / Prozent Rot:', value=f"{data['yellowPercent']}% / {data['redPercent']}%")
-        embed.add_field(name='Impfquote:', value='{:.2f}%'.format(self.get_impfquote()))
+        embed.add_field(name='Impfquote:', value=f'{self.get_impfquote():.2f}%')
         embed.add_field(name='Für entsprechende Regeln siehe:', value='https://corona-ampel-bayern.de/', inline=False)
         embed.timestamp = datetime.datetime.fromisoformat(data['lastUpdate'][:-1])
 
@@ -104,20 +104,20 @@ class Covid(Cog):
         """current percentage of idiots who are not vaccinated"""
         quote = self.get_impfquote()
         # jaja kinder und vorerkrankungen bla bla aber eh nur dummer joke also hdm
-        await ctx.send('Aktuell sind {:.2f}% der Deutschen ungeimpfte Idioten :('.format(100. - quote))
+        await ctx.send(f'Aktuell sind {100. - quote:.2f}% der Deutschen ungeimpfte Idioten :(')
 
     def get_impfquote(self):
         if datetime.datetime.now() - self.quote_age[1] > datetime.timedelta(hours=6):
             data_complete = json.loads(requests.get('https://rki-vaccination-data.vercel.app/api/v2').text)
             try:
-                de = None
+                de_data = None
                 data = data_complete['data']
                 for d in data:
                     if d['name'] == 'Deutschland':
-                        de = d
-                if de is None:
+                        de_data = d
+                if de_data is None:
                     return self.quote_age[0]
-                quote_once = float(de['vaccinatedAtLeastOnce']['quote'])
+                quote_once = float(de_data['vaccinatedAtLeastOnce']['quote'])
                 self.quote_age = (quote_once, datetime.datetime.now())
                 return quote_once
             except KeyError:
@@ -176,14 +176,14 @@ def create_incidence_image(bavaria_incidence, bavaria_last_incidence, data, germ
 def format_incidence_change(incidence, incidence_before):
     if incidence is None or incidence == 0:
         return 'N/A'
-    s = '{:.2f}'.format(incidence) + '\n('
+    string = f'{incidence:.2f}\n('
     if incidence_before is None or incidence_before == 0:
-        return s + 'N/A)'
+        return string + 'N/A)'
     ratio = incidence / incidence_before
     if ratio > 1.0:
-        s += '+'
-    s += '{:.2%}'.format(ratio - 1.0) + ')'
-    return s
+        string += '+'
+    string += f'{ratio - 1.0:.2%})'
+    return string
 
 
 def setup(bot):

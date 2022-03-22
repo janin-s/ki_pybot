@@ -1,16 +1,17 @@
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 from discord import Embed
 from discord.ext import tasks
 from discord.ext.commands import Cog, group, command
 
-from ..utils import send_paginated, parse_datetime
 from lib.db import db
-from datetime import datetime, timedelta
+from lib import utils
 
 
 @dataclass()
 class Reminder:
+    """data class representing one reminder"""
     reminder_id: int
     user_id: int
     guild_id: int
@@ -85,14 +86,14 @@ class Reminders(Cog):
             if user is None:
                 user = await self.bot.fetch_user(rem.user_id)
             rems += f'{rem.time.strftime("%d.%m.%Y %H:%M")}, {user.display_name}: {rem.message}\n'
-        await send_paginated(ctx, start="```", end="```", content=rems)
+        await utils.send_paginated(ctx, start="```", end="```", content=rems)
 
     @reminders.command()
     async def add(self, ctx, datestring=None, *, message='reminding you :)'):
         """add reminder"""
         # parse the date
         try:
-            time: datetime = parse_datetime(datestring)
+            time: datetime = utils.parse_datetime(datestring)
         except ValueError:
             await ctx.send("invalid date format")
             return

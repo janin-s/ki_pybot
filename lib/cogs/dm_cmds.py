@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 import discord
-from discord import Member
 from discord.ext.commands import Cog, command
 from discord.ext import commands
 
@@ -106,7 +105,7 @@ class DMCmds(Cog):
 
 async def kick_invite_roles(ctx, user, guild):
     records = [(r.id, user.id, guild.id) for r in user.roles]
-    if isinstance(user, Member) and user.nick is not None:
+    if isinstance(user, discord.Member) and user.nick is not None:
         nick = user.nick
     else:
         nick = user.display_name

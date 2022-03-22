@@ -3,11 +3,11 @@ from datetime import datetime
 from operator import itemgetter
 
 from discord import User, Embed
-from discord.ext.commands import Cog, group, command
+from discord.ext.commands import Cog, group
 from apscheduler.triggers.cron import CronTrigger
 
 from lib.db import db
-from ..utils import send_paginated, parse_datetime
+from lib import utils
 
 
 
@@ -37,7 +37,7 @@ class Birthdays(Cog):
     @birthdays.command()
     async def add(self, ctx, *, birthdate):
         try:
-            date = parse_datetime(birthdate)
+            date = utils.parse_datetime(birthdate)
         except ValueError:
             await ctx.message.add_reaction('\U0000274C')
             return
@@ -51,7 +51,7 @@ class Birthdays(Cog):
             result = db.records("SELECT user_id, month, day FROM birthdays WHERE guild_id = ?", ctx.guild.id)
         else:
             try:
-                date = parse_datetime(birthdate)
+                date = utils.parse_datetime(birthdate)
             except ValueError:
                 date = datetime.now()
             result = db.records(
@@ -75,7 +75,7 @@ class Birthdays(Cog):
 
         msg = "\n".join([f"{ctx.guild.get_member(id).display_name}: {d:02d}.{m:02d}" for (id, m, d) in bds_all
                          if ctx.guild.get_member(id) is not None])
-        await send_paginated(ctx, start="```", end="```", content=msg)
+        await utils.send_paginated(ctx, start="```", end="```", content=msg)
 
     async def congratulate(self):
         await asyncio.sleep(1)  # make sure we have the next day

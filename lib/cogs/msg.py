@@ -1,7 +1,7 @@
 from random import choice
 from discord.ext.commands import Cog, command, has_permissions
-from ..db import db
-from ..utils import MsgNotFound, send_paginated
+from lib.db import db
+from lib import utils
 
 REPLACE_SENDER = "[$SENDER$]"
 REPLACE_MENTIONS = "[$MENTIONS$]"
@@ -25,7 +25,7 @@ class Msg(Cog):
 
         text = "Available shorthands:\n" + "\n".join(sorted(all_msgs))
 
-        await send_paginated(ctx, start="```", end="```", content=text)
+        await utils.send_paginated(ctx, start="```", end="```", content=text)
 
     @command(name="set_message")
     @has_permissions(administrator=True)
@@ -56,7 +56,7 @@ async def message(ctx, msg=""):
 
         await ctx.send(msg.replace("\\n", "\n"))
     else:
-        raise MsgNotFound
+        raise utils.MsgNotFound
 
 
 def setup(bot):

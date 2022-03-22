@@ -1,4 +1,5 @@
-import os, binascii
+import binascii
+import os
 
 from discord import Embed, Colour
 from discord.ext.commands import Cog, command
@@ -34,7 +35,7 @@ class Random(Cog):
     @command()
     async def flag(self, ctx):
         """ Generate yourself a flag """
-        # To remember our fallen brothers & adored tutors in the battle of the flags. 
+        # To remember our fallen brothers & adored tutors in the battle of the flags.
         # Never forget the brave soldiers at the front of the red flags.
         # Acta est fabula, plaudite!
         await ctx.send('flag{' + str(binascii.b2a_hex(os.urandom(18)).decode())+'}')
