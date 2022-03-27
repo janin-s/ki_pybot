@@ -3,7 +3,7 @@ import random
 
 import requests
 from discord import Embed, File, TextChannel, Message
-from discord.ext.commands import *
+from discord.ext.commands import Cog, has_permissions, command
 from apscheduler.triggers.cron import CronTrigger
 
 from lib.db import db
@@ -27,19 +27,27 @@ class DailyInfos(Cog):
     @command()
     @has_permissions(administrator=True)
     async def daily_info(self, ctx):
-        await self.print_daily_infos()
+        """command for triggering the daily info post for current guild"""
+        guild_id = ctx.guild.id
+        guild = db.record('SELECT name, reminder_channel, quote_channel FROM server_info WHERE guild_id = ?', guild_id)
+        if guild is None:
+            return
+        name, rem_channel, quote_channel = guild
+        await self.print_daily_infos_for_guild(name, rem_channel, quote_channel)
 
     async def print_daily_infos(self):
-        guilds = db.records('SELECT guild_id, name, reminder_channel, quote_channel FROM server_info')
-        for _, name, rem_channel, quote_channel in guilds:
+        """prints daily infos for all guilds"""
+        guilds = db.records('SELECT name, reminder_channel, quote_channel FROM server_info')
+        for name, rem_channel, quote_channel in guilds:
             await self.print_daily_infos_for_guild(name, rem_channel, quote_channel)
 
     async def print_daily_infos_for_guild(self, name: str, main_channel_id: int, quote_channel_id: int):
+        """prints daily info for one guild"""
         main_channel: TextChannel = await self.bot.fetch_channel(main_channel_id)
         quote_channel: TextChannel = await self.bot.fetch_channel(quote_channel_id)
 
         main_embed: Embed = Embed(title=f'Guten Morgen {name}')
-        inzidenz_file = get_incidence_image_embed()
+        inzidenz_file = get_incidence_image_file()
         main_embed.set_image(url='attachment://incidence.png')
         await main_channel.send(file=inzidenz_file, embed=main_embed)
 
@@ -53,13 +61,13 @@ class DailyInfos(Cog):
 
 
 async def get_relikte_throwback_embed(channel: TextChannel) -> Embed | None:
+    """returns an Embed containing a throwback from relikte x years ago on current date"""
     if channel is None:
         return
     today = datetime.today()
     # TODO handle leap year, where there is no history
     old_messages = []
     for date in [today.replace(year=today.year - i) for i in range(1, 5)]:
-        # for date in [today - timedelta(days=i) for i in range(1, 5)]:
         history = channel.history(before=date + timedelta(days=1), after=date)
         async for m in history:
             old_messages.append(m)
@@ -81,6 +89,7 @@ async def get_relikte_throwback_embed(channel: TextChannel) -> Embed | None:
 
 
 def get_weather_info_embed(api_key) -> Embed | None:
+    """returns an Embed containing Weather information for Garching"""
     LATITUDE = 48.25
     LONGITUDE = 11.65
     api_call = f'https://api.openweathermap.org/data/2.5/onecall?lat={LATITUDE}&lon={LONGITUDE}&exclude=current,' \
@@ -98,16 +107,14 @@ def get_weather_info_embed(api_key) -> Embed | None:
 
 
 def get_news_embed(api_key) -> Embed | None:
+    """returns an Embed containg current news headline"""
     url = f'https://newsapi.org/v2/top-headlines?sources='
     data_zeit = json.loads(requests.get(f'{url}die-zeit&apiKey={api_key}').text)
-    data_spiegel = json.loads(requests.get(f'{url}spiegel-online&apiKey={api_key}').text)
-    spiegel_articles = data_spiegel['articles'][:3]
-    zeit_articles = \
-        list(filter(
-            lambda a: not ('Corona-Zahlen' in a['title'] or 'Fotografie' in a['title'] or a['description'] is None),
-            data_zeit['articles']))[:3]
+    # data_spiegel = json.loads(requests.get(f'{url}spiegel-online&apiKey={api_key}').text)
+    # spiegel_articles = data_spiegel['articles'][:3]
 
-    articles = spiegel_articles + zeit_articles
+    # filter out unwanted entries in the Zeit data
+    articles = filter_articles(data_zeit)[:6]
 
     embed: Embed = Embed(title='Aktuelle Schlagzeilen')
     for article in articles:
@@ -116,7 +123,13 @@ def get_news_embed(api_key) -> Embed | None:
     return embed
 
 
-def get_incidence_image_embed() -> File:
+def filter_articles(data):
+    keywords = ['Corona-Zahlen', 'Fotografie', 'Basketball', 'Fußball', 'Tennis']
+    return list(filter(lambda a: not (any(keyword in a['title'] for keyword in keywords)), data['articles']))
+
+
+def get_incidence_image_file() -> File:
+    """returns the incidence image as a discord File"""
     incidence_image(path='./data/other/incidence.png')
     incidence_image_file = File('./data/other/incidence.png', filename='incidence.png')
     return incidence_image_file
