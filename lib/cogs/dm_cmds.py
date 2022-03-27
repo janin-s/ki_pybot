@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import discord
 from discord import Member
-from discord.ext.commands import *
+from discord.ext.commands import Cog, command
 from discord.ext import commands
 
 from lib.db import db
@@ -78,8 +78,9 @@ class DMCmds(Cog):
             VALUES (?,?,?) 
             ON CONFLICT (user_id, guild_id) DO
             UPDATE SET punish_time = ? WHERE user_id = ? AND guild_id = ?"""
-            time = datetime.now().isoformat(timespec='seconds')
-            db.execute(sql_update_time, current_id, ctx.guild.id, time, time, current_id, ctx.guild.id)
+
+            new_time = datetime.now().isoformat(timespec='seconds')
+            db.execute(sql_update_time, current_id, ctx.guild.id, new_time, new_time, current_id, ctx.guild.id)
 
             await kick_invite_roles(ctx, user, ctx.guild)
 

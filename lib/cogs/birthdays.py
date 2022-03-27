@@ -1,13 +1,14 @@
 import asyncio
-
-from discord import User, Embed
-from discord.ext.commands import *
-from apscheduler.triggers.cron import CronTrigger
-
-from ..utils import send_paginated, parse_datetime
-from lib.db import db
 from datetime import datetime
 from operator import itemgetter
+
+from discord import User, Embed
+from discord.ext.commands import Cog, group, command
+from apscheduler.triggers.cron import CronTrigger
+
+from lib.db import db
+from ..utils import send_paginated, parse_datetime
+
 
 
 class Birthdays(Cog):

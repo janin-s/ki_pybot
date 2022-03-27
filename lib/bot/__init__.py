@@ -14,7 +14,7 @@ from lib.utils import MsgNotFound
 
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 
-class Ready(object):
+class Ready():
     def __init__(self):
         for cog in COGS:
             setattr(self, cog, False)
@@ -75,7 +75,7 @@ class Bot(BotBase):
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, commands.errors.CommandNotFound):
             try:
-                await msg.message(ctx=ctx, message=ctx.invoked_with)
+                await msg.message(ctx=ctx, msg=ctx.invoked_with)
             except MsgNotFound:
                 await ctx.send('KI dummdumm v2 <:eist_moment:731293248324370483>')
 

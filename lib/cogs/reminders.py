@@ -1,9 +1,8 @@
-
 from dataclasses import dataclass
 
 from discord import Embed
 from discord.ext import tasks
-from discord.ext.commands import *
+from discord.ext.commands import Cog, group, command
 
 from ..utils import send_paginated, parse_datetime
 from lib.db import db
@@ -25,16 +24,15 @@ class Reminders(Cog):
 
     def __init__(self, bot):
         self.bot = bot
-
         records = db.records('SELECT reminder_id, user_id, guild_id, time, message, mentions, called FROM reminders')
-        self.reminders: [Reminder] = [Reminder(reminder_id=reminder_id,
-                                               user_id=user_id,
-                                               guild_id=guild_id,
-                                               time=datetime.fromisoformat(time),
-                                               message=message,
-                                               mentions=mentions,
-                                               called=called)
-                                      for (reminder_id, user_id, guild_id, time, message, mentions, called) in records]
+        self.reminder_list = [Reminder(reminder_id=reminder_id,
+                                       user_id=user_id,
+                                       guild_id=guild_id,
+                                       time=datetime.fromisoformat(time),
+                                       message=message,
+                                       mentions=mentions,
+                                       called=called)
+                              for (reminder_id, user_id, guild_id, time, message, mentions, called) in records]
         self.reminder_loop.start()
         self.delete_reminders.start()
 
@@ -73,9 +71,10 @@ class Reminders(Cog):
     async def list(self, ctx):
         mentioned_ids = [user.id for user in ctx.message.mentions]
         if mentioned_ids is None or len(mentioned_ids) == 0:
-            reminders = self.reminders
+            reminders = self.reminder_list
         else:
-            reminders = list(filter(lambda r: r.user_id in mentioned_ids, self.reminders))
+            reminders = list(filter(lambda r: r.user_id in mentioned_ids, self.reminder_list))
+
         if reminders is None or len(reminders) == 0:
             await ctx.send('no reminders found')
             return
@@ -115,7 +114,7 @@ class Reminders(Cog):
         rem_id = insert_reminder(rem)
         rem.reminder_id = rem_id
 
-        self.reminders.append(rem)
+        self.reminder_list.append(rem)
 
         await ctx.send("Ich sag dann Bescheid")
 
@@ -156,7 +155,7 @@ class Reminders(Cog):
 
         db.execute('''UPDATE reminders SET time = ?, called = ? WHERE reminder_id = ?''',
                    date.isoformat(), False, reminder_id)
-        for rem in self.reminders:
+        for rem in self.reminder_list:
             if rem.reminder_id == reminder_id:
                 rem.called = False
                 rem.time = date
@@ -167,14 +166,14 @@ class Reminders(Cog):
         cutoff = datetime.now() - timedelta(hours=1)
         db.execute('DELETE FROM reminders WHERE time <= ?', cutoff.isoformat())
 
-        self.reminders = list(filter(lambda r: r.time <= cutoff, self.reminders))
+        self.reminder_list = list(filter(lambda r: r.time > cutoff, self.reminder_list))
 
     @tasks.loop(minutes=1)
     async def reminder_loop(self):
         # fetch the next upcoming reminder
-        records = db.records('''SELECT reminder_id, guild_id, message, mentions FROM reminders WHERE 
+        records = db.records('''SELECT guild_id, message, mentions FROM reminders WHERE
                                 time <= ? AND called= ?''', (datetime.now() + timedelta(seconds=15)).isoformat(), False)
-        for reminder_id, guild_id, message, mentions in records:
+        for guild_id, message, mentions in records:
             channel_id = db.field('SELECT reminder_channel FROM server_info WHERE guild_id = ?', guild_id)
             channel = self.bot.get_channel(channel_id)
             if channel is None:
@@ -186,7 +185,7 @@ class Reminders(Cog):
         for rem_id in ids:
             db.execute('''UPDATE reminders SET called = ? WHERE reminder_id = ?''',
                        True, rem_id)
-            for rem in self.reminders:
+            for rem in self.reminder_list:
                 if rem.reminder_id == rem_id:
                     rem.called = True
 
@@ -196,6 +195,7 @@ class Reminders(Cog):
 
 
 def insert_reminder(rem: Reminder) -> int:
+    """inserts a reminder Object into the database and returns the id of the newly created column"""
     new_reminder_id: int = db.field(
         'INSERT INTO reminders (user_id, guild_id, time, message, mentions) VALUES '
         '(?,?,?,?,?) RETURNING reminder_id',

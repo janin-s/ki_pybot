@@ -5,7 +5,7 @@ import json
 import requests
 
 from discord import Embed, Colour, File
-from discord.ext.commands import *
+from discord.ext.commands import Cog, command
 
 from lib.covid_utils import incidence_image
 

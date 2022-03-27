@@ -1,6 +1,5 @@
 from random import choice
-from discord.ext.commands import *
-from re import search
+from discord.ext.commands import Cog, command, has_permissions
 from ..db import db
 from ..utils import MsgNotFound, send_paginated
 
@@ -39,13 +38,13 @@ class Msg(Cog):
         await ctx.message.add_reaction('\U00002705')
 
 
-async def message(ctx, message=""):
-    print(f"message with shorthand {message}.")
-    if message == "" or ctx is None:
+async def message(ctx, msg=""):
+    print(f"message with shorthand {msg}.")
+    if msg == "" or ctx is None:
         return
     guild_id = ctx.guild.id
 
-    msgs = db.column("SELECT message FROM messages WHERE guild_id = ? AND shorthand = ?", guild_id, message)
+    msgs = db.column("SELECT message FROM messages WHERE guild_id = ? AND shorthand = ?", guild_id, msg)
 
     if msgs is not None and len(msgs) != 0:
         msg = choice(msgs)

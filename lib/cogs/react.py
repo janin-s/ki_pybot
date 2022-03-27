@@ -1,4 +1,4 @@
-from discord.ext.commands import *
+from discord.ext.commands import Cog, command
 from discord import NotFound, HTTPException
 
 
