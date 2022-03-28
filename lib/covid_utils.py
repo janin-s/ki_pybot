@@ -88,11 +88,11 @@ def create_incidence_image(bavaria_incidence, bavaria_last_incidence, data, germ
 def format_incidence_change(incidence, incidence_before):
     if incidence is None or incidence == 0:
         return 'N/A'
-    s = '{:.2f}'.format(incidence) + '\n('
+    string = f'{incidence:.2f}\n('
     if incidence_before is None or incidence_before == 0:
-        return s + 'N/A)'
+        return string + 'N/A)'
     ratio = incidence / incidence_before
     if ratio > 1.0:
-        s += '+'
-    s += '{:.2%}'.format(ratio - 1.0) + ')'
-    return s
+        string += '+'
+    string += f'{ratio - 1.0:.2%})'
+    return string
