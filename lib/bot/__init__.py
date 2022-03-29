@@ -5,7 +5,7 @@ from asyncio import sleep
 from discord.ext.commands import Bot as BotBase
 from discord.ext import commands
 from discord import Intents, utils, Forbidden
-from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from lib.bot.config import Config
 from lib.db import db
@@ -13,6 +13,7 @@ from lib.cogs import msg
 from lib.utils import MsgNotFound
 
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
+
 
 class Ready():
     def __init__(self):
