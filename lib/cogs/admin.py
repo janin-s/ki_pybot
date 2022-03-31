@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog, command
 from discord.ext import commands
 
-from lib.bot import COGS
+from lib.bot import AVAILABLE_COGS, COGS
 from lib.db import db
 
 
@@ -12,28 +12,29 @@ class Admin(Cog):
     @Cog.listener()
     async def on_ready(self):
         if not self.bot.ready:
-            self.bot.cogs_ready.ready_up("admin")
+            self.bot.cogs_ready.ready_up('admin')
 
     @command(name='load')
     @commands.has_permissions(administrator=True)
     async def load(self, ctx, cog):
         """Loads a previously not loaded Cog"""
-        if cog not in COGS:
+        if cog not in AVAILABLE_COGS:
             await ctx.send(f'cog \"{cog}\" not found')
             return
-
-        self.bot.load_extension(f"lib.cogs.{cog}")
+        if cog not in COGS:
+            COGS.append(cog)
+        self.bot.load_extension(f'lib.cogs.{cog}')
         await ctx.message.add_reaction('\U00002705')
 
     @command(name='unload')
     @commands.has_permissions(administrator=True)
     async def unload(self, ctx, cog):
         """Unloads a previously loaded Cog"""
-        if cog not in COGS or cog == "admin":
+        if cog not in COGS or cog == 'admin':
             await ctx.send(f'cog \"{cog}\" not found or invalid')
             return
-
-        self.bot.unload_extension(f"lib.cogs.{cog}")
+        COGS.remove(cog)
+        self.bot.unload_extension(f'lib.cogs.{cog}')
         await ctx.message.add_reaction('\U00002705')
 
     @command(name='reload')
@@ -43,8 +44,18 @@ class Admin(Cog):
         if cog not in COGS:
             await ctx.send(f'cog \"{cog}\" not found')
             return
-        self.bot.reload_extension(f"lib.cogs.{cog}")
+        self.bot.reload_extension(f'lib.cogs.{cog}')
         await ctx.message.add_reaction('\U00002705')
+
+    @command(name='get_cogs')
+    @commands.has_permissions(administrator=True)
+    async def get_cogs(self, ctx):
+        """prints which Cogs are loaded or available"""
+        s = 'Loaded Cogs: ' + ", ".join(COGS)
+        s += '\nAdditionally available Cogs: ' + ', '.join([cog for cog in AVAILABLE_COGS if cog not in COGS])
+        await ctx.send(s)
+
+
 
     @command()
     @commands.has_permissions(administrator=True)

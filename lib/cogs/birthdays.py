@@ -10,7 +10,6 @@ from lib.db import db
 from lib import utils
 
 
-
 class Birthdays(Cog):
     def __init__(self, bot):
         bot.scheduler.add_job(self.congratulate, CronTrigger(hour=0))

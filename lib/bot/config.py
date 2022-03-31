@@ -51,6 +51,8 @@ class Config:
 
         self.guild_id = int(self.get_key("guild_id"))
 
+        self.disabled_cogs = self.get_key("cogs", "disabled_cogs")
+
         self.discord_token = str(self.get_key("api_tokens", "discord"))
 
         self.news_api_key = str(self.get_key("api_tokens", "news_api_key"))

@@ -1,3 +1,4 @@
+import copy
 import os
 import sys
 from asyncio import sleep
@@ -12,10 +13,11 @@ from lib.db import db
 from lib.cogs import msg
 from lib.utils import MsgNotFound
 
-COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
+AVAILABLE_COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
+COGS = copy.copy(AVAILABLE_COGS)
 
 
-class Ready():
+class Ready:
     def __init__(self):
         for cog in COGS:
             setattr(self, cog, False)
@@ -34,6 +36,10 @@ class Bot(BotBase):
         if len(sys.argv) > 1:
             config_file = sys.argv[1]
         self.config = Config(config_file)
+
+        for cog in self.config.disabled_cogs:
+            COGS.remove(cog)
+
         self.ready = False
         self.cogs_ready = Ready()
         self.guild = None
@@ -51,10 +57,10 @@ class Bot(BotBase):
     # loading cogs
     def setup(self):
         for cog in COGS:
-            self.load_extension(f"lib.cogs.{cog}")
-            print(f"{cog} cog loaded")
+            self.load_extension(f'lib.cogs.{cog}')
+            print(f'{cog} cog loaded')
 
-        print("setup complete")
+        print(f'setup complete. Loaded {len(COGS)} Cogs. Disabled Cogs: {self.config.disabled_cogs}')
 
     def run(self):
         self.setup()
