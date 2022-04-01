@@ -21,6 +21,10 @@ async def send_paginated(ctx, limit=2000, start="", end="", *, content):
 
 
 def parse_datetime(s: str) -> datetime:
+    """parses a string to a datetime object"""
+    # date: DD.MM[.YYYY]|morgen|tomorrow
+    # time: HH:MM
+    # valid strings: date;time | date | time
     day = datetime.now().day
     if s.startswith('morgen') or s.startswith('tomorrow'):
         day = (datetime.today() + timedelta(days=1)).day

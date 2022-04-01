@@ -47,22 +47,19 @@ class Reminders(Cog):
 
     @group(aliases=['reminder', 'remindme', 'rm'], invoke_without_command=True)
     async def reminders(self, ctx):
-        """reminder: !reminder add DD.MM[.YYYY][;HH:MM] reminds the calling user"""
-        embed = Embed(title='Reminders')
-        embed.add_field(name='aliases', value='You can use !reminders, !reminder, !remindme or !rm')
+        """reminder: !reminder add <date> <message> reminds the calling user"""
+        embed = Embed(title='Reminders (rm/reminder/remindme)')
         embed.add_field(name='usage',
-                        value='Use !rm add <date> [<message>] to get a reminder on the specified date/time')
+                        value='Use `!rm add <date> [<message>]` to get a reminder on the specified date/time. '
+                              'Mention users to have them pinged by the reminder')
         embed.add_field(name='list',
-                        value='Use !rm list [<mentions>] to get a list of reminders for the mentioned users '
-                              '(all users when nobody mentioned)')
+                        value='Use !rm list [<mentions>] to get a list of reminders for the mentioned (or all) users')
         embed.add_field(name='snooze',
                         value='User !rm snooze [x](h/m) or !snooze [x](h/m) to let your last reminder snooze for x '
                               'hours/minutes, alias is schlummer[n]')
-        embed.add_field(name='mentions',
-                        value='Every user or role mentioned in the message will be pinged by the reminder')
-        embed.add_field(name='date',
-                        value='Use only time as HH:MM, sets reminder on next occurrence of this time. For dates use '
-                              'DD.MM[.YYYY][;HH:MM] or \'today/heute[;HH:MM]\' and \'tomorrow/morgen[;HH:MM]\'')
+        embed.add_field(name='datetime format',
+                        value='**date**: DD.MM[.YYYY] | morgen | tomorrow\n**time**: HH:MM\n**valid strings**: '
+                              'date;time | date | time')
         embed.set_thumbnail(
             url="https://pngimg.com/uploads/alarm_clock/alarm_clock_PNG2.png")
         await ctx.send(embed=embed)
