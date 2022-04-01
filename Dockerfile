@@ -3,7 +3,7 @@ FROM python:3.10.4-alpine3.15
 
 WORKDIR /usr/src/app
 
-# to get gcc and zlib and jpeg to make matplotlib work
+# to get gcc for compiling libs and zlib and jpeg to make matplotlib work
 RUN apk add build-base zlib-dev jpeg-dev
 
 COPY requirements.txt ./

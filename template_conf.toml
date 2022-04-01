@@ -6,6 +6,11 @@ owner_id = 123
 
 guild_id = 123
 
+[cogs]
+# choose which cogs to disable from this list:
+# ["daily_infos", "reminders", "misc", "birthdays", "admin", "covid", "event", "msg", "react", "dm_cmds", "random"]
+disabled_cogs = ["daily_infos", "covid"]
+
 [api_tokens]
 
 discord = "abc"
