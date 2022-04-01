@@ -63,7 +63,7 @@ class DailyInfos(Cog):
 async def get_relikte_throwback_embed(channel: TextChannel) -> Embed | None:
     """returns an Embed containing a throwback from relikte x years ago on current date"""
     if channel is None:
-        return
+        return None
     today = datetime.today()
     # TODO handle leap year, where there is no history
     old_messages = []

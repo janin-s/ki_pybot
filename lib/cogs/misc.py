@@ -10,7 +10,7 @@ class Misc(Cog):
     api_secret = ''
     bearer_token = ''
     api = None
-    tweets: [tw.Tweet] = None
+    tweets: list[tw.Tweet] = None
 
     def __init__(self, bot):
         # setup folder for

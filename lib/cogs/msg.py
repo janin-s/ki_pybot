@@ -1,4 +1,4 @@
-from random import choice
+import random
 from discord.ext.commands import Cog, command, has_permissions
 from lib.db import db
 from lib import utils
@@ -47,7 +47,7 @@ async def message(ctx, msg=""):
     msgs = db.column("SELECT message FROM messages WHERE guild_id = ? AND shorthand = ?", guild_id, msg)
 
     if msgs is not None and len(msgs) != 0:
-        msg = choice(msgs)
+        msg = random.choice(msgs)
         msg = str(msg)
         if REPLACE_SENDER in msg:
             msg = msg.replace(REPLACE_SENDER, ctx.message.author.display_name)
