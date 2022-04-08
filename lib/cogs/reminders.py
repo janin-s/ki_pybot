@@ -44,6 +44,7 @@ class Reminders(Cog):
 
     def cog_unload(self):
         self.reminder_loop.cancel()
+        self.delete_reminders.cancel()
 
     @group(aliases=['reminder', 'remindme', 'rm'], invoke_without_command=True)
     async def reminders(self, ctx):
@@ -169,9 +170,9 @@ class Reminders(Cog):
     @tasks.loop(minutes=1)
     async def reminder_loop(self):
         # fetch the next upcoming reminder
-        records = db.records('''SELECT guild_id, message, mentions FROM reminders WHERE
+        records = db.records('''SELECT reminder_id, guild_id, message, mentions FROM reminders WHERE
                                 time <= ? AND called= ?''', (datetime.now() + timedelta(seconds=15)).isoformat(), False)
-        for guild_id, message, mentions in records:
+        for rem_id, guild_id, message, mentions in records:
             channel_id = db.field('SELECT reminder_channel FROM server_info WHERE guild_id = ?', guild_id)
             channel = self.bot.get_channel(channel_id)
             if channel is None:
@@ -179,10 +180,9 @@ class Reminders(Cog):
             embed = Embed(title='Reminder', description=message)
             await channel.send(mentions, embed=embed)
 
-        ids = [reminder_id for reminder_id, _, _, _ in records]
-        for rem_id in ids:
             db.execute('''UPDATE reminders SET called = ? WHERE reminder_id = ?''',
                        True, rem_id)
+
             for rem in self.reminder_list:
                 if rem.reminder_id == rem_id:
                     rem.called = True
