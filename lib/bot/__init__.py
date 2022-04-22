@@ -14,6 +14,7 @@ from lib.utils import MsgNotFound
 
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 
+
 class Ready():
     def __init__(self):
         for cog in COGS:
@@ -67,10 +68,10 @@ class Bot(BotBase):
     async def on_disconnect(self):
         print("bot disconnected")
 
-#   async def on_error(self, err, *args, **kwargs):
-#     if err == "on_command_error":
-#            await args[0].send("iwas falsch oh no :(")
-#            print("help :(")
+    #   async def on_error(self, err, *args, **kwargs):
+    #     if err == "on_command_error":
+    #            await args[0].send("iwas falsch oh no :(")
+    #            print("help :(")
 
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, commands.errors.CommandNotFound):
@@ -109,9 +110,11 @@ class Bot(BotBase):
         roles = db.column('SELECT role_id FROM roles WHERE user_id = ? AND guild_id = ?',
                           user_id, guild_id)
         if roles is not None:
+            guild_roles = await member.guild.fetch_roles()
+            guild_roles = set(guild_roles + member.guild.roles)
             for role_id in roles:
-                role = utils.get(member.guild.roles, id=role_id)
-                if role.name != "@everyone":
+                role = utils.get(guild_roles, id=role_id)
+                if role.name != '@everyone':
                     try:
                         await member.add_roles(role)
                     except Forbidden:

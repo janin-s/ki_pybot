@@ -110,8 +110,10 @@ async def kick_invite_roles(ctx, user, guild):
     else:
         nick = user.display_name
 
-    insert_roles_query = "REPLACE INTO roles(role_id, user_id, guild_id) VALUES (?, ?, ?)"
-    db.multiexec(insert_roles_query, records)
+    # remove old roles
+    db.execute('DELETE FROM ROLES WHERE user_id = ?', user.id)
+    # insert new roles
+    db.multiexec('INSERT INTO roles(role_id, user_id, guild_id) VALUES (?, ?, ?)', records)
 
     db.execute('REPLACE INTO users (display_name, id, guild_id) VALUES (?,?,?)',
                str(nick), user.id, guild.id)
@@ -121,21 +123,22 @@ async def kick_invite_roles(ctx, user, guild):
     if user in guild.premium_subscribers:
         await ctx.send('Punishing boosters is not allowed!')
         return
-    dm_channel = user.dm_channel
-    await ctx.send(f"{nick} soll sich schämen gehen")
+
+    await ctx.send(f'{nick} soll sich schämen gehen')
     invite = await ctx.channel.create_invite(max_uses=1)
     try:
+        dm_channel = user.dm_channel
         if dm_channel is None:
             dm_channel = await user.create_dm()
-        await dm_channel.send("shame!\n" * 4)
-        await dm_channel.send("https://media.giphy.com/media/vX9WcCiWwUF7G/giphy.gif")
+        await dm_channel.send('shame!\n' * 4)
+        await dm_channel.send('https://media.giphy.com/media/vX9WcCiWwUF7G/giphy.gif')
         await dm_channel.send(invite.url)
     except discord.Forbidden:
-        await ctx.send("da ist jemand ehrenlos und hat bot dms aus. >:(")
+        await ctx.send('da ist jemand ehrenlos und hat bot dms aus. >:(')
     try:
-        await user.kick(reason="punish")
+        await user.kick(reason='punish')
     except discord.Forbidden:
-        await ctx.send("KI nicht mächtig genug :(")
+        await ctx.send('KI nicht mächtig genug :(')
 
 
 async def reset_votes(user_id, guild_id):
