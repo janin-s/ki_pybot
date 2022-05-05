@@ -22,9 +22,10 @@ class Say(Cog):
         avatar_bytes: bytes = await user.avatar_url.read()
 
         guild_webhooks: list[discord.Webhook] = await ctx.guild.webhooks()
-        webhooks_filtered: list[discord.Webhook] = [w for w in guild_webhooks if 'say-cmd-hook' in w.name]
+        webhooks_filtered: list[discord.Webhook] = [w for w in guild_webhooks if str(ctx.channel.id) in w.name]
         if not webhooks_filtered:
-            webhook: discord.Webhook = await ctx.channel.create_webhook(name=f'say-cmd-hook', avatar=avatar_bytes)
+            webhook: discord.Webhook = await ctx.channel.create_webhook(name=f'say-cmd-hook-{ctx.channel.id}',
+                                                                        avatar=avatar_bytes)
         else:
             webhook: discord.Webhook = webhooks_filtered[0]
 
