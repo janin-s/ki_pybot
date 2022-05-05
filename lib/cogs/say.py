@@ -29,6 +29,7 @@ class Say(Cog):
         else:
             webhook: discord.Webhook = webhooks_filtered[0]
 
+        await ctx.message.delete()
         await webhook.send(content=content, username=nick, avatar_url=user.avatar_url)
 
 
