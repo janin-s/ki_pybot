@@ -3,7 +3,7 @@ import discord.ext
 from discord.ext.commands import Cog, command, Context
 
 
-class React(Cog):
+class Say(Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -14,6 +14,7 @@ class React(Cog):
 
     @command()
     async def say(self, ctx: Context, user_id_mention: str, *, content):
+        """'!say [mention | user_id] content' creates message containing content as the user from the first argument"""
         user: discord.User = await get_user_from_id_or_mention(ctx, user_id_mention)
 
         nick: str = user.nick if isinstance(user, discord.Member) and user.nick is not None else user.display_name
@@ -31,6 +32,7 @@ class React(Cog):
 
 
 async def get_user_from_id_or_mention(ctx: Context, user_id_mention: str) -> discord.User:
+    """gets a User object. If argument is numeric, from that id, the first mention in the message otherwise"""
     if user_id_mention.isnumeric():
         user: discord.User = ctx.guild.get_member(user_id_mention)
         if not user:
@@ -42,4 +44,4 @@ async def get_user_from_id_or_mention(ctx: Context, user_id_mention: str) -> dis
 
 
 def setup(bot):
-    bot.add_cog(React(bot))
+    bot.add_cog(Say(bot))
