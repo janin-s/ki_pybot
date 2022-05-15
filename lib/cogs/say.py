@@ -12,7 +12,7 @@ class Say(Cog):
             self.bot.cogs_ready.ready_up("say")
 
     @command()
-    async def say(self, ctx: Context, user: discord.User, *, content):
+    async def say(self, ctx: Context, user: discord.Member, *, content):
         """'!say [mention | user_id] content' creates message containing content as the user from the first argument"""
         nick: str = user.nick if isinstance(user, discord.Member) and user.nick is not None else user.display_name
 
