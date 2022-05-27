@@ -59,6 +59,10 @@ class Config:
         self.twitter_api_secret = str(self.get_key("api_tokens", "twitter_api_secret"))
         self.twitter_bearer_token = str(self.get_key("api_tokens", "twitter_bearer_token"))
 
+        self.alpaca_api_key_id = str(self.get_key("api_tokens", "alpaca_api_key_id"))
+        self.alpaca_api_secret = str(self.get_key("api_tokens", "alpaca_api_secret"))
+
+
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)
 
