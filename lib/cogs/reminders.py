@@ -5,6 +5,7 @@ from discord import Embed
 from discord.ext import tasks
 from discord.ext.commands import Cog, group, command
 
+from lib.bot import Bot
 from lib.db import db
 from lib import utils
 
@@ -24,7 +25,7 @@ class Reminder:
 class Reminders(Cog):
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         records = db.records('SELECT reminder_id, user_id, guild_id, time, message, mentions, called FROM reminders')
         self.reminder_list = [Reminder(reminder_id=reminder_id,
                                        user_id=user_id,

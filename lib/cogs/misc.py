@@ -2,6 +2,8 @@ import os.path
 
 import tweepy as tw
 from discord.ext.commands import Cog, command
+
+from lib.bot import Bot
 from lib.db import db
 
 
@@ -27,7 +29,7 @@ class Misc(Cog):
                                 wait_on_rate_limit=True,
                                 return_type=tw.Response)
 
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):

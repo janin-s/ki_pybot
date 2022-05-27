@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import discord
 from discord.ext.commands import Cog, command, Context, cooldown, BucketType
 
+from lib.bot import Bot
 from lib.db import db
 
 OFFLINE_PUNISH = True
@@ -12,7 +13,7 @@ REQUIRED_VOTES = 2
 
 class DMCmds(Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):

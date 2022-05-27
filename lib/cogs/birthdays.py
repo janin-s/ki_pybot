@@ -6,6 +6,7 @@ from discord import User, Embed
 from discord.ext.commands import Cog, group
 from apscheduler.triggers.cron import CronTrigger
 
+from lib.bot import Bot
 from lib.db import db
 from lib import utils
 
@@ -14,7 +15,7 @@ from lib import utils
 class Birthdays(Cog):
     def __init__(self, bot):
         bot.scheduler.add_job(self.congratulate, CronTrigger(hour=0))
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):

@@ -7,6 +7,7 @@ import requests
 from discord import Embed, Colour, File
 from discord.ext.commands import Cog, command
 
+from lib.bot import Bot
 from lib.covid_utils import incidence_image
 
 
@@ -19,7 +20,7 @@ class Covid(Cog):
         if not os.path.exists('./data/other'):
             os.mkdir('./data/other')
 
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):

@@ -1,5 +1,7 @@
 from random import choice
 from discord.ext.commands import Cog, command, has_permissions
+
+from lib.bot import Bot
 from lib.db import db
 from lib.utils import utils
 
@@ -9,7 +11,7 @@ REPLACE_MENTIONS = "[$MENTIONS$]"
 
 class Msg(Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):

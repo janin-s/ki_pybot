@@ -4,13 +4,14 @@ import os
 from discord import Embed, Colour
 from discord.ext.commands import Cog, command
 
+from lib.bot import Bot
 from lib.utils.utils import true_random_int
 
 
 class Random(Cog):
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):

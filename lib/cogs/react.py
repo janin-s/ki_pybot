@@ -1,10 +1,12 @@
 from discord.ext.commands import Cog, command
 from discord import NotFound, HTTPException
 
+from lib.bot import Bot
+
 
 class React(Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):

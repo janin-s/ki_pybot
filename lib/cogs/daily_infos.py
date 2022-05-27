@@ -6,6 +6,7 @@ from discord import Embed, File, TextChannel, Message
 from discord.ext.commands import Cog, has_permissions, command
 from apscheduler.triggers.cron import CronTrigger
 
+from lib.bot import Bot
 from lib.db import db
 from datetime import datetime, timedelta
 
@@ -14,7 +15,7 @@ from lib.covid_utils import incidence_image
 
 class DailyInfos(Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.NEWS_API_KEY = self.bot.config.news_api_key
         self.WEATHER_API_KEY = self.bot.config.weather_api_key
         bot.scheduler.add_job(self.print_daily_infos, CronTrigger(hour=8))

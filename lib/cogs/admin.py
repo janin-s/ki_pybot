@@ -1,13 +1,14 @@
+from apscheduler.job import Job
 from discord.ext.commands import Cog, command
 from discord.ext import commands
 
-from lib.bot import COGS
+from lib.bot import COGS, Bot
 from lib.db import db
 
 
 class Admin(Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):
@@ -57,6 +58,15 @@ class Admin(Cog):
             return
         purge_limit = min(amount + 1, 200)
         await ctx.channel.purge(limit=purge_limit)
+
+    @command()
+    @commands.has_permissions(administrator=True)
+    async def get_jobs(self, ctx):
+        def show_job(job: Job) -> str:
+            return f'Job ({job.id=} {job.name=} {job.func=} {job.args=} {job.next_run_time=}'
+        result = ', '.join(map(show_job, self.bot.scheduler.get_jobs()))
+
+        await ctx.send(result)
 
 
 def setup(bot):

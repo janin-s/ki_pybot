@@ -1,10 +1,12 @@
 import discord
 from discord.ext.commands import Cog, command, Context
 
+from lib.bot import Bot
+
 
 class Say(Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @Cog.listener()
     async def on_ready(self):
