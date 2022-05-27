@@ -1,7 +1,7 @@
 from random import choice
 from discord.ext.commands import Cog, command, has_permissions
 from lib.db import db
-from lib import utils
+from lib.utils import utils
 
 REPLACE_SENDER = "[$SENDER$]"
 REPLACE_MENTIONS = "[$MENTIONS$]"

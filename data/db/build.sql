@@ -87,6 +87,31 @@ CREATE TABLE IF NOT EXISTS birthdays (
         ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS trading_polls (
+    poll_id integer,
+    guild_id integer NOT NULL REFERENCES server_info (guild_id) ON DELETE CASCADE,
+    start_time text NOT NULL,
+    end_time text NOT NULL,
+    asset1_id text NOT NULL,
+    asset2_id text NOT NULL,
+    PRIMARY KEY (poll_id),
+        FOREIGN KEY (guild_id)
+        REFERENCES server_info(guild_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS trading_votes (
+    poll_id integer NOT NULL REFERENCES trading_polls (poll_id) ON DELETE CASCADE,
+    user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    asset_id text NOT NULL REFERENCES assets (id) ON DELETE CASCADE,
+    PRIMARY KEY (poll_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS assets (
+    id text NOT NULL PRIMARY KEY,
+    symbol text NOT NULL
+);
+
 INSERT OR IGNORE INTO server_info (guild_id, name, main_channel, quote_channel, birthday_channel, reminder_channel)
 VALUES (705425948996272210, '10111011 Strassenbande', 705425949541269668, 705427122151227442, 705425949541269668, 705425949541269668);
 INSERT OR IGNORE INTO messages (shorthand, message, guild_id)

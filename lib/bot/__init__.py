@@ -10,7 +10,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
 from lib.bot.config import Config
 from lib.db import db
 from lib.cogs import msg
-from lib.utils import MsgNotFound
+from lib.utils.utils import MsgNotFound
 
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 

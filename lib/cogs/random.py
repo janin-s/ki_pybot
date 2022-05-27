@@ -4,7 +4,7 @@ import os
 from discord import Embed, Colour
 from discord.ext.commands import Cog, command
 
-from lib.utils import true_random_int
+from lib.utils.utils import true_random_int
 
 
 class Random(Cog):
