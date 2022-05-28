@@ -4,34 +4,59 @@ import alpaca_trade_api
 
 from datetime import datetime, timedelta
 from alpaca_trade_api.common import URL
-from alpaca_trade_api.entity import Asset, Order
+from alpaca_trade_api.entity import Asset, Order, Clock, Account, Position
 from apscheduler.triggers.date import DateTrigger
-from discord import TextChannel, Message
+from discord import TextChannel, Message, HTTPException
 from discord.ext import tasks
 from discord.ext.commands import Cog, has_permissions, command, Context
+from pytz import timezone
+
+from lib.bot import Bot
 from lib.db import db
 from lib.utils.trading_classes import StockError, StockButton
-
 from lib.utils.trading_utils import Stock, choose_two, to_stock, seconds_until, create_poll_embed, \
-    create_database_poll_entry, get_all_stocks_from_db
+    create_database_poll_entry, get_all_stocks_from_db, format_portfolio_embeds, add_buytime_noise
 
 
 class Trading(Cog):
     def __init__(self, bot):
-        self.bot = bot
-        api_key_id = 'PKZ0AFHB21M8WVI8UMX3'
-        api_secret_key = 'AXBHvjLKqMQPQDEwosddasP0CZqjAUuvV6trCy3x'
-        endpoint = URL('https://paper-api.alpaca.markets')
-        self.api = alpaca_trade_api.REST(key_id=api_key_id, secret_key=api_secret_key, base_url=endpoint)
-        self.pinned_message: Message | None = None
+        self.bot: Bot = bot
+        api_key_id = self.bot.config.alpaca_api_key_id
+        api_secret = self.bot.config.alpaca_api_secret
+        api_endpoint = URL('https://api.alpaca.markets')
+        paper_api_key_id = 'PKZ0AFHB21M8WVI8UMX3'
+        paper_api_secret_key = 'AXBHvjLKqMQPQDEwosddasP0CZqjAUuvV6trCy3x'
+        paper_endpoint = URL('https://paper-api.alpaca.markets')
+        self.api = alpaca_trade_api.REST(key_id=paper_api_key_id,
+                                         secret_key=paper_api_secret_key,
+                                         base_url=paper_endpoint)
+        self.pinned_messages: list[Message] = []
         self.create_poll_loop.start()
 
     @Cog.listener()
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("trading")
+    
+    @command()
+    async def portfolio(self, ctx: Context):
+        account: Account = self.api.get_account()
+        cash: str = account.cash
+        portfolio_value: str = account.portfolio_value
+        positions: list[Position] = self.api.list_positions()
+        embeds = format_portfolio_embeds(cash, portfolio_value, positions)
+        await ctx.send(embeds=embeds)
 
-    def update_stocks(self) -> None:
+    def _get_next_buy_time(self) -> datetime:
+        berlin = timezone('Europe/Berlin')
+        market_clock: Clock = self.api.get_clock()
+        next_open_iso: str = market_clock._raw['next_open']
+        eastern_time = datetime.fromisoformat(next_open_iso) + timedelta(minutes=30)
+        berlin_time = eastern_time.astimezone(berlin)
+        # return berlin_time
+        return (datetime.now() + timedelta(minutes=2)).replace(second=0, microsecond=0)
+
+    def _update_stocks(self) -> None:
         all_assets: list[Asset] = self.api.list_assets(status='active', asset_class='us_equity')
         relevant_assets = list(filter(lambda a: a.fractionable and a.tradable and a.status == 'active', all_assets))
         insert_statement = 'INSERT INTO assets (id, symbol) VALUES (?, ?)'
@@ -39,7 +64,7 @@ class Trading(Cog):
         db.execute('DELETE FROM assets')
         db.multiexec(insert_statement, map(lambda a: (a.id, a.symbol), relevant_assets))
 
-    def buy_stock(self, stock: Stock):
+    def _buy_stock(self, stock: Stock):
         response: Order = self.api.submit_order(symbol=stock.symbol,
                                                 notional=1.,
                                                 side='buy',
@@ -66,7 +91,7 @@ class Trading(Cog):
         stocks = get_all_stocks_from_db()
         chosen_stocks = choose_two(stocks)
         if not chosen_stocks:
-            self.update_stocks()
+            self._update_stocks()
             stocks = get_all_stocks_from_db()
             chosen_stocks = choose_two(stocks)
             if not chosen_stocks:
@@ -76,25 +101,33 @@ class Trading(Cog):
         stock1 = to_stock(chosen_stocks[0])
         stock2 = to_stock(chosen_stocks[1])
 
-        poll_id, end_time = create_database_poll_entry(guild_id, stock1, stock2)
-
-        embed1 = create_poll_embed(stock1, end_time)
-        embed2 = create_poll_embed(stock2, end_time)
+        buy_time = self._get_next_buy_time()
+        poll_id = create_database_poll_entry(guild_id, stock1, stock2, buy_time)
+        
+        embed1 = create_poll_embed(stock1, buy_time)
+        embed2 = create_poll_embed(stock2, buy_time)
 
         view = discord.ui.View(timeout=None)
         view.add_item(StockButton(stock1.symbol, stock1.id, poll_id))
         view.add_item(StockButton(stock2.symbol, stock2.id, poll_id))
-
+        
+        job_buy_time = add_buytime_noise(buy_time, poll_id)
         # add job for evaluation
         self.bot.scheduler.add_job(
-            func=self.evaluate_poll,
-            trigger=DateTrigger(end_time),
-            args=[poll_id, channel])
+            name=f'Poll {poll_id}',
+            func=self._evaluate_poll,
+            trigger=DateTrigger(job_buy_time),
+            args=[poll_id, channel],
+            misfire_grace_time=None)
         message: Message = await channel.send(embeds=[embed1, embed2], view=view)
-        self.pinned_message = message
-        await message.pin()
+        self.pinned_messages.append(message)
+        try:
+            await message.pin()
+        except HTTPException:
+            pass
 
-    async def evaluate_poll(self, poll_id: int, channel: TextChannel):
+    async def _evaluate_poll(self, poll_id: int, channel: TextChannel):
+        print(f'Evaluating poll {poll_id}')
         poll_record = db.record('SELECT start_time, end_time, asset1_id, asset2_id FROM trading_polls WHERE poll_id =?',
                                 poll_id)
         if poll_record is None:
@@ -107,23 +140,22 @@ class Trading(Cog):
 
         count2 = db.field('SELECT COUNT (*) FROM trading_votes WHERE poll_id = ? AND asset_id = ?',
                           poll_id, asset2_id)
-
-        symbol1 = db.field('SELECT symbol FROM assets WHERE id = ?', asset1_id)
-        symbol2 = db.field('SELECT symbol FROM assets WHERE id = ?', asset2_id)
-        stock1 = to_stock((asset1_id, symbol1))
-        stock2 = to_stock((asset2_id, symbol2))
         if count1 > count2:
-            winner: Stock = stock1
+            winner = asset1_id
         else:
-            winner: Stock = stock2
+            winner = asset2_id
+        winner_symbol = db.field('SELECT symbol FROM assets WHERE id = ?', winner)
+        winner_stock = to_stock((winner, winner_symbol))
+
         try:
-            self.buy_stock(winner)
+            self._buy_stock(winner_stock)
         except StockError:
-            await channel.send(f'Order for Stock Voting Winner **${winner.symbol}** not accepted :(')
+            await channel.send(f'Order for Stock Voting Winner **${winner_symbol}** not accepted :(')
             return
-        await channel.send(f'Bought $1 of Stock Voting Winner **${winner.symbol}** at current price ${winner.currentPrice}')
-        if self.pinned_message and self.pinned_message.pinned:
-            await self.pinned_message.unpin()
+        await channel.send(f'Bought $1 of Stock Voting Winner **${winner_symbol}** at current price ${winner_stock.currentPrice}')
+        if self.pinned_messages:
+            message = self.pinned_messages.pop(0)
+            await message.unpin()
 
 
 def setup(bot):

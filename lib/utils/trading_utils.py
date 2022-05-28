@@ -5,11 +5,15 @@ import math
 import yfinance
 
 from typing import TypeVar
+from alpaca_trade_api.entity import Position
 from discord import Embed
-from pytz import timezone
-from lib.db import db
 
+from lib.db import db
 from lib.utils.trading_classes import Stock
+
+
+def add_buytime_noise(buy_time: datetime.datetime, poll_id: int) -> datetime.datetime:
+    return buy_time + datetime.timedelta(seconds=poll_id % 60, milliseconds=random.randint(0, 99))
 
 
 def get_all_stocks_from_db() -> list[tuple[str, str]]:
@@ -17,19 +21,13 @@ def get_all_stocks_from_db() -> list[tuple[str, str]]:
     return records
 
 
-def create_database_poll_entry(guild_id: int, stock1: Stock, stock2: Stock) -> tuple[int, datetime]:
-    berlin = timezone('Europe/Berlin')
-    eastern = timezone('US/Eastern')
+def create_database_poll_entry(guild_id: int, stock1: Stock, stock2: Stock, buy_time: datetime.datetime) -> int:
     start_time: datetime = datetime.datetime.now()
-    end_time: datetime = datetime.datetime.now()
-    end_time = end_time.replace(hour=9, minute=35)
-    # label time as eastern and convert to our timezone to get correct timestamp for our time
-    end_time = eastern.localize(end_time).astimezone(berlin)
 
     new_id = db.field('INSERT INTO trading_polls (guild_id, start_time, end_time, asset1_id, asset2_id) '
                       'VALUES (?,?,?,?,?) RETURNING poll_id',
-                      guild_id, start_time.isoformat(), end_time.isoformat(), stock1.id, stock2.id)
-    return new_id, end_time
+                      guild_id, start_time.isoformat(), buy_time.isoformat(), stock1.id, stock2.id)
+    return new_id
 
 
 def create_poll_embed(stock: Stock, end_time: datetime) -> Embed:
@@ -43,13 +41,36 @@ def create_poll_embed(stock: Stock, end_time: datetime) -> Embed:
     return embed
 
 
-def stock_to_tuple(stock: Stock) -> tuple:
-    t = stock.id, stock.symbol, stock.shortName, stock.description, stock.logo_url, stock.currentPrice, stock.marketCap
-    return t
+def _position_to_str(pos: Position) -> str:
+    cost_basis = float(pos.cost_basis)
+    market_value = float(pos.market_value)
+    change = float(pos.unrealized_plpc)
+
+    def pad(s: str, length: int) -> str:
+        return s + (length - len(s))*' '
+    return f" {pad(pos.symbol, 8)} " \
+           f"${pad(f'{cost_basis:.2f}', 9)} " \
+           f"${pad(f'{market_value:.4f}', 12)} " \
+           f"{pad(f'{change:.3f}%', 8)}"
 
 
-def tuple_to_stock(tup: tuple) -> Stock:
-    return Stock(*tup)
+def _format_positions(positions: list[Position]) -> list[str]:
+    position_strs: list[str] = list(map(_position_to_str, positions))
+    header = 'Symbol | BuyPrice | MarketValue | rel. Change'
+    all_lines = [header] + position_strs
+    return ['\n'.join(all_lines[i:i + 94]) for i in range(0, len(all_lines), 94)]
+
+
+def format_portfolio_embeds(cash_string: str, value_string: str, positions: list[Position]) -> list[Embed]:
+    value = float(value_string)
+    cash = float(cash_string)
+    stock_only_val = value - cash
+    position_lines: list[str] = _format_positions(positions)
+    embed = Embed(title='Portfolio')
+    embed.add_field(name='Cash', value=f'${cash:.2f}')
+    embed.add_field(name='Portfolio Value', value=f'${stock_only_val:.4f}')
+    position_embeds = list(map(lambda s: Embed(description=f'```{s}```'), position_lines))
+    return [embed] + position_embeds
 
 
 T = TypeVar('T')
@@ -63,7 +84,7 @@ def choose_two(assets: list[T]) -> tuple[T, T] | None:
 
 
 def to_stock(stock: tuple[str, str]) -> Stock:
-    id, symbol = stock
+    stock_id, symbol = stock
     ticker = yfinance.Ticker(symbol)
     info = ticker.info
     print(f'\n\n\ninfo: {info}\n\n\n')
@@ -77,10 +98,10 @@ def to_stock(stock: tuple[str, str]) -> Stock:
         marketCap = info['marketCap']
         logo_url = info['logo_url']
     except KeyError:
-        return Stock(id=id, symbol=symbol, shortName='?', description='?',
+        return Stock(id=stock_id, symbol=symbol, shortName='?', description='?',
                      logo_url='https://upload.wikimedia.org/wikipedia/commons/3/33/White_square_with_question_mark.png',
                      currentPrice=0, marketCap=0)
-    return Stock(id=id,
+    return Stock(id=stock_id,
                  symbol=symbol,
                  shortName=name,
                  description=description,

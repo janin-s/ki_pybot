@@ -63,8 +63,8 @@ class Admin(Cog):
     @commands.has_permissions(administrator=True)
     async def get_jobs(self, ctx):
         def show_job(job: Job) -> str:
-            return f'Job ({job.id=} {job.name=} {job.func=} {job.args=} {job.next_run_time=}'
-        result = ', '.join(map(show_job, self.bot.scheduler.get_jobs()))
+            return f'Job ({job.id=} {job.name=} {job.func=} {job.next_run_time=}'
+        result = '\n\n'.join(map(show_job, self.bot.scheduler.get_jobs()))
 
         await ctx.send(result)
 

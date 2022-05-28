@@ -9,13 +9,12 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
 
 from lib.bot.config import Config
 from lib.db import db
-from lib.cogs import msg
 from lib.utils.utils import MsgNotFound
 
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 
 
-class Ready():
+class Ready:
     def __init__(self):
         for cog in COGS:
             setattr(self, cog, False)
@@ -38,7 +37,7 @@ class Bot(BotBase):
         self.cogs_ready = Ready()
         self.guild = None
         self.scheduler = AsyncIOScheduler()
-
+        self.msg_cog = None
         db.autosave(self.scheduler)
         super().__init__(
             command_prefix=self.config.command_prefix,
@@ -53,12 +52,11 @@ class Bot(BotBase):
         for cog in COGS:
             self.load_extension(f"lib.cogs.{cog}")
             print(f"{cog} cog loaded")
-
+        self.msg_cog = self.get_cog('msg')
         print("setup complete")
 
     def run(self):
         self.setup()
-
         print("running bot..")
         super().run(self.config.discord_token, reconnect=True)
 
@@ -76,7 +74,7 @@ class Bot(BotBase):
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, commands.errors.CommandNotFound):
             try:
-                await msg.message(ctx=ctx, msg=ctx.invoked_with)
+                await self.msg_cog.message(ctx=ctx, msg=ctx.invoked_with)
             except MsgNotFound:
                 await ctx.send('KI dummdumm v2 <:eist_moment:731293248324370483>')
 
