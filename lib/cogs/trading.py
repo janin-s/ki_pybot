@@ -64,8 +64,8 @@ class Trading(Cog):
         next_open_iso: str = market_clock._raw['next_open']
         eastern_time = datetime.fromisoformat(next_open_iso) + timedelta(minutes=30)
         berlin_time = eastern_time.astimezone(berlin)
-        # return berlin_time
-        return (datetime.now() + timedelta(minutes=2)).replace(second=0, microsecond=0)
+        return berlin_time
+        # return (datetime.now() + timedelta(minutes=2)).replace(second=0, microsecond=0)
 
     def _update_stocks(self) -> None:
         all_assets: list[Asset] = self.api.list_assets(status='active', asset_class='us_equity')
