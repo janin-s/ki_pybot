@@ -44,7 +44,6 @@ class Trading(Cog):
 
     @command()
     async def portfolio_history(self, ctx: Context):
-        print(f'called at {datetime.now().isoformat()}')
         history: PortfolioHistory = self.api.get_portfolio_history(date_start='2022-05-23', timeframe='1D')
         file: discord.File = get_portfolio_history_image(history)
         await ctx.send(file=file)
@@ -90,7 +89,6 @@ class Trading(Cog):
     async def create_poll_loop(self):
         await asyncio.sleep(seconds_until(9, 0))  # Will stay here until your clock says 11:58
         spam = await self.bot.fetch_channel(705425949541269668)
-        print(f'creating poll')
         await self._create_poll(spam, 705425948996272210)
 
     @command()

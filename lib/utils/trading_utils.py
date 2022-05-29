@@ -80,7 +80,6 @@ def _get_total_change(positions: list[Position]) -> float:
     total_cost, total_value = functools.reduce(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1]),
                                                map(lambda p: (float(p.cost_basis), float(p.market_value)), positions),
                                                (0, 0))
-    print(f'{total_cost=}, {total_value=}')
     return total_value / total_cost - 1.
 
 
@@ -98,7 +97,6 @@ def format_portfolio_embeds(cash_string: str, value_string: str, positions: list
 
 
 def get_portfolio_history_image(history: PortfolioHistory) -> discord.File:
-    # print(history._raw)
     image_path: Path = _build_portfolio_plot(history.timestamp, history.equity, history.profit_loss_pct)
     return discord.File(fp=image_path, filename='portfolio_history.png')
 
@@ -122,7 +120,6 @@ async def get_stock_info(symbol: str):
 async def to_stock(stock: tuple[str, str]) -> Stock:
     stock_id, symbol = stock
     info = await get_stock_info(symbol)
-    print(f'\n\n\ninfo: {info}\n\n\n')
     try:
         long_description = info['longBusinessSummary']
         split_description = _split_into_sentences(long_description)
@@ -146,13 +143,14 @@ async def to_stock(stock: tuple[str, str]) -> Stock:
 
 
 def get_cross_point(x1: float, y1: float, x2: float, y2: float, threshold: float) -> float:
+    """returns x coord where line from (x1,y1) to (x2,ys) crosses vertical line at threshold"""
     m = (y2 - y1) / (x2 - x1)
     t = y1 - m * x1
-    f = lambda n: (n - t) / m
-    return f(threshold)
+    return (threshold - t) / m
 
 
-def modify_data(x_orig: list[float], y_orig: list[float], threshold: float):
+def modify_data(x_orig: list[float], y_orig: list[float], threshold: float) -> tuple[list[float], list[float]]:
+    """inserts dummy points at (=slightly above/below) the threshold to make colouring parts of the graph possible"""
     xs = copy.copy(x_orig)
     ys = copy.copy(y_orig)
     xs_zipped = zip(xs[:-1] + [xs[-1]], xs[1:] + [xs[-1]])
@@ -165,7 +163,6 @@ def modify_data(x_orig: list[float], y_orig: list[float], threshold: float):
 
         if y1 < threshold < y2 or y1 >= threshold > y2:
             new_x = get_cross_point(x1, y1, x2, y2, threshold)
-            print(f'{y1=}, {y2=}, {new_x=}, {x1=}, {x2=}')
             new_xs.append(new_x)
             if y1 < y2:
                 new_ys.append(threshold + 0.000000001)
@@ -187,7 +184,10 @@ def threshold_plot(axs: Axes, xs: ndarray, ys: ndarray, threshv, color, overcolo
 
     axs.add_collection(lc)
     axs.set_xlim(np.min(xs), np.max(xs))
-    axs.set_ylim(np.min(ys), np.max(ys))
+    ys_min = np.min(ys)
+    ys_max = np.max(ys)
+    data_range = ys_max-ys_min
+    axs.set_ylim(ys_min-0.1*data_range, ys_max+0.1*data_range)
     return lc
 
 
@@ -196,7 +196,6 @@ def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profi
     fig: Figure
     ax: Axes
     style_path = Path('styles/portfolio.mplstyle')
-    print(style_path.absolute())
     plt.style.use(style_path.absolute())
 
     fig, ax = plt.subplots()
@@ -211,12 +210,11 @@ def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profi
     timestamps = [t / 86400 for t in timestamps_unix]
     leveled_equity = [e if e > 0 else THRESHOLD for e in equity]
     x_list, y_list = modify_data(x_orig=timestamps, y_orig=leveled_equity, threshold=THRESHOLD)
-    print(f'{x_list=}\n{y_list=}')
     x = np.asarray(x_list)
     y = np.asarray(y_list)
 
     # get line colored according to threshold
-    lc = threshold_plot(ax, np.asarray(x), np.asarray(y), THRESHOLD, 'darkred', 'g')
+    lc = threshold_plot(ax, np.asarray(x), np.asarray(y), THRESHOLD, 'darkred', 'green')
     lc.set_linewidth(2)
 
     # add horizontal line
