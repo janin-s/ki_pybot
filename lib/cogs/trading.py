@@ -16,7 +16,7 @@ from lib.db import db
 from lib.utils.trading_classes import StockError, StockButton
 from lib.utils.trading_utils import Stock, choose_two, to_stock, seconds_until, create_poll_embed, \
     create_database_poll_entry, get_all_stocks_from_db, format_portfolio_embeds, add_buytime_noise, \
-    format_portfolio_history
+    get_portfolio_history_image
 
 
 class Trading(Cog):
@@ -46,7 +46,8 @@ class Trading(Cog):
     async def portfolio_history(self, ctx: Context):
         print(f'called at {datetime.now().isoformat()}')
         history: PortfolioHistory = self.api.get_portfolio_history(date_start='2022-05-23', timeframe='1D')
-        format_portfolio_history(history)
+        file: discord.File = get_portfolio_history_image(history)
+        await ctx.send(file=file)
 
     @command()
     async def portfolio(self, ctx: Context):
@@ -108,8 +109,8 @@ class Trading(Cog):
                 await channel.send('No Stocks found :(')
                 return
 
-        stock1 = to_stock(chosen_stocks[0])
-        stock2 = to_stock(chosen_stocks[1])
+        stock1 = await to_stock(chosen_stocks[0])
+        stock2 = await to_stock(chosen_stocks[1])
 
         buy_time = self._get_next_buy_time()
         poll_id = create_database_poll_entry(guild_id, stock1, stock2, buy_time)
@@ -155,14 +156,15 @@ class Trading(Cog):
         else:
             winner = asset2_id
         winner_symbol = db.field('SELECT symbol FROM assets WHERE id = ?', winner)
-        winner_stock = to_stock((winner, winner_symbol))
+        winner_stock = await to_stock((winner, winner_symbol))
 
         try:
             self._buy_stock(winner_stock)
         except StockError:
             await channel.send(f'Order for Stock Voting Winner **${winner_symbol}** not accepted :(')
             return
-        await channel.send(f'Bought $1 of Stock Voting Winner **${winner_symbol}** at current price ${winner_stock.currentPrice}')
+        await channel.send(f'Submitted buy order for $1 of Stock Voting Winner **${winner_symbol}** at current price '
+                           f'${winner_stock.currentPrice}')
         if self.pinned_messages:
             message = self.pinned_messages.pop(0)
             await message.unpin()

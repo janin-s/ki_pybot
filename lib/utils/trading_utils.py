@@ -1,9 +1,12 @@
+import copy
 import functools
 import random
 import re
 import datetime
 import math
+from pathlib import Path
 
+import discord
 import numpy as np
 import yfinance
 from matplotlib import pyplot as plt
@@ -11,9 +14,12 @@ from matplotlib import pyplot as plt
 from typing import TypeVar
 from alpaca_trade_api.entity import Position, PortfolioHistory
 from discord import Embed
+from matplotlib.axes import Axes
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 import matplotlib.dates as mdates
+from matplotlib.figure import Figure
+from matplotlib.ticker import ScalarFormatter
 from numpy import ndarray
 
 from lib.db import db
@@ -91,9 +97,11 @@ def format_portfolio_embeds(cash_string: str, value_string: str, positions: list
     return [embed] + position_embeds
 
 
-def format_portfolio_history(history: PortfolioHistory):
-    print(history._raw)
-    _build_portfolio_plot(history.timestamp, history.equity, history.profit_loss_pct)
+def get_portfolio_history_image(history: PortfolioHistory) -> discord.File:
+    # print(history._raw)
+    image_path: Path = _build_portfolio_plot(history.timestamp, history.equity, history.profit_loss_pct)
+    return discord.File(fp=image_path, filename='portfolio_history.png')
+
 
 T = TypeVar('T')
 
@@ -105,10 +113,15 @@ def choose_two(assets: list[T]) -> tuple[T, T] | None:
     return assets[0], assets[1]
 
 
-def to_stock(stock: tuple[str, str]) -> Stock:
-    stock_id, symbol = stock
+async def get_stock_info(symbol: str):
     ticker = yfinance.Ticker(symbol)
-    info = ticker.info
+    info: dict = ticker.info
+    return info
+
+
+async def to_stock(stock: tuple[str, str]) -> Stock:
+    stock_id, symbol = stock
+    info = await get_stock_info(symbol)
     print(f'\n\n\ninfo: {info}\n\n\n')
     try:
         long_description = info['longBusinessSummary']
@@ -132,32 +145,91 @@ def to_stock(stock: tuple[str, str]) -> Stock:
                  marketCap=marketCap)
 
 
-def _build_portfolio_plot(timestamp: list[int], equity: list[float], profit_loss_pct: list[float]):
-    BOUNDARY = 100_000
-    equity = [e if e > 0.000001 else BOUNDARY for e in equity]
+def get_cross_point(x1: float, y1: float, x2: float, y2: float, threshold: float) -> float:
+    m = (y2 - y1) / (x2 - x1)
+    t = y1 - m * x1
+    f = lambda n: (n - t) / m
+    return f(threshold)
 
-    dates = list(map(lambda t: datetime.datetime.fromtimestamp(t).strftime('%d.%m'), timestamp))
 
-    print(f'{dates=}, {equity=}')
-    plt.plot(dates, equity)
-    plt.axhline(y=BOUNDARY, xmin=0, xmax=1, color='b', linestyle=':')
+def modify_data(x_orig: list[float], y_orig: list[float], threshold: float):
+    xs = copy.copy(x_orig)
+    ys = copy.copy(y_orig)
+    xs_zipped = zip(xs[:-1] + [xs[-1]], xs[1:] + [xs[-1]])
+    ys_zipped = zip(ys[:-1] + [ys[-1]], ys[1:] + [ys[-1]])
+    new_xs = []
+    new_ys = []
+    for (x1, x2), (y1, y2) in zip(xs_zipped, ys_zipped):
+        new_ys.append(y1)
+        new_xs.append(x1)
+
+        if y1 < threshold < y2 or y1 >= threshold > y2:
+            new_x = get_cross_point(x1, y1, x2, y2, threshold)
+            print(f'{y1=}, {y2=}, {new_x=}, {x1=}, {x2=}')
+            new_xs.append(new_x)
+            if y1 < y2:
+                new_ys.append(threshold + 0.000000001)
+            else:
+                new_ys.append(threshold - 0.000000001)
+    return new_xs, new_ys
+
+
+def threshold_plot(axs: Axes, xs: ndarray, ys: ndarray, threshv, color, overcolor) -> LineCollection:
+    # from https://stackoverflow.com/a/30125761
+    cmap = ListedColormap([color, overcolor])
+    norm = BoundaryNorm([np.min(ys), threshv, np.max(ys)], cmap.N)
+
+    points = np.array([xs, ys]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+    lc = LineCollection(segments, cmap=cmap, norm=norm)
+    lc.set_array(ys)
+
+    axs.add_collection(lc)
+    axs.set_xlim(np.min(xs), np.max(xs))
+    axs.set_ylim(np.min(ys), np.max(ys))
+    return lc
+
+
+def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profit_loss_pct: list[float]) -> Path:
+    THRESHOLD = 100_000
+    fig: Figure
+    ax: Axes
+    style_path = Path('styles/portfolio.mplstyle')
+    print(style_path.absolute())
+    plt.style.use(style_path.absolute())
+
+    fig, ax = plt.subplots()
+
+    # styles and formatting
+    ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.'))
+    ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=mdates.MO, interval=1))
+    fig.autofmt_xdate()
+
+    # prepare data
+    timestamps = [t / 86400 for t in timestamps_unix]
+    leveled_equity = [e if e > 0 else THRESHOLD for e in equity]
+    x_list, y_list = modify_data(x_orig=timestamps, y_orig=leveled_equity, threshold=THRESHOLD)
+    print(f'{x_list=}\n{y_list=}')
+    x = np.asarray(x_list)
+    y = np.asarray(y_list)
+
+    # get line colored according to threshold
+    lc = threshold_plot(ax, np.asarray(x), np.asarray(y), THRESHOLD, 'darkred', 'g')
+    lc.set_linewidth(2)
+
+    # add horizontal line
+    ax.axhline(THRESHOLD, color='#ada4a4')
+
+    # file area between curve and horizontal line
+    ax.fill_between(x, y, THRESHOLD, where=(y < THRESHOLD), facecolor="red", interpolate=True)
+    ax.fill_between(x, y, THRESHOLD, where=(y > THRESHOLD), facecolor="limegreen", interpolate=True)
+
+    figure_path = Path('data/other/portfolio.png')
+    plt.savefig(figure_path.absolute())
     plt.show()
-
-    #c = ['r' if e < 100000 else 'g' for e in equity]
-    #cmap = ListedColormap(['r', 'g'])
-    #norm = BoundaryNorm([0, BOUNDARY], cmap.N, extend='max')
-    #points = np.array([x, y]).T.reshape(-1, 1, 2)
-    #segments = np.concatenate([points[:-1], points[1:]], axis=1)
-#
-    #fig, axs = plt.subplots(2, 1, sharex=True, sharey=True)
-#
-    #lc = LineCollection(segments, cmap=cmap, norm=norm)
-    ## lc.set_array(dydx)
-    #lc.set_linewidth(2)
-    #line = axs[1].add_collection(lc)
-    #fig.colorbar(line, ax=axs[1])
-    #plt.xlim(x.min(), x.max())
-    #plt.ylim(y.min(), y.max())
+    return figure_path
 
 
 def seconds_until(hours, minutes):

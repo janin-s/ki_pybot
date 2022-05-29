@@ -4,6 +4,8 @@ matplotlib~=3.5.1
 tweepy~=4.8.0
 toml~=0.10.2
 alpaca-trade-api~=2.0.0
-yfinance
+yfinance~=0.1.70
 py-cord==2.0.0rc1
-pytz
+pytz~=2022.1
+numpy~=1.22.4
+qbstyles~=0.1.4

@@ -1,0 +1,39 @@
+# from https://everyhue.me/posts/sane-color-scheme-for-matplotlib/
+
+patch.linewidth: 0.5
+patch.facecolor: 348ABD  # blue
+patch.edgecolor: EEEEEE
+patch.antialiased: True
+
+font.size: 10.0
+
+axes.facecolor: 2e2e2e
+axes.edgecolor: ada4a4
+axes.linewidth: 1
+axes.grid: True
+axes.titlesize: x-large
+axes.labelsize: large
+axes.labelcolor: ada4a4
+axes.axisbelow: True       # grid/ticks are below elements (e.g., lines, text)
+
+axes.prop_cycle: cycler('color', ['E24A33', '348ABD', '988ED5', '777777', 'FBC15E', '8EBA42', 'FFB5B8'])
+                   # E24A33 : red
+                   # 348ABD : blue
+                   # 988ED5 : purple
+                   # 777777 : gray
+                   # FBC15E : yellow
+                   # 8EBA42 : green
+                   # FFB5B8 : pink
+
+xtick.color: ada4a4
+xtick.direction: out
+
+ytick.color: ada4a4
+ytick.direction: out
+
+grid.color: 444444
+grid.linestyle: -    # solid line
+
+figure.facecolor: 2e2e2e
+figure.edgecolor: 0.50
+
