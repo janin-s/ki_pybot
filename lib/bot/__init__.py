@@ -9,7 +9,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler  # idk
 
 from lib.bot.config import Config
 from lib.db import db
-from lib.utils.utils import MsgNotFound
+from lib.utils.message_utils import MsgNotFound, message
 
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 
@@ -37,7 +37,6 @@ class Bot(BotBase):
         self.cogs_ready = Ready()
         self.guild = None
         self.scheduler = AsyncIOScheduler()
-        self.msg_cog = None
         db.autosave(self.scheduler)
         super().__init__(
             command_prefix=self.config.command_prefix,
@@ -52,7 +51,6 @@ class Bot(BotBase):
         for cog in COGS:
             self.load_extension(f"lib.cogs.{cog}")
             print(f"{cog} cog loaded")
-        self.msg_cog = self.get_cog('msg')
         print("setup complete")
 
     def run(self):
@@ -74,7 +72,7 @@ class Bot(BotBase):
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, commands.errors.CommandNotFound):
             try:
-                await self.msg_cog.message(ctx=ctx, msg=ctx.invoked_with)
+                await message(ctx=ctx, msg=ctx.invoked_with)
             except MsgNotFound:
                 await ctx.send('KI dummdumm v2 <:eist_moment:731293248324370483>')
 
@@ -83,7 +81,7 @@ class Bot(BotBase):
         elif isinstance(exc, commands.errors.BotMissingPermissions):
             await ctx.send("KI nicht mächtig genug :(")
         else:
-            await ctx.send("KI nix verstehi ._." + str(exc))
+            await ctx.send("KI nix verstehi ._. " + str(exc))
 
     async def on_ready(self):
         if not self.ready:
@@ -92,7 +90,9 @@ class Bot(BotBase):
             # wait for cogs to be ready
             while not self.cogs_ready.all_ready():
                 await sleep(0.5)
-
+            print(self.cogs)
+            print(self.get_cog('Msg'))
+            self.msg_cog = self.get_cog('Msg')
             self.ready = True
             print("bot ready")
         else:

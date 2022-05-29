@@ -23,7 +23,7 @@ class DailyInfos(Cog):
     @Cog.listener()
     async def on_ready(self):
         if not self.bot.ready:
-            self.bot.cogs_ready.ready_up("dailyinfos")
+            self.bot.cogs_ready.ready_up("daily_infos")
 
     @command()
     @has_permissions(administrator=True)

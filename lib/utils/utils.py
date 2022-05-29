@@ -4,10 +4,6 @@ import discord.utils
 import requests
 
 
-class MsgNotFound(Exception):
-    pass
-
-
 async def send_paginated(ctx, limit=2000, start="", end="", *, content):
     content = discord.utils.escape_mentions(content)
     content = content.replace('`', '`\u200b')
