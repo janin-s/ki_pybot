@@ -1,12 +1,20 @@
+import functools
 import random
 import re
 import datetime
 import math
+
+import numpy as np
 import yfinance
+from matplotlib import pyplot as plt
 
 from typing import TypeVar
-from alpaca_trade_api.entity import Position
+from alpaca_trade_api.entity import Position, PortfolioHistory
 from discord import Embed
+from matplotlib.collections import LineCollection
+from matplotlib.colors import ListedColormap, BoundaryNorm
+import matplotlib.dates as mdates
+from numpy import ndarray
 
 from lib.db import db
 from lib.utils.trading_classes import Stock
@@ -47,7 +55,8 @@ def _position_to_str(pos: Position) -> str:
     change = float(pos.unrealized_plpc)
 
     def pad(s: str, length: int) -> str:
-        return s + (length - len(s))*' '
+        return s + (length - len(s)) * ' '
+
     return f" {pad(pos.symbol, 8)} " \
            f"${pad(f'{cost_basis:.2f}', 9)} " \
            f"${pad(f'{market_value:.4f}', 12)} " \
@@ -61,6 +70,14 @@ def _format_positions(positions: list[Position]) -> list[str]:
     return ['\n'.join(all_lines[i:i + 94]) for i in range(0, len(all_lines), 94)]
 
 
+def _get_total_change(positions: list[Position]) -> float:
+    total_cost, total_value = functools.reduce(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1]),
+                                               map(lambda p: (float(p.cost_basis), float(p.market_value)), positions),
+                                               (0, 0))
+    print(f'{total_cost=}, {total_value=}')
+    return total_value / total_cost - 1.
+
+
 def format_portfolio_embeds(cash_string: str, value_string: str, positions: list[Position]) -> list[Embed]:
     value = float(value_string)
     cash = float(cash_string)
@@ -69,9 +86,14 @@ def format_portfolio_embeds(cash_string: str, value_string: str, positions: list
     embed = Embed(title='Portfolio')
     embed.add_field(name='Cash', value=f'${cash:.2f}')
     embed.add_field(name='Portfolio Value', value=f'${stock_only_val:.4f}')
+    embed.add_field(name='Total Change', value=f'{_get_total_change(positions):.4f}%')
     position_embeds = list(map(lambda s: Embed(description=f'```{s}```'), position_lines))
     return [embed] + position_embeds
 
+
+def format_portfolio_history(history: PortfolioHistory):
+    print(history._raw)
+    _build_portfolio_plot(history.timestamp, history.equity, history.profit_loss_pct)
 
 T = TypeVar('T')
 
@@ -108,6 +130,34 @@ def to_stock(stock: tuple[str, str]) -> Stock:
                  logo_url=logo_url,
                  currentPrice=price,
                  marketCap=marketCap)
+
+
+def _build_portfolio_plot(timestamp: list[int], equity: list[float], profit_loss_pct: list[float]):
+    BOUNDARY = 100_000
+    equity = [e if e > 0.000001 else BOUNDARY for e in equity]
+
+    dates = list(map(lambda t: datetime.datetime.fromtimestamp(t).strftime('%d.%m'), timestamp))
+
+    print(f'{dates=}, {equity=}')
+    plt.plot(dates, equity)
+    plt.axhline(y=BOUNDARY, xmin=0, xmax=1, color='b', linestyle=':')
+    plt.show()
+
+    #c = ['r' if e < 100000 else 'g' for e in equity]
+    #cmap = ListedColormap(['r', 'g'])
+    #norm = BoundaryNorm([0, BOUNDARY], cmap.N, extend='max')
+    #points = np.array([x, y]).T.reshape(-1, 1, 2)
+    #segments = np.concatenate([points[:-1], points[1:]], axis=1)
+#
+    #fig, axs = plt.subplots(2, 1, sharex=True, sharey=True)
+#
+    #lc = LineCollection(segments, cmap=cmap, norm=norm)
+    ## lc.set_array(dydx)
+    #lc.set_linewidth(2)
+    #line = axs[1].add_collection(lc)
+    #fig.colorbar(line, ax=axs[1])
+    #plt.xlim(x.min(), x.max())
+    #plt.ylim(y.min(), y.max())
 
 
 def seconds_until(hours, minutes):

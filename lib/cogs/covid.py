@@ -8,7 +8,7 @@ from discord import Embed, Colour, File
 from discord.ext.commands import Cog, command
 
 from lib.bot import Bot
-from lib.covid_utils import incidence_image
+from lib.utils.covid_utils import incidence_image
 
 
 class Covid(Cog):

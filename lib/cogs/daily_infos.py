@@ -10,7 +10,7 @@ from lib.bot import Bot
 from lib.db import db
 from datetime import datetime, timedelta
 
-from lib.covid_utils import incidence_image
+from lib.utils.covid_utils import incidence_image
 
 
 class DailyInfos(Cog):

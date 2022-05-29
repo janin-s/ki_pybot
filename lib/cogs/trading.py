@@ -4,7 +4,7 @@ import alpaca_trade_api
 
 from datetime import datetime, timedelta
 from alpaca_trade_api.common import URL
-from alpaca_trade_api.entity import Asset, Order, Clock, Account, Position
+from alpaca_trade_api.entity import Asset, Order, Clock, Account, Position, PortfolioHistory
 from apscheduler.triggers.date import DateTrigger
 from discord import TextChannel, Message, HTTPException
 from discord.ext import tasks
@@ -15,7 +15,8 @@ from lib.bot import Bot
 from lib.db import db
 from lib.utils.trading_classes import StockError, StockButton
 from lib.utils.trading_utils import Stock, choose_two, to_stock, seconds_until, create_poll_embed, \
-    create_database_poll_entry, get_all_stocks_from_db, format_portfolio_embeds, add_buytime_noise
+    create_database_poll_entry, get_all_stocks_from_db, format_portfolio_embeds, add_buytime_noise, \
+    format_portfolio_history
 
 
 class Trading(Cog):
@@ -27,6 +28,9 @@ class Trading(Cog):
         paper_api_key_id = 'PKZ0AFHB21M8WVI8UMX3'
         paper_api_secret_key = 'AXBHvjLKqMQPQDEwosddasP0CZqjAUuvV6trCy3x'
         paper_endpoint = URL('https://paper-api.alpaca.markets')
+        # self.api = alpaca_trade_api.REST(key_id=api_key_id,
+        #                                  secret_key=api_secret,
+        #                                  base_url=api_endpoint)
         self.api = alpaca_trade_api.REST(key_id=paper_api_key_id,
                                          secret_key=paper_api_secret_key,
                                          base_url=paper_endpoint)
@@ -37,12 +41,18 @@ class Trading(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("trading")
-    
+
+    @command()
+    async def portfolio_history(self, ctx: Context):
+        print(f'called at {datetime.now().isoformat()}')
+        history: PortfolioHistory = self.api.get_portfolio_history(date_start='2022-05-23', timeframe='1D')
+        format_portfolio_history(history)
+
     @command()
     async def portfolio(self, ctx: Context):
         account: Account = self.api.get_account()
         cash: str = account.cash
-        portfolio_value: str = account.portfolio_value
+        portfolio_value: str = account.equity
         positions: list[Position] = self.api.list_positions()
         embeds = format_portfolio_embeds(cash, portfolio_value, positions)
         await ctx.send(embeds=embeds)
