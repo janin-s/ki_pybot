@@ -7,7 +7,7 @@ from discord.ext.commands import Cog, group, command
 
 from lib.bot import Bot
 from lib.db import db
-from lib import utils
+from lib.utils import utils
 
 
 @dataclass()

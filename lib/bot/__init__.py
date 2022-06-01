@@ -90,9 +90,6 @@ class Bot(BotBase):
             # wait for cogs to be ready
             while not self.cogs_ready.all_ready():
                 await sleep(0.5)
-            print(self.cogs)
-            print(self.get_cog('Msg'))
-            self.msg_cog = self.get_cog('Msg')
             self.ready = True
             print("bot ready")
         else:

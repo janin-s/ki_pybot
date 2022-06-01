@@ -8,8 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 from lib.bot import Bot
 from lib.db import db
-from lib import utils
-
+from lib.utils import utils
 
 
 class Birthdays(Cog):
