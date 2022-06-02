@@ -28,12 +28,9 @@ class Trading(Cog):
         paper_api_key_id = 'PKZ0AFHB21M8WVI8UMX3'
         paper_api_secret_key = 'AXBHvjLKqMQPQDEwosddasP0CZqjAUuvV6trCy3x'
         paper_endpoint = URL('https://paper-api.alpaca.markets')
-        # self.api = alpaca_trade_api.REST(key_id=api_key_id,
-        #                                  secret_key=api_secret,
-        #                                  base_url=api_endpoint)
-        self.api = alpaca_trade_api.REST(key_id=paper_api_key_id,
-                                         secret_key=paper_api_secret_key,
-                                         base_url=paper_endpoint)
+        self.api = alpaca_trade_api.REST(key_id=api_key_id,
+                                         secret_key=api_secret,
+                                         base_url=api_endpoint)
         self.pinned_messages: list[Message] = []
         self.create_poll_loop.start()
 
