@@ -228,7 +228,6 @@ def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profi
 
     figure_path = Path('data/other/portfolio.png')
     plt.savefig(figure_path.absolute())
-    plt.show()
     return figure_path
 
 

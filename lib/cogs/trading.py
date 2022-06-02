@@ -41,7 +41,7 @@ class Trading(Cog):
 
     @command()
     async def portfolio_history(self, ctx: Context):
-        history: PortfolioHistory = self.api.get_portfolio_history(date_start='2022-05-23', timeframe='1D')
+        history: PortfolioHistory = self.api.get_portfolio_history(date_start='2022-05-28', timeframe='1D')
         file: discord.File = get_portfolio_history_image(history)
         await ctx.send(file=file)
 
