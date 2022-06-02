@@ -80,6 +80,8 @@ def _get_total_change(positions: list[Position]) -> float:
     total_cost, total_value = functools.reduce(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1]),
                                                map(lambda p: (float(p.cost_basis), float(p.market_value)), positions),
                                                (0, 0))
+    if total_cost == 0:
+        return 0.0
     return total_value / total_cost - 1.
 
 
@@ -171,7 +173,7 @@ def modify_data(x_orig: list[float], y_orig: list[float], threshold: float) -> t
     return new_xs, new_ys
 
 
-def threshold_plot(axs: Axes, xs: ndarray, ys: ndarray, threshv, color, overcolor) -> LineCollection:
+def threshold_plot(axs: Axes, xs: ndarray, ys: ndarray, threshv: float, color: str, overcolor: str) -> LineCollection:
     # from https://stackoverflow.com/a/30125761
     cmap = ListedColormap([color, overcolor])
     norm = BoundaryNorm([np.min(ys), threshv, np.max(ys)], cmap.N)
@@ -192,7 +194,7 @@ def threshold_plot(axs: Axes, xs: ndarray, ys: ndarray, threshv, color, overcolo
 
 
 def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profit_loss_pct: list[float]) -> Path:
-    THRESHOLD = 100_000
+    THRESHOLD = 57.79
     fig: Figure
     ax: Axes
     style_path = Path('styles/portfolio.mplstyle')
@@ -230,7 +232,7 @@ def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profi
     return figure_path
 
 
-def seconds_until(hours, minutes):
+def seconds_until(hours: int, minutes: int) -> float:
     given_time = datetime.time(hours, minutes)
     now = datetime.datetime.now()
     future_exec = datetime.datetime.combine(now, given_time)
@@ -243,7 +245,7 @@ def seconds_until(hours, minutes):
 millnames = ['', 'k', 'M', 'B', 'T']
 
 
-def millify(n: float | None):
+def millify(n: float | None) -> str:
     if n is None:
         return 'N/A'
     millidx = max(0, min(len(millnames) - 1,
