@@ -2,7 +2,7 @@ import json
 import random
 
 import requests
-from discord import Embed, File, TextChannel, Message
+from discord import Embed, File, Message
 from discord.ext.commands import Cog, has_permissions, command
 from apscheduler.triggers.cron import CronTrigger
 
@@ -11,6 +11,7 @@ from lib.db import db
 from datetime import datetime, timedelta
 
 from lib.utils.covid_utils import incidence_image
+from lib.utils.utils import Channel
 
 
 class DailyInfos(Cog):
@@ -30,7 +31,7 @@ class DailyInfos(Cog):
     async def daily_info(self, ctx):
         """command for triggering the daily info post for current guild"""
         guild_id = ctx.guild.id
-        guild = db.record('SELECT name, reminder_channel, quote_channel FROM server_info WHERE guild_id = ?', guild_id)
+        guild = db.record('SELECT name, main_channel, quote_channel FROM server_info WHERE guild_id = ?', guild_id)
         if guild is None:
             return
         name, rem_channel, quote_channel = guild
@@ -44,24 +45,21 @@ class DailyInfos(Cog):
 
     async def print_daily_infos_for_guild(self, name: str, main_channel_id: int, quote_channel_id: int):
         """prints daily info for one guild"""
-        main_channel: TextChannel = await self.bot.fetch_channel(main_channel_id)
-        quote_channel: TextChannel = await self.bot.fetch_channel(quote_channel_id)
+        main_channel: Channel = await self.bot.fetch_channel(main_channel_id)
+        quote_channel: Channel = await self.bot.fetch_channel(quote_channel_id)
 
-        main_embed: Embed = Embed(title=f'Guten Morgen {name}')
         inzidenz_file = get_incidence_image_file()
+        main_embed: Embed = Embed(title=f'Guten Morgen {name}')
         main_embed.set_image(url='attachment://incidence.png')
-        await main_channel.send(file=inzidenz_file, embed=main_embed)
 
         relikte_embed = await get_relikte_throwback_embed(quote_channel)
         weather_embed = get_weather_info_embed(self.WEATHER_API_KEY)
         news_embed = get_news_embed(self.NEWS_API_KEY)
-        embeds = [relikte_embed, weather_embed, news_embed]
-        for e in embeds:
-            if e is not None:
-                await main_channel.send(embed=e)
+        embeds = [embed for embed in [main_embed, weather_embed, news_embed, relikte_embed] if embed]
+        await main_channel.send(embeds=embeds, file=inzidenz_file)
 
 
-async def get_relikte_throwback_embed(channel: TextChannel) -> Embed | None:
+async def get_relikte_throwback_embed(channel: Channel) -> Embed | None:
     """returns an Embed containing a throwback from relikte x years ago on current date"""
     if channel is None:
         return

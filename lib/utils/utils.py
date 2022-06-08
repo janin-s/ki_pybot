@@ -2,6 +2,10 @@ from datetime import datetime, timedelta
 
 import discord.utils
 import requests
+from discord import Thread
+from discord.abc import GuildChannel, PrivateChannel
+
+Channel = GuildChannel | PrivateChannel | Thread
 
 
 async def send_paginated(ctx, limit=2000, start="", end="", *, content):

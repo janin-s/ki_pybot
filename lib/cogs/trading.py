@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from alpaca_trade_api.common import URL
 from alpaca_trade_api.entity import Asset, Order, Clock, Account, Position, PortfolioHistory
 from apscheduler.triggers.date import DateTrigger
-from discord import TextChannel, Message, HTTPException
+from discord import Message, HTTPException
 from discord.ext import tasks
 from discord.ext.commands import Cog, has_permissions, command, Context
 from pytz import timezone
@@ -17,6 +17,7 @@ from lib.utils.trading_classes import StockError, StockButton
 from lib.utils.trading_utils import Stock, choose_two, to_stock, seconds_until, create_poll_embed, \
     create_database_poll_entry, get_all_stocks_from_db, format_portfolio_embeds, add_buytime_noise, \
     get_portfolio_history_image
+from lib.utils.utils import Channel
 
 
 class Trading(Cog):
@@ -93,7 +94,7 @@ class Trading(Cog):
     async def create_poll(self, ctx: Context):
         await self._create_poll(ctx.channel, ctx.guild.id)
 
-    async def _create_poll(self, channel: TextChannel, guild_id: int):
+    async def _create_poll(self, channel: Channel, guild_id: int):
         stocks = get_all_stocks_from_db()
         chosen_stocks = choose_two(stocks)
         if not chosen_stocks:
@@ -132,7 +133,7 @@ class Trading(Cog):
         except HTTPException:
             pass
 
-    async def _evaluate_poll(self, poll_id: int, channel: TextChannel):
+    async def _evaluate_poll(self, poll_id: int, channel: Channel):
         print(f'Evaluating poll {poll_id}')
         poll_record = db.record('SELECT start_time, end_time, asset1_id, asset2_id FROM trading_polls WHERE poll_id =?',
                                 poll_id)
