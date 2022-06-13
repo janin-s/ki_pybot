@@ -1,11 +1,18 @@
-from datetime import datetime, timedelta
-
 import discord.utils
 import requests
-from discord import Thread
+
+from datetime import datetime, timedelta
+from discord import Thread, Interaction, HTTPException
 from discord.abc import GuildChannel, PrivateChannel
 
 Channel = GuildChannel | PrivateChannel | Thread
+
+
+async def dummy_response(interaction: Interaction):
+    try:
+        await interaction.response.send_message()
+    except HTTPException:
+        pass
 
 
 async def send_paginated(ctx, limit=2000, start="", end="", *, content):

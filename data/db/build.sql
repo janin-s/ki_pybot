@@ -112,6 +112,20 @@ CREATE TABLE IF NOT EXISTS assets (
     symbol text NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS events (
+    id integer PRIMARY KEY,
+    guild_id integer NOT NULL references server_info (guild_id) ON DELETE CASCADE,
+    channel_id integer NOT NULL,
+    message_id integer NOT NULL,
+    event_id integer NOT NULL,
+    role_id integer NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    location TEXT NOT NULL
+);
+
 INSERT OR IGNORE INTO server_info (guild_id, name, main_channel, quote_channel, birthday_channel, reminder_channel)
 VALUES (705425948996272210, '10111011 Strassenbande', 705425949541269668, 705427122151227442, 705425949541269668, 705425949541269668);
 INSERT OR IGNORE INTO messages (shorthand, message, guild_id)

@@ -1,7 +1,8 @@
 import dataclasses
-from discord import Embed, HTTPException, Interaction, ui, enums
+from discord import Embed, Interaction, ui, enums
 
 from lib.db import db
+from lib.utils.utils import dummy_response
 
 
 @dataclasses.dataclass
@@ -72,10 +73,3 @@ class StockButton(ui.Button):
 def count_votes(poll_id: int, asset_id: str) -> int:
     return db.field('SELECT COUNT (*) FROM trading_votes WHERE poll_id = ? AND asset_id = ?',
                     poll_id, asset_id)
-
-
-async def dummy_response(interaction: Interaction):
-    try:
-        await interaction.response.send_message()
-    except HTTPException:
-        pass
