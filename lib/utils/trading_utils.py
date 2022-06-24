@@ -63,7 +63,7 @@ def create_poll_embed(stock: Stock, end_time: datetime) -> Embed:
 def _position_to_str(pos: Position) -> str:
     cost_basis = float(pos.cost_basis)
     market_value = float(pos.market_value)
-    change = float(pos.unrealized_plpc)
+    change = float(pos.unrealized_plpc) * 100.
 
     def pad(s: str, length: int) -> str:
         return s + (length - len(s)) * ' '
