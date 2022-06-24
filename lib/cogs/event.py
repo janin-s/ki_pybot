@@ -5,7 +5,8 @@ from discord.ext.commands import Cog, group, Context
 from lib.bot import Bot
 from lib.db import db
 from lib.utils import utils
-from lib.utils.event_classes import Event, EventButton, EventView
+from lib.utils.event_classes import EventButton, EventView
+from lib.utils.event_utils import parse_command_args, create_event_embed, tuple_to_event
 
 
 class EventCog(Cog):
@@ -53,20 +54,12 @@ class EventCog(Cog):
     @event.command()
     async def add(self, ctx: Context, *, event: str):
         """!event add name;description;start date;start time;end date; end time; place"""
-        args = event.split(';')
-        if len(args) != 7:
-            await ctx.send(f'Invalid number of arguments: {len(args)}')
-            return
-        name: str = args[0]
-        description: str = args[1]
-        place = args[6]
         try:
-            start = datetime.strptime(args[2] + ';' + args[3], '%Y-%m-%d;%H:%M')
-            end = datetime.strptime(args[4] + ';' + args[5], '%Y-%m-%d;%H:%M')
-        except ValueError:
-            await ctx.send(f'Couldn\'t parse date')
+            name, description, place, start, end, role_name = parse_command_args(event)
+        except ValueError as e:
+            await ctx.send(str(e))
             return
-        role_name = f'event-{"-".join(name.lower().split(" "))}'
+
         role: Role = await ctx.guild.create_role(name=role_name, mentionable=True)
 
         event = await ctx.guild.create_scheduled_event(name=name,
@@ -175,17 +168,6 @@ class EventCog(Cog):
                     pass
         db.execute('DELETE FROM events WHERE id = ?', event_id)
         return name
-
-
-def create_event_embed(name: str, description: str, place: str, start: datetime, end: datetime) -> Embed:
-    embed = Embed(title=name, description=description)
-    embed.add_field(name='When?', value=f'{start.strftime("%H:%M %d.%m.%y")} - {end.strftime("%H:%M %d.%m.%y")}')
-    embed.add_field(name='Where?', value=place)
-    return embed
-
-
-def tuple_to_event(t: tuple) -> Event:
-    return Event(*t[1:])
 
 
 def setup(bot):

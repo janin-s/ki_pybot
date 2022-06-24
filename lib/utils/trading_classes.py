@@ -34,13 +34,13 @@ class StockButton(ui.Button):
 
     async def callback(self, interaction: Interaction):
         """This function will be called any time a user clicks on this button."""
-        existing_vote = db.field('SELECT asset_id FROM trading_votes WHERE poll_id = ? AND user_id = ?',
-                                 self.poll_id, interaction.user.id)
-        current_count = count_votes(self.poll_id, self.stock_id)
-
         embeds = interaction.message.embeds
         this_embed: Embed = [e for e in embeds if e.title == self.symbol].pop()
         other_embed: Embed = [e for e in embeds if e.title != self.symbol].pop()
+
+        existing_vote = db.field('SELECT asset_id FROM trading_votes WHERE poll_id = ? AND user_id = ?',
+                                 self.poll_id, interaction.user.id)
+
         message = f'{interaction.user.mention} voted to buy **${self.symbol}**!'
         if existing_vote is not None:
             if existing_vote == self.stock_id:
@@ -52,6 +52,7 @@ class StockButton(ui.Button):
                    self.poll_id, interaction.user.id, self.stock_id)
 
         # update count in embed
+        current_count = count_votes(self.poll_id, self.stock_id)
         this_embed.remove_field(3)
         this_embed.add_field(name='Current Votes', value=str(current_count + 1))
 

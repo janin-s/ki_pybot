@@ -26,6 +26,11 @@ from lib.db import db
 from lib.utils.trading_classes import Stock
 
 
+def update_poll_entry(message_id: int, channel_id: int, poll_id: int) -> None:
+    db.execute('UPDATE trading_polls SET message_id = ?, channel_id = ? WHERE poll_id = ?',
+               message_id, channel_id, poll_id)
+
+
 def add_buytime_noise(buy_time: datetime.datetime, poll_id: int) -> datetime.datetime:
     return buy_time + datetime.timedelta(seconds=poll_id % 60, milliseconds=random.randint(0, 99))
 

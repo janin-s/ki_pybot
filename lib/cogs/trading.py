@@ -13,10 +13,10 @@ from pytz import timezone
 
 from lib.bot import Bot
 from lib.db import db
-from lib.utils.trading_classes import StockError, StockButton
+from lib.utils.trading_classes import StockError, StockButton, count_votes
 from lib.utils.trading_utils import Stock, choose_two, to_stock, seconds_until, create_poll_embed, \
     create_database_poll_entry, get_all_stocks_from_db, format_portfolio_embeds, add_buytime_noise, \
-    get_portfolio_history_image
+    get_portfolio_history_image, update_poll_entry
 from lib.utils.utils import Channel
 
 
@@ -37,8 +37,29 @@ class Trading(Cog):
 
     @Cog.listener()
     async def on_ready(self):
+        records = db.records(
+            'SELECT poll_id, guild_id, asset1_id, asset2_id, message_id, channel_id FROM trading_polls '
+            'WHERE end_time > ?',
+            datetime.now().isoformat())
+        for poll_id, guild_id, asset1_id, asset2_id, message_id, channel_id in records:
+            await self.update_trading_view(asset1_id, asset2_id, channel_id, guild_id, message_id, poll_id)
+
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("trading")
+
+    async def update_trading_view(self, asset1_id: str, asset2_id: str, channel_id: int, guild_id: int, message_id: int,
+                                  poll_id: int) -> None:
+        guild = await self.bot.fetch_guild(guild_id)
+        channel = await guild.fetch_channel(channel_id)
+        message = await channel.fetch_message(message_id)
+        symbol1 = db.field('SELECT symbol FROM assets WHERE id = ?', asset1_id)
+        symbol2 = db.field('SELECT symbol FROM assets WHERE id = ?', asset2_id)
+        if symbol1 and symbol2 and message:
+            view = discord.ui.View(timeout=None)
+            view.add_item(StockButton(symbol1, asset1_id, poll_id))
+            view.add_item(StockButton(symbol2, asset2_id, poll_id))
+            await message.edit(view=view)
+            self.bot.add_view(view, message_id=message_id)
 
     @command()
     async def portfolio_history(self, ctx: Context):
@@ -80,14 +101,16 @@ class Trading(Cog):
                                                 time_in_force='day',
                                                 order_class='simple')
         print(response)
-        if response.status != 'accepted':
+        if response.status in ['canceled', 'stopped', 'rejected', 'suspended']:
             raise StockError('Order not accepted')
 
     @tasks.loop(hours=24)
     async def create_poll_loop(self):
-        await asyncio.sleep(seconds_until(9, 0))  # Will stay here until your clock says 11:58
-        spam = await self.bot.fetch_channel(705425949541269668)
-        await self._create_poll(spam, 705425948996272210)
+        await asyncio.sleep(seconds_until(9, 0))
+        records = db.execute('SELECT guild_id, trading_channel FROM server_info')
+        for guild_id, trading_channel in records:
+            channel = await self.bot.fetch_channel(trading_channel)
+            await self._create_poll(channel, guild_id)
 
     @command()
     @has_permissions(administrator=True)
@@ -110,14 +133,14 @@ class Trading(Cog):
 
         buy_time = self._get_next_buy_time()
         poll_id = create_database_poll_entry(guild_id, stock1, stock2, buy_time)
-        
+
         embed1 = create_poll_embed(stock1, buy_time)
         embed2 = create_poll_embed(stock2, buy_time)
 
         view = discord.ui.View(timeout=None)
         view.add_item(StockButton(stock1.symbol, stock1.id, poll_id))
         view.add_item(StockButton(stock2.symbol, stock2.id, poll_id))
-        
+
         job_buy_time = add_buytime_noise(buy_time, poll_id)
         # add job for evaluation
         self.bot.scheduler.add_job(
@@ -126,10 +149,13 @@ class Trading(Cog):
             trigger=DateTrigger(job_buy_time),
             args=[poll_id, channel],
             misfire_grace_time=None)
-        message: Message = await channel.send(embeds=[embed1, embed2], view=view)
-        self.pinned_messages.append(message)
+        short_message: Message = await channel.send(content=f'Poll for {stock1.symbol} & {stock2.symbol}')
+        embed_message: Message = await channel.send(embeds=[embed1, embed2], view=view)
+        update_poll_entry(embed_message.id, embed_message.channel.id, poll_id)
+
+        self.pinned_messages.append(short_message)
         try:
-            await message.pin()
+            await short_message.pin()
         except HTTPException:
             pass
 
@@ -142,11 +168,8 @@ class Trading(Cog):
             return
         start_time, end_time, asset1_id, asset2_id = poll_record
 
-        count1 = db.field('SELECT COUNT (*) FROM trading_votes WHERE poll_id = ? AND asset_id = ?',
-                          poll_id, asset1_id)
-
-        count2 = db.field('SELECT COUNT (*) FROM trading_votes WHERE poll_id = ? AND asset_id = ?',
-                          poll_id, asset2_id)
+        count1 = count_votes(poll_id, asset1_id)
+        count2 = count_votes(poll_id, asset2_id)
         if count1 > count2:
             winner = asset1_id
         else:
