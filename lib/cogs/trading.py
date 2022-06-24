@@ -69,12 +69,16 @@ class Trading(Cog):
 
     @command()
     async def portfolio(self, ctx: Context):
-        account: Account = self.api.get_account()
+        account, positions = self._get_account_and_positions()
         cash: str = account.cash
         portfolio_value: str = account.equity
-        positions: list[Position] = self.api.list_positions()
         embeds = format_portfolio_embeds(cash, portfolio_value, positions)
         await ctx.send(embeds=embeds)
+
+    def _get_account_and_positions(self) -> tuple[Account, list[Position]]:
+        positions: list[Position] = self.api.list_positions()
+        account: Account = self.api.get_account()
+        return account, positions
 
     def _get_next_buy_time(self) -> datetime:
         berlin = timezone('Europe/Berlin')

@@ -98,13 +98,13 @@ def format_portfolio_embeds(cash_string: str, value_string: str, positions: list
     embed = Embed(title='Portfolio')
     embed.add_field(name='Cash', value=f'${cash:.2f}')
     embed.add_field(name='Portfolio Value', value=f'${stock_only_val:.4f}')
-    embed.add_field(name='Total Change', value=f'{_get_total_change(positions):.4f}%')
+    embed.add_field(name='Total Change', value=f'{_get_total_change(positions) * 100:.4f}%')
     position_embeds = list(map(lambda s: Embed(description=f'```{s}```'), position_lines))
     return [embed] + position_embeds
 
 
 def get_portfolio_history_image(history: PortfolioHistory) -> discord.File:
-    image_path: Path = _build_portfolio_plot(history.timestamp, history.equity, history.profit_loss_pct)
+    image_path: Path = _build_portfolio_plot_relative(history.timestamp, history.profit_loss)
     return discord.File(fp=image_path, filename='portfolio_history.png')
 
 
@@ -193,13 +193,21 @@ def threshold_plot(axs: Axes, xs: ndarray, ys: ndarray, threshv: float, color: s
     axs.set_xlim(np.min(xs), np.max(xs))
     ys_min = np.min(ys)
     ys_max = np.max(ys)
-    data_range = ys_max-ys_min
-    axs.set_ylim(ys_min-0.1*data_range, ys_max+0.1*data_range)
+    data_range = ys_max - ys_min
+    axs.set_ylim(ys_min - 0.1 * data_range, ys_max + 0.1 * data_range)
     return lc
 
 
-def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profit_loss_pct: list[float]) -> Path:
-    THRESHOLD = 57.79
+def _accumulate_changes(profit_loss: list[float]) -> list[float]:
+    current_sum = 0
+    for idx, val in enumerate(profit_loss):
+        current_sum = current_sum + val
+        profit_loss[idx] = current_sum
+    return profit_loss
+
+
+def _build_portfolio_plot_relative(timestamps_unix: list[int], profit_loss: list[float]) -> Path:
+    THRESHOLD = 0.
     fig: Figure
     ax: Axes
     style_path = Path('styles/portfolio.mplstyle')
@@ -214,9 +222,9 @@ def _build_portfolio_plot(timestamps_unix: list[int], equity: list[float], profi
     fig.autofmt_xdate()
 
     # prepare data
+    profit_loss = _accumulate_changes(profit_loss)
     timestamps = [t / 86400 for t in timestamps_unix]
-    leveled_equity = [e if e > 0 else THRESHOLD for e in equity]
-    x_list, y_list = modify_data(x_orig=timestamps, y_orig=leveled_equity, threshold=THRESHOLD)
+    x_list, y_list = modify_data(x_orig=timestamps, y_orig=profit_loss, threshold=THRESHOLD)
     x = np.asarray(x_list)
     y = np.asarray(y_list)
 
