@@ -111,7 +111,7 @@ class Trading(Cog):
     @tasks.loop(hours=24)
     async def create_poll_loop(self):
         await asyncio.sleep(seconds_until(9, 0))
-        records = db.execute('SELECT guild_id, trading_channel FROM server_info')
+        records = db.records('SELECT guild_id, trading_channel FROM server_info')
         for guild_id, trading_channel in records:
             channel = await self.bot.fetch_channel(trading_channel)
             await self._create_poll(channel, guild_id)
