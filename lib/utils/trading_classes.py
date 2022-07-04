@@ -54,7 +54,7 @@ class StockButton(ui.Button):
         # update count in embed
         current_count = count_votes(self.poll_id, self.stock_id)
         this_embed.remove_field(3)
-        this_embed.add_field(name='Current Votes', value=str(current_count + 1))
+        this_embed.add_field(name='Current Votes', value=str(current_count))
 
         await interaction.message.edit(embeds=embeds)
         # await interaction.response.send(message)
