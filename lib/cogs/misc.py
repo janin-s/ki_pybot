@@ -1,6 +1,8 @@
 import os.path
+import random
 
 import tweepy as tw
+from discord import Member
 from discord.ext.commands import Cog, command
 
 from lib.bot import Bot
@@ -35,6 +37,14 @@ class Misc(Cog):
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("misc")
+
+    good_nicks = ['beliebter big brain B Baum bauer', 'lieber chrisl', 'gros gehirn chrisl']
+
+    @Cog.listener()
+    async def on_member_update(self, before: Member, after: Member):
+        if before.id == 174900012340215809 and after.nick not in self.good_nicks:
+            good_nick = random.choice(self.good_nicks)
+            await after.edit(nick=good_nick)
 
     @command()
     async def amongus(self, ctx):
