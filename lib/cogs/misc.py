@@ -42,7 +42,7 @@ class Misc(Cog):
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member):
-        if before.id == 388061626131283968 and after.nick not in self.good_nicks:
+        if before.id == 388061626131283968 and after.nick not in self.good_nicks and False:
             good_nick = random.choice(self.good_nicks)
             await after.edit(nick=good_nick)
 
