@@ -38,7 +38,7 @@ class Misc(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("misc")
 
-    good_nicks = ['claudias liebling', 'liebe janin', 'IOT expertin', 'bezwingerin der EN 68430282320']
+    good_nicks = ['claudias liebling', 'liebe janin', 'IOT expertin', 'bezwingerin der EN 68430282320', 'beliebte bridge bändigerin']
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member):
