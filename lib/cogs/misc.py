@@ -38,11 +38,11 @@ class Misc(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("misc")
 
-    good_nicks = ['beliebter big brain B Baum bauer', 'lieber chrisl', 'gros gehirn chrisl']
+    good_nicks = ['claudias liebling', 'liebe janin', 'IOT expertin', 'bezwingerin der EN 68430282320']
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member):
-        if before.id == 174900012340215809 and after.nick not in self.good_nicks:
+        if before.id == 388061626131283968 and after.nick not in self.good_nicks:
             good_nick = random.choice(self.good_nicks)
             await after.edit(nick=good_nick)
 
