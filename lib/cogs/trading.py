@@ -62,8 +62,11 @@ class Trading(Cog):
             self.bot.add_view(view, message_id=message_id)
 
     @command()
-    async def portfolio_history(self, ctx: Context):
-        history: PortfolioHistory = self.api.get_portfolio_history(date_start='2022-05-28', timeframe='1D')
+    async def portfolio_history(self, ctx: Context, days: int = 30):
+        start_date = datetime.today() - timedelta(days=days)
+        history: PortfolioHistory = self.api.get_portfolio_history(
+            date_start=start_date.date().isoformat(), timeframe='1D', period="1A"
+        )
         file: discord.File = get_portfolio_history_image(history)
         await ctx.send(file=file)
 

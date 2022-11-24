@@ -178,15 +178,28 @@ def modify_data(x_orig: list[float], y_orig: list[float], threshold: float) -> t
     return new_xs, new_ys
 
 
-def threshold_plot(axs: Axes, xs: ndarray, ys: ndarray, threshv: float, color: str, overcolor: str) -> LineCollection:
+def threshold_plot(
+        axs: Axes, xs: ndarray, ys: ndarray, threshv: float, color_below: str, color_above: str
+) -> LineCollection:
     # from https://stackoverflow.com/a/30125761
-    cmap = ListedColormap([color, overcolor])
-    norm = BoundaryNorm([np.min(ys), threshv, np.max(ys)], cmap.N)
+    ys_min, ys_max = np.min(ys), np.max(ys)
+    if ys_min <= threshv <= ys_max:
+        colors = [color_below, color_above]
+        boundaries = [np.min(ys), threshv, np.max(ys)]
+    elif threshv < ys_min:
+        colors = [color_above]
+        boundaries = [np.min(ys), np.max(ys)]
+    else:
+        colors = [color_below]
+        boundaries = [np.min(ys), np.max(ys)]
+
+    cmap = ListedColormap(colors)
+    norm = BoundaryNorm(boundaries, cmap.N)
 
     points = np.array([xs, ys]).T.reshape(-1, 1, 2)
-    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+    line_segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
-    lc = LineCollection(segments, cmap=cmap, norm=norm)
+    lc = LineCollection(line_segments, cmap=cmap, norm=norm)
     lc.set_array(ys)
 
     axs.add_collection(lc)
@@ -206,6 +219,14 @@ def _accumulate_changes(profit_loss: list[float]) -> list[float]:
     return profit_loss
 
 
+def get_axis_marker_interval(plot_start: int, plot_end: int) -> int:
+    start_date = datetime.date.fromtimestamp(plot_start)
+    end_date = datetime.date.fromtimestamp(plot_end)
+    weeks = (end_date - start_date).days / 7
+    interval = math.ceil(weeks / 16)  # 16 markers nicely fit on the image
+    return interval
+
+
 def _build_portfolio_plot_relative(timestamps_unix: list[int], profit_loss: list[float]) -> Path:
     THRESHOLD = 0.
     fig: Figure
@@ -216,28 +237,33 @@ def _build_portfolio_plot_relative(timestamps_unix: list[int], profit_loss: list
     fig, ax = plt.subplots()
 
     # styles and formatting
+    interval = get_axis_marker_interval(plot_start=timestamps_unix[0], plot_end=timestamps_unix[-1])
     ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.'))
-    ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=mdates.MO, interval=1))
+    ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=mdates.MO, interval=interval))
     fig.autofmt_xdate()
 
     # prepare data
     profit_loss = _accumulate_changes(profit_loss)
     timestamps = [t / 86400 for t in timestamps_unix]
-    x_list, y_list = modify_data(x_orig=timestamps, y_orig=profit_loss, threshold=THRESHOLD)
-    x = np.asarray(x_list)
-    y = np.asarray(y_list)
+    timestamps_mod, values_mod = modify_data(x_orig=timestamps, y_orig=profit_loss, threshold=THRESHOLD)
+    timestamps_modified = np.asarray(timestamps_mod)
+    values_modified = np.asarray(values_mod)
 
     # get line colored according to threshold
-    lc = threshold_plot(ax, np.asarray(x), np.asarray(y), THRESHOLD, 'darkred', 'green')
+    lc = threshold_plot(ax, np.asarray(timestamps_modified), np.asarray(values_modified), THRESHOLD, 'darkred', 'green')
     lc.set_linewidth(2)
 
     # add horizontal line
     ax.axhline(THRESHOLD, color='#ada4a4')
 
     # file area between curve and horizontal line
-    ax.fill_between(x, y, THRESHOLD, where=(y < THRESHOLD), facecolor="red", interpolate=True)
-    ax.fill_between(x, y, THRESHOLD, where=(y > THRESHOLD), facecolor="limegreen", interpolate=True)
+    ax.fill_between(
+        timestamps_modified, values_modified, THRESHOLD, where=(values_modified < THRESHOLD), facecolor="red", interpolate=True
+    )
+    ax.fill_between(
+        timestamps_modified, values_modified, THRESHOLD, where=(values_modified > THRESHOLD), facecolor="limegreen", interpolate=True
+    )
 
     figure_path = Path('data/other/portfolio.png')
     plt.savefig(figure_path.absolute())
