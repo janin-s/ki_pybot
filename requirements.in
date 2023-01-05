@@ -1,0 +1,11 @@
+APScheduler
+requests
+matplotlib
+tweepy
+toml
+alpaca-trade-api
+yfinance
+py-cord
+pytz
+numpy
+qbstyles
