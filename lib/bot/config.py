@@ -62,6 +62,9 @@ class Config:
         self.alpaca_api_key_id = str(self.get_key("api_tokens", "alpaca_api_key_id"))
         self.alpaca_api_secret = str(self.get_key("api_tokens", "alpaca_api_secret"))
 
+        self.chatgpt_mail = str(self.get_key("api_tokens", "chatgpt_mail"))
+        self.chatgpt_password = str(self.get_key("api_tokens", "chatgpt_password"))
+
 
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)
