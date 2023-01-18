@@ -7,6 +7,7 @@ from discord.ext.commands import Cog, command
 from lib.bot import Bot
 from lib.utils.utils import true_random_int
 
+import requests
 
 class Random(Cog):
 
@@ -70,7 +71,19 @@ class Random(Cog):
 
         embed = Embed(title=str(numbers)[1:-1].replace(',', ''), color=Colour.from_rgb(255, 255, 255))
         await ctx.send(embed=embed)
-
-
+        
+    @command()
+    async def stäbli(self, ctx):
+        """ get the number of visitors in the stäblibad """
+        res = requests.get("https://functions.api.ticos-systems.cloud/api/gates/counter?organizationUnitIds=30194",
+             headers={
+                 "abp-tenantid": "69"
+             })
+        visitors = int(res.json()[0]['personCount'])
+        max_visitors = int(res.json()[0]['maxPersonCount'])
+        percentage = "{0:.0%}".format(visitors / max_visitors)
+        await ctx.send(f"{visitors}/{max_visitors} ({percentage})")
+        
+        
 def setup(bot):
     bot.add_cog(Random(bot))
