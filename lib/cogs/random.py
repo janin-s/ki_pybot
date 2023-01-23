@@ -83,7 +83,19 @@ class Random(Cog):
         max_visitors = int(res.json()[0]['maxPersonCount'])
         percentage = "{0:.0%}".format(visitors / max_visitors)
         await ctx.send(f"{visitors}/{max_visitors} ({percentage})")
-        
+    
+    @command()
+    async def fitstar(self, ctx):
+        """get the current capacity of fitstar neuried"""
+        res = requests.get("https://www.mysports.com/nox/public/v1/studios/1210005340/utilization/v2/today",
+                           headers={"x-tenant": "fit-star"})
+        current_time_entry = next(filter(lambda time_entry: time_entry["current"], res.json()), None)
+        msg = "error getting data"
+        if current_time_entry:
+            percentage = current_time_entry["percentage"]
+            adjusted_percentage = int((percentage - 5) / 0.8)
+            msg = f"{adjusted_percentage}%"
+        await ctx.send(msg)
         
 def setup(bot):
     bot.add_cog(Random(bot))
