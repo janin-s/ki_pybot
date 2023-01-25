@@ -93,8 +93,10 @@ class Random(Cog):
         msg = "error getting data"
         if current_time_entry:
             percentage = current_time_entry["percentage"]
-            adjusted_percentage = int((percentage - 5) / 0.8)
-            msg = f"{adjusted_percentage}%"
+            adjusted_percentage = min(100, int((percentage - 5) / 0.8))
+            emojis = ["🥹", "😁", "😀", "😐", "🫤", "😒", "😠", "😤", "😡", "🤬", "💀"]
+            emoji = emojis[adjusted_percentage // 10]
+        msg = f"{adjusted_percentage}% {emoji}"
         await ctx.send(msg)
         
 def setup(bot):
