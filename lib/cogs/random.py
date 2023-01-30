@@ -99,5 +99,13 @@ class Random(Cog):
         msg = f"{adjusted_percentage}% {emoji}"
         await ctx.send(msg)
         
+    @command()
+    async def jumpers(self, ctx):
+        """get the current number of npcs of jumpers"""
+        res = requests.get("https://www.jumpers-fitness.com/club-checkin-number/40/Jumpers.JumpersFitnessTld")
+        checked_in = res.json()["countCheckedInCustomer"]
+        msg = f"{checked_in} npcs"
+        await ctx.send(msg)
+        
 def setup(bot):
     bot.add_cog(Random(bot))
