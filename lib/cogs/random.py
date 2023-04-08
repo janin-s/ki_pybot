@@ -1,7 +1,7 @@
 import binascii
 import os
 
-from discord import Embed, Colour
+from discord import Embed, Colour, File
 from discord.ext.commands import Cog, command
 
 from lib.bot import Bot
@@ -103,7 +103,7 @@ class Random(Cog):
                 if resp.status != 200:
                     return await ctx.send(msg)
                 data = io.BytesIO(await resp.read())
-                await ctx.send(msg, file=discord.File(data, 'fitstar.png'))
+                await ctx.send(msg, file=File(data, 'fitstar.png'))
         
     @command()
     async def jumpers(self, ctx):
