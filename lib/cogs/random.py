@@ -8,6 +8,8 @@ from lib.bot import Bot
 from lib.utils.utils import true_random_int
 
 import requests
+import io
+import aiohttp
 
 class Random(Cog):
 
@@ -93,11 +95,15 @@ class Random(Cog):
         msg = "error getting data"
         if current_time_entry:
             percentage = current_time_entry["percentage"]
-            adjusted_percentage = min(100, int((percentage - 5) / 0.8))
             emojis = ["🥹", "😁", "😀", "😐", "🫤", "😒", "😠", "😤", "😡", "🤬", "💀"]
-            emoji = emojis[adjusted_percentage // 10]
-        msg = f"{adjusted_percentage}% {emoji}"
-        await ctx.send(msg)
+            emoji = emojis[percentage // 10]
+        msg = f"Aktuelle Affenquote: {percentage}% {emoji}"
+        async with aiohttp.ClientSession() as session:
+            async with session.get("http://107.173.251.156/fitstar.png") as resp:
+                if resp.status != 200:
+                    return await ctx.send(msg)
+                data = io.BytesIO(await resp.read())
+                await ctx.send(msg, file=discord.File(data, 'fitstar.png'))
         
     @command()
     async def jumpers(self, ctx):
