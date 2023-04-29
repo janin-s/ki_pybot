@@ -11,6 +11,8 @@ import requests
 import io
 import aiohttp
 
+from PIL import Image, ImageChops
+
 class Random(Cog):
 
     def __init__(self, bot):
@@ -89,8 +91,24 @@ class Random(Cog):
     @command()
     async def fitstar(self, ctx):
         """get the current capacity of fitstar neuried"""
+        
+        async def fetch_image(url):
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as resp:
+                    if resp.status != 200:
+                        return None
+                    data = io.BytesIO(await resp.read())
+                    return Image.open(data)
+
+        def overlay_images(image1, image2):
+            result = ImageChops.add(image1, image2)
+            data = io.BytesIO()
+            result.save(data, 'PNG')
+            data.seek(0)
+            return data
+        
         res = requests.get("https://www.mysports.com/nox/public/v1/studios/1210005340/utilization/v2/today",
-                           headers={"x-tenant": "fit-star"})
+                   headers={"x-tenant": "fit-star"})
         current_time_entry = next(filter(lambda time_entry: time_entry["current"], res.json()), None)
         msg = "error getting data"
         if current_time_entry:
@@ -98,12 +116,18 @@ class Random(Cog):
             emojis = ["🥹", "😁", "😀", "😐", "🫤", "😒", "😠", "😤", "😡", "🤬", "💀"]
             emoji = emojis[percentage // 10]
         msg = f"Aktuelle Affenquote: {percentage}% {emoji}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get("http://107.173.251.156/fitstar.png") as resp:
-                if resp.status != 200:
-                    return await ctx.send(msg)
-                data = io.BytesIO(await resp.read())
-                await ctx.send(msg, file=File(data, 'fitstar.png'))
+
+        prediction_image_url = "http://107.173.251.156/fitstar.png"
+        actual_image_path = "/usr/share/nginx/html/fitstar_actual.png"
+
+        prediction_image = await fetch_image(prediction_image_url)
+        actual_image = Image.open(actual_image_path)
+
+        if prediction_image and actual_image:
+            overlayed_image_data = overlay_images(prediction_image, actual_image)
+            await ctx.send(msg, file=File(overlayed_image_data, 'fitstar_overlayed.png'))
+        else:
+            await ctx.send(msg)
         
     @command()
     async def jumpers(self, ctx):
