@@ -101,7 +101,9 @@ class Random(Cog):
                     return Image.open(data)
 
         def overlay_images(image1, image2):
-            result = ImageChops.add(image1, image2)
+            image1 = image1.convert("RGBA")
+            image2 = image2.convert("RGBA")
+            result = Image.alpha_composite(image1, image2)
             data = io.BytesIO()
             result.save(data, 'PNG')
             data.seek(0)
