@@ -27,7 +27,7 @@ class Sev(Cog):
                                 "reagierst mit einem traurigen Smiley oder ähnlichem."
 
     def generate_response(self, message: str) -> str:
-        completion = openai.ChatCompletion.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
                 {
@@ -42,7 +42,7 @@ class Sev(Cog):
             n=1,
             max_tokens=256
         )
-        return completion.choices[0].message
+        return response.choices[0].message.content
 
     async def send_message_as_sev(self, message: str, channel: TextChannel, guild: Guild):
         sev = discord.utils.get(self.bot.get_all_members(), id=self.sev_id)
