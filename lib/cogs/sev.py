@@ -64,7 +64,7 @@ class Sev(Cog):
         if not np.random.choice(a=[True, False], p=[0.1, 0.9]):
             return
         try:
-            bot_msg: str = self.generate_response(message=message.clean_content())
+            bot_msg: str = self.generate_response(message=message.clean_content)
         except Exception as e:
             print(e)
             return
