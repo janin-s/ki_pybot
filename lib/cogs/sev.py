@@ -60,8 +60,11 @@ class Sev(Cog):
             return
         if not any(user.id == self.sev_id for user in message.mentions):
             return
+        message_without_mentions = message.content
+        for user in message.mentions:
+            message_without_mentions = message_without_mentions.replace(user.mention, '')
         try:
-            bot_msg: str = self.generate_response(message=message.clean_content)
+            bot_msg: str = self.generate_response(message=message_without_mentions)
         except Exception as e:
             print(e)
             return
