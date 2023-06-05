@@ -64,6 +64,8 @@ class Sev(Cog):
 
     @Cog.listener()
     async def on_message(self, message: Message):
+        if not self.enabled:
+            return
         if not any(user.id == self.sev_id for user in message.mentions):
             return
         try:
