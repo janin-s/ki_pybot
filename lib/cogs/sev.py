@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 from discord.ext.commands import Cog, command, Context
 from discord.message import Message
 from discord.channel import TextChannel
@@ -11,6 +12,7 @@ from lib.bot import Bot
 
 class Sev(Cog):
     def __init__(self, bot):
+        self.enabled = False
         self.bot: Bot = bot
         self.sev_id = 139418002369019905  # sev
         # openai initialization
@@ -64,10 +66,6 @@ class Sev(Cog):
     async def on_message(self, message: Message):
         if not any(user.id == self.sev_id for user in message.mentions):
             return
-        # Only impersonate sev with a certain probability
-        #if not np.random.choice(a=[True, False], p=[0.2, 0.8]):
-        #    print("sev mag net antworten")
-        #    return
         try:
             bot_msg: str = self.generate_response(message=message.clean_content)
         except Exception as e:
@@ -76,6 +74,13 @@ class Sev(Cog):
         await self.send_message_as_sev(message=bot_msg,
                                        channel=message.channel,
                                        guild=message.guild)
+
+    @command()
+    @commands.has_permissions(administrator=True)
+    async def toggle_sev(self, ctx: Context, *, content):
+        """toggles the sev bot"""
+        self.enabled = not self.enabled
+        await ctx.send(f"Sev is now {'enabled' if self.enabled else 'disabled'}")
 
 
 def setup(bot):
