@@ -1,6 +1,7 @@
 import discord
 from discord.ext.commands import Cog, command, Context
-from discord.message import Message, TextChannel
+from discord.message import Message
+from discord.channel import TextChannel
 from discord.guild import Guild
 import numpy as np
 import openai
