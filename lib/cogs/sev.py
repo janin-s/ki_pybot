@@ -71,7 +71,7 @@ class Sev(Cog):
 
     @command()
     @commands.has_permissions(administrator=True)
-    async def toggle_sev(self, ctx: Context, *, content):
+    async def toggle_sev(self, ctx: Context):
         """toggles the sev bot"""
         self.enabled = not self.enabled
         await ctx.send(f"Sev is now {'enabled' if self.enabled else 'disabled'}")
