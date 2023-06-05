@@ -62,6 +62,9 @@ class Config:
         self.alpaca_api_key_id = str(self.get_key("api_tokens", "alpaca_api_key_id"))
         self.alpaca_api_secret = str(self.get_key("api_tokens", "alpaca_api_secret"))
 
+        self.openai_api_key = str(self.get_key("api_tokens", "openai_api_key"))
+        self.openai_org_id = str(self.get_key("api_tokens", "openai_org_id"))
+
 
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)
