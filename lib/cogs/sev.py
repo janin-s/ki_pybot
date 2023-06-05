@@ -31,7 +31,11 @@ class Sev(Cog):
             model="gpt-4",
             messages=[
                 {
-                    "role": self.role_description,
+                    "role": "system",
+                    "content": self.role_description
+                },
+                {
+                    "role": "user",
                     "content": message
                 }
             ],
