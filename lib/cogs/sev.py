@@ -39,7 +39,7 @@ class Sev(Cog):
         )
         return completion.choices[0].message
 
-    def send_message_as_sev(self, message: str, channel: TextChannel, guild: Guild):
+    async def send_message_as_sev(self, message: str, channel: TextChannel, guild: Guild):
         sev = discord.utils.get(self.bot.get_all_members(), id=self.sev_id)
         nick: str = sev.nick if isinstance(sev, discord.Member) and sev.nick is not None else sev.display_name
         guild_webhooks: list[discord.Webhook] = await guild.webhooks()
@@ -67,9 +67,9 @@ class Sev(Cog):
         except Exception as e:
             print(e)
             return
-        self.send_message_as_sev(message=bot_msg,
-                                 channel=message.channel,
-                                 guild=message.guild)
+        await self.send_message_as_sev(message=bot_msg,
+                                       channel=message.channel,
+                                       guild=message.guild)
 
 
 def setup(bot):
