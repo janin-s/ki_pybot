@@ -24,11 +24,11 @@ class Sev(Cog):
             .replace("\n", " ") \
             .strip()
 
-    def replace_mentions_with_names(self, message: Message) -> str:
-        """Replaces mentions with the user's display name, and removes role mentions"""
+    def remove_mentions(self, message: Message) -> str:
+        """Removes mentions from a message"""
         message_without_mentions = message.content
         for user in message.mentions:
-            message_without_mentions = message_without_mentions.replace(user.mention, user.display_name)
+            message_without_mentions = message_without_mentions.replace(user.mention, "")
         for role in message.role_mentions:
             message_without_mentions = message_without_mentions.replace(role.mention, "")
         return message_without_mentions
@@ -75,10 +75,10 @@ class Sev(Cog):
             return
         if not any(user.id == self.sev_id for user in message.mentions):
             return
-        message_without_mentions = self.replace_mentions_with_names(message)
+        message_without_mentions = f"{message.author.display_name}: {self.remove_mentions(message)}"
         messages_before = filter(lambda m: len(m.content) <= 100,
                                  await message.channel.history(limit=10, oldest_first=False).flatten())
-        messages_before = [f"{m.author.display_name}: {self.replace_mentions_with_names(m)}" for m in messages_before]
+        messages_before = [f"{m.author.display_name}: {self.remove_mentions(m)}" for m in messages_before]
         messages_before = [m for m in messages_before if m != ""][:5]
         messages_before.reverse()
         messages_before_acc = "\n".join(messages_before)
