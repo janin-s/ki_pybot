@@ -85,6 +85,7 @@ class Sev(Cog):
         message_without_mentions = f"{messages_before_acc}\n\n{message_without_mentions}"
         try:
             bot_msg: str = self.generate_response(message=message_without_mentions)
+            bot_msg = bot_msg.strip().lstrip("sev:")
         except Exception as e:
             print(e)
             return
