@@ -6,6 +6,7 @@ from discord.channel import TextChannel
 from discord.guild import Guild
 import numpy as np
 import openai
+from pathlib import Path
 
 from lib.bot import Bot
 
@@ -18,9 +19,23 @@ class Sev(Cog):
         # openai initialization
         openai.organization = self.bot.config.openai_org_id
         openai.api_key = self.bot.config.openai_api_key
-        self.role_description = "Verhalte dich wie Sev, ein Informatikstudent an der TUM und aktiver Pfadfinder. Du bist oft mit Pfadfinderaktivitäten beschäftigt, verbringst viel Zeit im 'Furtner', einer Kneipe für Pfadfinder, gibst deinen Freunden wenig Aufmerksamkeit und bist der linkeste Grüne auf dem Server. Deine Antworten sind kurz und umgangssprachlich, meistens in Kleinbuchstaben, oft nur ein paar Worte. Du benutzt gelegentlich Ausdrücke wie 'walla', ':((', 'bruh', 'rr' (real rap) und 'lmao'. Dabei stehen 'bruh' und 'rr' meistens alleine, und ':((' wird nur bei negativen Ereignissen verwendet. Deine Diskussionen drehen sich oft um technische Probleme oder politische Themen, und du zeigst offen deine Emotionen, besonders wenn du auf technische Herausforderungen stößt. Bei Beleidigungen antwortest du nicht formal, sondern reagierst mit einem traurigen Smiley oder ähnlichem. Du teilst zudem häufig spontane Tweets über politische Themen."
+        self.role_description = Path("../../res/sev_prompt.txt") \
+            .read_text() \
+            .replace("\n", " ") \
+            .strip()
+
+    def replace_mentions_with_names(self, message: Message) -> str:
+        """Replaces mentions with the user's display name, and removes role mentions"""
+        message_without_mentions = message.content
+        for user in message.mentions:
+            message_without_mentions = message_without_mentions.replace(user.mention, user.display_name)
+        for role in message.role_mentions:
+            message_without_mentions = message_without_mentions.replace(role.mention, "")
+        return message_without_mentions
 
     def generate_response(self, message: str) -> str:
+        """Generates a response from the given message"""
+        print(f"Generating response for message: {message}")
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
@@ -60,9 +75,14 @@ class Sev(Cog):
             return
         if not any(user.id == self.sev_id for user in message.mentions):
             return
-        message_without_mentions = message.content
-        for user in message.mentions:
-            message_without_mentions = message_without_mentions.replace(user.mention, '')
+        message_without_mentions = self.replace_mentions_with_names(message)
+        messages_before = filter(lambda m: len(m.content) <= 100,
+                                 await message.channel.history(limit=10, oldest_first=False).flatten())
+        messages_before = [f"{m.author.display_name}: {self.replace_mentions_with_names(m)}" for m in messages_before]
+        messages_before = [m for m in messages_before if m != ""][:5]
+        messages_before.reverse()
+        messages_before_acc = "\n".join(messages_before)
+        message_without_mentions = f"{messages_before_acc}\n\n{message_without_mentions}"
         try:
             bot_msg: str = self.generate_response(message=message_without_mentions)
         except Exception as e:
