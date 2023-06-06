@@ -104,8 +104,8 @@ class Sev(Cog):
         end_date = datetime.date.today().strftime('%Y-%m-%d')
         res = requestor.request("GET", f"/dashboard/billing/usage?end_date={end_date}&start_date={start_date}")
         costs = "{:.2f}".format(float(res[0].data["total_usage"]) / 100)
-        info_message = f"Sev is now {'enabled' if self.enabled else 'disabled'} and has been used for {costs}€ in the last week."
         self.enabled = not self.enabled
+        info_message = f"Sev is now {'enabled' if self.enabled else 'disabled'} and has been used for {costs}€ in the last week."
         await ctx.send(info_message)
 
 
