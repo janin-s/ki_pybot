@@ -88,7 +88,7 @@ class Sev(Cog):
             bot_msg: str = self.generate_response(message=message_without_mentions).strip()
             # remove the sev: prefix
             sev = discord.utils.get(self.bot.get_all_members(), id=self.sev_id)
-            bot_msg = bot_msg.replace("sev:", "").replace(f"{sev.display_name}:", "")
+            bot_msg = bot_msg.replace("sev:", "").replace("Sev:", "").replace(f"{sev.display_name}:", "")
         except Exception as e:
             print(e)
             return
