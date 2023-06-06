@@ -19,7 +19,7 @@ class Sev(Cog):
         # openai initialization
         openai.organization = self.bot.config.openai_org_id
         openai.api_key = self.bot.config.openai_api_key
-        self.role_description = Path("../../res/sev_prompt.txt") \
+        self.role_description = Path("res/sev_prompt.txt") \
             .read_text() \
             .replace("\n", " ") \
             .strip()
