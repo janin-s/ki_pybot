@@ -85,8 +85,10 @@ class Sev(Cog):
         messages_before_acc = "\n".join(messages_before)
         message_without_mentions = f"{messages_before_acc}\n\n{message_without_mentions}"
         try:
-            bot_msg: str = self.generate_response(message=message_without_mentions)
-            bot_msg = bot_msg.strip().lstrip("sev:")
+            bot_msg: str = self.generate_response(message=message_without_mentions).strip()
+            # remove the sev: prefix
+            sev = discord.utils.get(self.bot.get_all_members(), id=self.sev_id)
+            bot_msg = bot_msg.replace("sev:", "").replace(f"{sev.display_name}:", "")
         except Exception as e:
             print(e)
             return
