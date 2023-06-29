@@ -2,6 +2,10 @@
 Guten Tag %NAME%,
 <br><br>
         vielen Dank für Ihre Bestellung vom %DATE%.
+
+        Die Bearbeitung Ihrer Bestellung und die Bereitstellung des Print-Tickets im Kundenportal kann einige Werktage in Anspruch nehmen.
+        Bis zur Bereitstellung Ihres Deutschlandtickets als Print-Ticket nutzen Sie daher bitte diese Bestellbestätigung als Fahrschein.
+        <br><br>
             Bitte beachten Sie, dass die Chipkarte erst im Sommer 2023 verschickt werden kann. Bis dahin erhalten Sie monatlich Ihr persönliches Print-Ticket. Dieses stellen wir Ihnen jeweils ab dem 11. des Vormonats im MVG-Kundenportal zur Verfügung. Ihr Print-Ticket können Sie herunterladen und ausdrucken oder einfach auf Ihrem Smartphone nutzen.
     <br><br>
     Ihre Bestelldaten wurden wie folgt übernommen:
