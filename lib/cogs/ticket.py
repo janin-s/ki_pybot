@@ -60,12 +60,11 @@ class Ticket(Cog):
             self.bot.cogs_ready.ready_up("Notfallticket enabled!")
 
     @command()
-    async def ticket(self, ctx: Context):
-        await ctx.send("`!ticket Max Mustermann max@mustermann.de`")
-
-    @command()
-    async def ticket(self, ctx: Context, first_name, last_name, email):
+    async def ticket(self, ctx: Context, first_name=None, last_name=None, email=None):
         """sends you a ticket"""
+        if not first_name or not last_name or not email:
+            await ctx.send("`!ticket Max Mustermann max@gmail.com`")
+            return
         # check the current usage for today
         res : requests.Response = await self.send_fake_ticket(f"{first_name} {last_name}", email)
         await ctx.send(f"Ticket sent to {email} with status {res.status_code}")
