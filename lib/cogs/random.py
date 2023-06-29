@@ -138,6 +138,6 @@ class Random(Cog):
         checked_in = res.json()["countCheckedInCustomer"]
         msg = f"{checked_in} npcs"
         await ctx.send(msg)
-        
+
 def setup(bot):
     bot.add_cog(Random(bot))

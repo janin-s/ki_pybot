@@ -65,6 +65,8 @@ class Config:
         self.openai_api_key = str(self.get_key("api_tokens", "openai_api_key"))
         self.openai_org_id = str(self.get_key("api_tokens", "openai_org_id"))
 
+        self.brevo_api_key = str(self.get_key("api_tokens", "brevo_api_key"))
+
 
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)
