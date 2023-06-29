@@ -52,7 +52,7 @@ class Ticket(Cog):
                              email,
                              "MVG Kundenportal - Bestellbestätigung",
                              content)
-        return res.json()
+        return res
 
     @Cog.listener()
     async def on_ready(self):
