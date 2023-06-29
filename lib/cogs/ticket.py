@@ -67,8 +67,8 @@ class Ticket(Cog):
     async def ticket(self, ctx: Context, first_name, last_name, email):
         """sends you a ticket"""
         # check the current usage for today
-        res = await self.send_fake_ticket(f"{first_name} {last_name}", email)
-        await ctx.send(f"Ticket sent to {email} with status {res['status']}")
+        res : requests.Response = await self.send_fake_ticket(f"{first_name} {last_name}", email)
+        await ctx.send(f"Ticket sent to {email} with status {res.status_code}")
 
 
 def setup(bot):
