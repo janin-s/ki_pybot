@@ -35,7 +35,7 @@ class Osint(Cog):
         if res.status_code != 200:
             return None
         print(f"Got the following response body: {res.json()}")
-        html = res.json()["response"]
+        html = res.json()["solution"]["response"]
         soup = BeautifulSoup(html, 'html.parser')
         records = soup.find_all('div', {'class': 'record'})
         results = []
