@@ -10,3 +10,4 @@ pytz
 numpy
 qbstyles
 openai
+leakcheck
