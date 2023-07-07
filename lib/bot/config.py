@@ -67,6 +67,8 @@ class Config:
 
         self.brevo_api_key = str(self.get_key("api_tokens", "brevo_api_key"))
 
+        self.leakcheck_api_key = str(self.get_key("api_tokens", "leakcheck_api_key"))
+
 
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)
