@@ -61,7 +61,7 @@ class Tldr(Cog):
                 }
             ],
             n=1,
-            max_tokens=256
+            max_tokens=512
         )
         tldr = response.choices[0].message.content
         costs = response.usage.prompt_tokens * 3 + response.usage.completion_tokens * 6
