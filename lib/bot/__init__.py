@@ -81,7 +81,7 @@ class Bot(BotBase):
             seconds = exc.retry_after
             minutes = seconds // 60
             seconds %= 60
-            await ctx.send(f"Noch {minutes:02d}:{seconds:02d} Minuten cooldown. Chill bisl!")
+            await ctx.send(f"Noch {minutes}m {seconds}s cooldown. Chill bisl!")
         elif isinstance(exc, commands.errors.BotMissingPermissions):
             await ctx.send("KI nicht mächtig genug :(")
         else:
