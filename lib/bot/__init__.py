@@ -76,8 +76,12 @@ class Bot(BotBase):
             except MsgNotFound:
                 await ctx.send('KI dummdumm v2 <:eist_moment:731293248324370483>')
 
+
         elif isinstance(exc, commands.errors.CommandOnCooldown):
-            await ctx.send("nicht so schnell")
+            seconds = exc.retry_after
+            minutes = seconds // 60
+            seconds %= 60
+            await ctx.send(f"Noch {minutes:02d}:{seconds:02d} Minuten cooldown. Chill bisl!")
         elif isinstance(exc, commands.errors.BotMissingPermissions):
             await ctx.send("KI nicht mächtig genug :(")
         else:
