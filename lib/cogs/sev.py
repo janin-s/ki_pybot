@@ -54,7 +54,7 @@ class Sev(Cog):
         )
 
         costs = response.usage.prompt_tokens * 0.03 + response.usage.completion_tokens * 0.06
-
+        costs = costs // 1000
         return response.choices[0].message.content, costs
 
     async def send_message_as_sev(self, message: str, channel: TextChannel, guild: Guild):

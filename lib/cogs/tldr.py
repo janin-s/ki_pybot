@@ -6,6 +6,7 @@ from discord.ext.commands import Cog, command, Context
 from discord.message import Message
 from discord.channel import TextChannel
 from discord.guild import Guild
+from discord.ext.commands import BucketType
 import numpy as np
 import openai, openai.api_requestor
 from pathlib import Path
@@ -64,9 +65,11 @@ class Tldr(Cog):
         )
         tldr = response.choices[0].message.content
         costs = response.usage.prompt_tokens * 3 + response.usage.completion_tokens * 6
+        costs = costs // 1000
         return tldr, costs
 
     @command()
+    @commands.cooldown(1, 30 * 60, commands.BucketType.guild)
     async def tldr(self, ctx: Context):
         """Generates a TL;DR summary of the recent discussion in the channel"""
         if self.enabled:
