@@ -41,7 +41,7 @@ class Tldr(Cog):
         for m in selected_messages:
             filtered_content = ' '.join(
                 word for word in m.content.translate(str.maketrans('', '', string.punctuation)).split() if
-                len(word) > 3)
+                len(word) > 2)
             filtered_messages.append(f"{m.author.display_name}: {filtered_content}")
 
         # Step 4: Pass the filtered messages to the openai API and generate a short summary
