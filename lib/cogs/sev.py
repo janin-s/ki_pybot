@@ -34,7 +34,7 @@ class Sev(Cog):
             message_without_mentions = message_without_mentions.replace(role.mention, "")
         return message_without_mentions
 
-    def generate_response(self, message: str) -> str:
+    def generate_response(self, message: str):
         """Generates a response from the given message"""
         print(f"Generating response for message: {message}")
         response = openai.ChatCompletion.create(
@@ -52,7 +52,10 @@ class Sev(Cog):
             n=1,
             max_tokens=256
         )
-        return response.choices[0].message.content
+
+        costs = response.usage.prompt_tokens * 0.03 + response.usage.completion_tokens * 0.06
+
+        return response.choices[0].message.content, costs
 
     async def send_message_as_sev(self, message: str, channel: TextChannel, guild: Guild):
         sev = discord.utils.get(self.bot.get_all_members(), id=self.sev_id)
@@ -85,7 +88,9 @@ class Sev(Cog):
         messages_before_acc = "\n".join(messages_before)
         message_without_mentions = f"{messages_before_acc}\n\n{message_without_mentions}"
         try:
-            bot_msg: str = self.generate_response(message=message_without_mentions).strip()
+            bot_msg, costs = self.generate_response(message=message_without_mentions)
+            bot_msg = bot_msg.strip()
+            bot_msg = f"{bot_msg}\n\n||Diese Nachricht hat {costs}ct gekostet||"
             # remove the sev: prefix
             sev = discord.utils.get(self.bot.get_all_members(), id=self.sev_id)
             bot_msg = bot_msg.replace("sev:", "").replace("Sev:", "").replace(f"{sev.display_name}:", "")
