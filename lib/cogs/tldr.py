@@ -74,6 +74,7 @@ class Tldr(Cog):
         """Generates a TL;DR summary of the recent discussion in the channel"""
         if self.enabled:
             try:
+                await ctx.send("Lese die letzten 250 Nachrichten...")
                 tldr, costs = await self.get_tldr(ctx.channel)
                 await ctx.send(f"**TLDR der letzten 250 Nachrichten**:\n{tldr}\n\n||Diese Nachricht hat {costs}ct gekostet||")
             except Exception as e:
