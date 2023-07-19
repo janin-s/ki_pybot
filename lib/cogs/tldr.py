@@ -34,7 +34,7 @@ class Tldr(Cog):
         # Step 2: Draw 25 messages with a higher probability for longer ones
         weights = np.array([len(m.content) for m in history])
         weights = weights / np.sum(weights)  # Normalize weights
-        selected_messages = np.random.choice(history, size=25, p=weights, replace=False)
+        selected_messages = np.random.choice(history, size=50, p=weights, replace=False)
 
         # Step 3: Remove words with <= 3 letters and all punctuations
         filtered_messages = []
@@ -65,7 +65,7 @@ class Tldr(Cog):
         )
         tldr = response.choices[0].message.content
         costs = response.usage.prompt_tokens * 3 + response.usage.completion_tokens * 6
-        costs = costs // 1000
+        costs = "{:.2f}".format(costs / 1000)
         return tldr, costs
 
     @command()
