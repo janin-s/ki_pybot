@@ -28,15 +28,15 @@ class Tldr(Cog):
             .strip()
 
     async def get_tldr(self, channel: TextChannel):
-        # Step 1: Fetch last 250 messages
-        history = await channel.history(limit=250).flatten()
+        # Step 1: Fetch last 100 messages
+        history = await channel.history(limit=100).flatten()
 
-        # Step 2: Draw 25 messages with a higher probability for longer ones
+        # Step 2: Draw 50 messages with a higher probability for longer ones
         weights = np.array([len(m.content) for m in history])
         weights = weights / np.sum(weights)  # Normalize weights
         selected_messages = np.random.choice(history, size=50, p=weights, replace=False)
 
-        # Step 3: Remove words with <= 3 letters and all punctuations
+        # Step 3: Remove words with <= 2 letters and all punctuations
         filtered_messages = []
         for m in selected_messages:
             filtered_content = ' '.join(
@@ -61,7 +61,7 @@ class Tldr(Cog):
                 }
             ],
             n=1,
-            max_tokens=512
+            max_tokens=400
         )
         tldr = response.choices[0].message.content
         costs = response.usage.prompt_tokens * 3 + response.usage.completion_tokens * 6
