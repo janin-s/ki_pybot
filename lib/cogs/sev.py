@@ -106,13 +106,8 @@ class Sev(Cog):
     async def toggle_sev(self, ctx: Context):
         """toggles the sev bot"""
         # check the current usage for today
-        requestor = openai.api_requestor.APIRequestor()
-        start_date = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-        end_date = datetime.date.today().strftime('%Y-%m-%d')
-        res = requestor.request("GET", f"/dashboard/billing/usage?end_date={end_date}&start_date={start_date}")
-        costs = "{:.2f}".format(float(res[0].data["total_usage"]) / 100)
         self.enabled = not self.enabled
-        info_message = f"Sev is now {'enabled' if self.enabled else 'disabled'} and has been used for {costs}€ today."
+        info_message = f"Sev is now {'enabled' if self.enabled else 'disabled'}."
         await ctx.send(info_message)
 
 
