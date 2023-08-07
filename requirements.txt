@@ -153,7 +153,7 @@ websockets==10.4
     # via alpaca-trade-api
 yarl==1.9.2
     # via aiohttp
-yfinance==0.2.22
+yfinance==0.2.27
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
