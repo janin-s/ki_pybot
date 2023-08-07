@@ -16,7 +16,7 @@ class Claude(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("Claude enabled!")
 
-    def get_response(self, prompt, attachments):
+    async def get_response(self, prompt, attachments):
         new_chat = self.client_api.create_new_chat()
         new_chat_id = new_chat["uuid"]
         attachment = None
@@ -34,7 +34,7 @@ class Claude(Cog):
         if not prompt:
             await ctx.send("!claude <prompt>")
             return
-        response = self.get_response(prompt, ctx.message.attachments)
+        response = await self.get_response(prompt, ctx.message.attachments)
         return await ctx.send(response)
 
 
