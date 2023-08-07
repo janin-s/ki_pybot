@@ -7,7 +7,7 @@ from claude_api import Client
 from lib.bot import Bot
 
 
-class Osint(Cog):
+class Claude(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.client_api = Client(self.bot.config.claude_session_cookie)
