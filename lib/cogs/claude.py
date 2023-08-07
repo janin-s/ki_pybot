@@ -31,4 +31,4 @@ class Claude(Cog):
         return await ctx.send(response)
 
 def setup(bot):
-    bot.add_cog(Osint(bot))
+    bot.add_cog(Claude(bot))
