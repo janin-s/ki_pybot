@@ -22,6 +22,7 @@ class Claude(Cog):
         attachment = None
         if attachments:
             a = attachments[0]
+            print(a.content_type)
             if a.content_type not in ["pdf", "txt"]:
                 return "Please only upload PDF or TXT files."
             attachment = f"/tmp/{a.filename}"
