@@ -40,7 +40,7 @@ class Claude(Cog):
         with open("/tmp/claude.txt", "w") as f:
             f.write(response)
 
-        return await ctx.reply(file=discord.File("/tmp/osint.txt"))
+        return await ctx.reply(file=discord.File("/tmp/claude.txt"))
 
 
 def setup(bot):
