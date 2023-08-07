@@ -2,7 +2,7 @@ import re
 
 import discord
 from discord.ext.commands import Cog, command, Context
-from claude_api import Client
+from leakcheck import LeakCheckAPI
 
 from lib.bot import Bot
 
@@ -10,25 +10,32 @@ from lib.bot import Bot
 class Osint(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
-        self.client_api = Client(self.bot.config.claude_session_cookie)
+        self.leakcheck = LeakCheckAPI()
+        self.leakcheck.set_key(self.bot.config.leakcheck_api_key)
 
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("OSINT enabled!")
 
-    def get_response(self, prompt, attachment_urls):
-        new_chat = self.client_api.create_new_chat()
-        new_chat_id = new_chat["uuid"]
-        response = self.client_api.send_message(prompt, new_chat_id)
-        return response
-
     @command()
-    async def claude(self, ctx: Context, prompt=None):
-        if not prompt:
-            await ctx.send("!claude <prompt>")
+    async def osint(self, ctx: Context, email=None):
+        email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+        if not email or not re.fullmatch(email_regex, email):
+            await ctx.send("`!osint max@gmail.com`")
             return
-        response = self.get_response(prompt, [])
-        return await ctx.send(response)
+        results = self.leakcheck.lookup(email)
+        if not results:
+            await ctx.send("Konnte keine Daten finden. :(")
+            return
+        with open("/tmp/osint.txt", "w") as f:
+            for result in results:
+                line = f"source: {', '.join(result['sources'])}\n" \
+                       f"info: {result['line']}\n" \
+                       f"last_breach: {result['last_breach']}\n"
+                f.write(line + "\n")
+                f.write("\n")
+        await ctx.send(f"Infos zu `{email}`:", file=discord.File("/tmp/osint.txt"))
+
 
 def setup(bot):
     bot.add_cog(Osint(bot))
