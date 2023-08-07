@@ -30,10 +30,7 @@ class Claude(Cog):
         return response
 
     @command()
-    async def claude(self, ctx: Context, prompt=None):
-        if not prompt:
-            await ctx.send("!claude <prompt>")
-            return
+    async def claude(self, ctx: Context, *, prompt):
         await ctx.reply("Generating response...")
         response = await self.get_response(prompt, ctx.message.attachments)
 
