@@ -25,7 +25,7 @@ class Claude(Cog):
             if a.content_type not in ["application/pdf", "application/txt"]:
                 return "Please only upload PDF or TXT files."
             attachment = f"/tmp/{a.filename}"
-            a.save(attachment)
+            await a.save(attachment)
         response = self.client_api.send_message(prompt, new_chat_id, attachment)
         return response
 
