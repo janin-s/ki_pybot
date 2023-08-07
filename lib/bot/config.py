@@ -69,6 +69,8 @@ class Config:
 
         self.leakcheck_api_key = str(self.get_key("api_tokens", "leakcheck_api_key"))
 
+        self.claude_session_cookie = str(self.get_key("api_tokens", "claude_session_cookie"))
+
 
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)
