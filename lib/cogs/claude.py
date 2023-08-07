@@ -34,8 +34,13 @@ class Claude(Cog):
         if not prompt:
             await ctx.send("!claude <prompt>")
             return
+        await ctx.reply("Generating response...")
         response = await self.get_response(prompt, ctx.message.attachments)
-        return await ctx.send(response)
+
+        with open("/tmp/claude.txt", "w") as f:
+            f.write(response)
+
+        return await ctx.reply(file=discord.File("/tmp/osint.txt"))
 
 
 def setup(bot):
