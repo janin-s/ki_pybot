@@ -42,5 +42,6 @@ class Claudia(Cog):
             message = f"{response}\n\n||Diese Nachricht hat {costs:.2f}ct gekostet||"
             return await ctx.reply(message, mention_author=False)
 
-    def setup(bot):
-        bot.add_cog(Claudia(bot))
+
+def setup(bot):
+    bot.add_cog(Claudia(bot))
