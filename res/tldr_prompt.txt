@@ -4,4 +4,4 @@ Halte die Zusammenfassung so kurz wie möglich und maximiere dabei die Informati
 Versuche trotzdem, den Kontext zu begreifen und zu erklären.
 Beziehe dabei die Nutzer mit ein, sag also, wer was geschrieben hat.
 Wenn du die Namen erwähnst, schreibe sie bitte zwischen Sternchen, z.B. **Max**
-Nach der Zusammenfassung jedes Themas, füge bitte 1 Leerzeile ein.
+Nach der Zusammenfassung jedes Themas, füge bitte 1 Leerzeile (\ņ) ein.

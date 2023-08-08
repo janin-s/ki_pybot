@@ -8,7 +8,7 @@ from discord.channel import TextChannel
 from discord.guild import Guild
 from discord.ext.commands import BucketType
 import numpy as np
-import openai, openai.api_requestor
+from lib.utils import llm
 from pathlib import Path
 import datetime
 
@@ -20,53 +20,34 @@ class Tldr(Cog):
         self.enabled = False
         self.bot: Bot = bot
         # openai initialization
-        openai.organization = self.bot.config.openai_org_id
-        openai.api_key = self.bot.config.openai_api_key
         self.role_description = Path("res/tldr_prompt.txt") \
             .read_text() \
             .replace("\n", " ") \
             .strip()
 
     async def get_tldr(self, channel: TextChannel):
-        # Step 1: Fetch last 100 messages
-        history = await channel.history(limit=100).flatten()
+        # Step 1: Fetch last 250 messages
+        history = await channel.history(limit=250).flatten()
 
-        # Step 2: Draw 50 messages with a higher probability for longer ones
+        # Step 2: Draw 100 messages with a higher probability for longer ones
         weights = np.array([len(m.content) for m in history])
         weights = weights / np.sum(weights)  # Normalize weights
-        selected_messages = np.random.choice(history, size=50, p=weights, replace=False)
+        selected_messages = np.random.choice(history, size=100, p=weights, replace=False)
 
-        # Step 3: Remove words with <= 2 letters and all punctuations
+        # Step 3: Remove words with <= 1 letters and all punctuations
         filtered_messages = []
         for m in selected_messages:
             filtered_content = ' '.join(
                 word for word in m.content.translate(str.maketrans('', '', string.punctuation)).split() if
-                len(word) > 2)
+                len(word) > 1)
             filtered_messages.append(f"{m.author.display_name}: {filtered_content}")
 
-        # Step 4: Pass the filtered messages to the openai API and generate a short summary
+        # Step 4: Pass the filtered messages to the llm and generate a short summary
         message_string = '\n'.join(filtered_messages)
         print(f"Generating TL;DR for: {message_string[:100]}...")  # Print a short preview for debugging
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {
-                    "role": "system",
-                    "content": self.role_description
-                },
-                {
-                    "role": "user",
-                    "content": message_string
-                }
-            ],
-            n=1,
-            max_tokens=400
-        )
-        tldr = response.choices[0].message.content
-        costs = response.usage.prompt_tokens * 3 + response.usage.completion_tokens * 6
-        costs = "{:.2f}".format(costs / 1000)
-        return tldr, costs
+        response, costs = llm.claude(self.bot).get_response(self.role_description, message_string)
+        return response, costs
 
     @command()
     @commands.cooldown(1, 30 * 60, commands.BucketType.guild)
@@ -76,7 +57,8 @@ class Tldr(Cog):
             try:
                 await ctx.send("Lese die letzten 250 Nachrichten...")
                 tldr, costs = await self.get_tldr(ctx.channel)
-                await ctx.send(f"**TLDR der letzten 250 Nachrichten**:\n{tldr}\n\n||Diese Nachricht hat {costs}ct gekostet||")
+                await ctx.send(
+                    f"**TLDR der letzten 250 Nachrichten**:\n{tldr}\n\n||Diese Nachricht hat {costs}ct gekostet||")
             except Exception as e:
                 print(e)
                 await ctx.send("An error occurred while generating the TLDR.")

@@ -5,7 +5,8 @@ from discord.message import Message
 from discord.channel import TextChannel
 from discord.guild import Guild
 import numpy as np
-import openai, openai.api_requestor
+from lib.utils import llm
+
 from pathlib import Path
 import datetime
 
@@ -18,8 +19,6 @@ class Sev(Cog):
         self.bot: Bot = bot
         self.sev_id = 139418002369019905  # sev
         # openai initialization
-        openai.organization = self.bot.config.openai_org_id
-        openai.api_key = self.bot.config.openai_api_key
         self.role_description = Path("res/sev_prompt.txt") \
             .read_text() \
             .replace("\n", " ") \
@@ -33,29 +32,6 @@ class Sev(Cog):
         for role in message.role_mentions:
             message_without_mentions = message_without_mentions.replace(role.mention, "")
         return message_without_mentions
-
-    def generate_response(self, message: str):
-        """Generates a response from the given message"""
-        print(f"Generating response for message: {message}")
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {
-                    "role": "system",
-                    "content": self.role_description
-                },
-                {
-                    "role": "user",
-                    "content": message
-                }
-            ],
-            n=1,
-            max_tokens=256
-        )
-
-        costs = response.usage.prompt_tokens * 0.03 + response.usage.completion_tokens * 0.06
-        costs = "{:.2f}".format(costs / 1000)
-        return response.choices[0].message.content, costs
 
     async def send_message_as_sev(self, message: str, channel: TextChannel, guild: Guild):
         sev = discord.utils.get(self.bot.get_all_members(), id=self.sev_id)
@@ -81,14 +57,15 @@ class Sev(Cog):
             return
         message_without_mentions = f"{message.author.display_name}: {self.remove_mentions(message)}"
         messages_before = filter(lambda m: len(m.content) <= 100,
-                                 await message.channel.history(limit=10, oldest_first=False).flatten())
-        messages_before = [f"{m.author.display_name}: {self.remove_mentions(m)}" for m in messages_before]
-        messages_before = [m for m in messages_before if m != ""][:5]
+                                 await message.channel.history(limit=20, oldest_first=False).flatten())
+        messages_before = [f"[{str(m.created_at)}] {m.author.display_name}: {self.remove_mentions(m)}" for m in
+                           messages_before]
+        messages_before = [m for m in messages_before if m != ""]
         messages_before.reverse()
         messages_before_acc = "\n".join(messages_before)
         message_without_mentions = f"{messages_before_acc}\n\n{message_without_mentions}"
         try:
-            bot_msg, costs = self.generate_response(message=message_without_mentions)
+            bot_msg, costs = llm.claude(self.bot).get_response(self.role_description, message_without_mentions)
             bot_msg = bot_msg.strip()
             bot_msg = f"{bot_msg}\n\n||Diese Nachricht hat {costs}ct gekostet||"
             # remove the sev: prefix
