@@ -22,7 +22,6 @@ class Claudia(Cog):
 
     @command()
     async def claudia(self, ctx: Context, *, prompt):
-        await ctx.reply("Generating response...", mention_author=False)
 
         file_paths = []
         for a in ctx.message.attachments:
