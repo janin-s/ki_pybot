@@ -5,3 +5,4 @@ Versuche trotzdem, den Kontext zu begreifen und zu erklären.
 Beziehe dabei die Nutzer mit ein, sag also, wer was geschrieben hat.
 Wenn du die Namen erwähnst, schreibe sie bitte zwischen Sternchen, z.B. **Max**
 Nach der Zusammenfassung jedes Themas, füge bitte 1 Leerzeile (\ņ) ein.
+ONLY ANSWER IN GERMAN!

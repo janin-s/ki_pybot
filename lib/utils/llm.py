@@ -65,7 +65,7 @@ class Claude(LLM):
         """Crafts a prompt from the given message"""
         return f'Your role description: "{role_desc}"\n\n' \
                f'User input / your task: "{prompt}"\n\n' \
-               f'Now, please with respect to your role description and the respective user input, please react accordingly.'
+               f'Now, with respect to your role description and the respective user input, react accordingly.'
 
     def _get_response(self, role_desc: str, prompt: str, file_paths: []) -> (str, float):
         """Generates a response from the given message"""
