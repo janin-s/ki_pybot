@@ -21,7 +21,7 @@ class Claudia(Cog):
             self.bot.cogs_ready.ready_up("Claudia enabled!")
 
     @command()
-    async def claude(self, ctx: Context, *, prompt):
+    async def claudia(self, ctx: Context, *, prompt):
         await ctx.reply("Generating response...", mention_author=False)
 
         file_paths = []
