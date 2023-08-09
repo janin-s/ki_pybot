@@ -1,6 +1,7 @@
 from threading import Lock
 import openai, openai.api_requestor
 from claude_api import Client
+from datetime import datetime
 
 from lib.bot import Bot
 
@@ -67,13 +68,20 @@ class Claude(LLM):
                f'User input / your task: "{prompt}"\n\n' \
                f'Now, with respect to your role description and the respective user input, react accordingly.'
 
+    def _get_latest_reply(self, uuid: str) -> str:
+        history = self.client_api.chat_conversation_history(uuid)
+        sorted_entries = sorted(history["chat_messages"],
+                                key=lambda entry: datetime.strptime(entry["created_at"], "%Y-%m-%dT%H:%M:%S.%f%z"))
+        return sorted_entries[-1]["text"] if sorted_entries[-1]["sender"] == "assistant" else ""
+
     def _get_response(self, role_desc: str, prompt: str, file_paths: []) -> (str, float):
         """Generates a response from the given message"""
         super().get_response(role_desc, prompt)
         new_chat = self.client_api.create_new_chat()
         new_chat_id = new_chat["uuid"]
         file = file_paths[0] if file_paths else None
-        response = self.client_api.send_message(self._craft_prompt(role_desc, prompt), new_chat_id, file)
+        self.client_api.send_message(self._craft_prompt(role_desc, prompt), new_chat_id, file)
+        response = self._get_latest_reply(new_chat_id)
         # Claude is not charging for the chat
         costs = 0
         return response, costs

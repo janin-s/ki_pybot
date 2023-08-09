@@ -33,10 +33,10 @@ class Claudia(Cog):
 
         response, costs = llm.claude(self.bot).get_response(self.role_desc, prompt, file_paths)
         if len(response) > 1000:
-            with open("/tmp/claudia_prompt.txt", "w") as f:
+            with open("/tmp/claudia.txt", "w") as f:
                 f.write(response)
             message = f"||Diese Nachricht hat {costs:.2f}ct gekostet||"
-            return await ctx.reply(message, file=discord.File("/tmp/claudia_prompt.txt"), mention_author=False)
+            return await ctx.reply(message, file=discord.File("/tmp/claudia.txt"), mention_author=False)
         else:
             message = f"{response}\n\n||Diese Nachricht hat {costs:.2f}ct gekostet||"
             return await ctx.reply(message, mention_author=False)
