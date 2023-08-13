@@ -92,23 +92,6 @@ class Random(Cog):
     async def fitstar(self, ctx):
         """get the current capacity of fitstar neuried"""
         
-        async def fetch_image(url):
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as resp:
-                    if resp.status != 200:
-                        return None
-                    data = io.BytesIO(await resp.read())
-                    return Image.open(data)
-
-        def overlay_images(image1, image2):
-            image1 = image1.convert("RGBA")
-            image2 = image2.convert("RGBA")
-            result = Image.alpha_composite(image1, image2)
-            data = io.BytesIO()
-            result.save(data, 'PNG')
-            data.seek(0)
-            return data
-        
         res = requests.get("https://www.mysports.com/nox/public/v1/studios/1210005340/utilization/v2/today",
                    headers={"x-tenant": "fit-star"})
         current_time_entry = next(filter(lambda time_entry: time_entry["current"], res.json()), None)
@@ -121,15 +104,14 @@ class Random(Cog):
 
         prediction_image_url = "http://107.173.251.156/fitstar.png"
         actual_image_path = "/usr/share/nginx/html/fitstar_actual.png"
-
-        prediction_image = await fetch_image(prediction_image_url)
-        actual_image = Image.open(actual_image_path)
-
-        if prediction_image and actual_image:
-            overlayed_image_data = overlay_images(prediction_image, actual_image)
-            await ctx.send(msg, file=File(overlayed_image_data, 'fitstar_overlayed.png'))
-        else:
-            await ctx.send(msg)
+        try:
+            with Image.open(actual_image_path) as actual_image:
+                byte_arr = io.BytesIO()
+                actual_image.save(byte_arr, format='PNG')
+                byte_arr.seek(0)
+                await ctx.send(msg, file=File(byte_arr, 'fitstar.png'))
+        except Exception as e:
+            await ctx.send(f"{msg}\n(Note: Could not load the image. {str(e)})")
         
     @command()
     async def jumpers(self, ctx):
