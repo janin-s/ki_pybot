@@ -106,8 +106,16 @@ class Random(Cog):
         actual_image_path = "/usr/share/nginx/html/fitstar_actual.png"
         try:
             with Image.open(actual_image_path) as actual_image:
+                
+                # Create a white background image
+                white_bg = Image.new('RGBA', actual_image.size, 'WHITE')
+                
+                # Paste the actual image onto the white background
+                white_bg.paste(actual_image, (0, 0), actual_image)
+                
+                # Save the image with white background to a byte array
                 byte_arr = io.BytesIO()
-                actual_image.save(byte_arr, format='PNG')
+                white_bg.save(byte_arr, format='PNG')
                 byte_arr.seek(0)
                 await ctx.send(msg, file=File(byte_arr, 'fitstar.png'))
         except Exception as e:
