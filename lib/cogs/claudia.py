@@ -35,20 +35,20 @@ class Claudia(Cog):
             await webhook.send(
             content=message,
             username="Prof. Claudi",
-            avatar_url="https://www.acatech.de/wp-content/uploads/2021/06/Claudia-Eckert_Zuschnitt.jpg",
+            avatar_url="https://profile-images.xing.com/images/ca8686b5c8f66c1f03e9cd327e765ab1-1/claudia-eckert.1024x1024.jpg",
             file=file,
         )
         else: 
             await webhook.send(
             content=message,
             username="Prof. Claudi",
-            avatar_url="https://www.acatech.de/wp-content/uploads/2021/06/Claudia-Eckert_Zuschnitt.jpg",
+            avatar_url="https://profile-images.xing.com/images/ca8686b5c8f66c1f03e9cd327e765ab1-1/claudia-eckert.1024x1024.jpg",
         )
 
     @Cog.listener()
     async def on_message(self, message):
         if not str(message.content).lower().startswith(
-            ("@Claudia ", "@Claudi ", "@Claudimausi ", "@Eggard ", "@Eggi ")
+            ("@Claudi")
         ):
             return
 
