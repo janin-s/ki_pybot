@@ -44,7 +44,7 @@ class Claudia(Cog):
         #    ("@Claudia ", "@Claudi ", "@Claudimausi ", "@Eggard ", "@Eggi ")
         #):
         print(message.content)
-        print(message.content.lower().startswith(
+        print(message.content.startswith(
             ("@Claudia ")
         ))
         if not message.content.lower().startswith(
