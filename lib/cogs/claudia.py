@@ -21,7 +21,7 @@ class Claudia(Cog):
             self.bot.cogs_ready.ready_up("Gottköniginclaudia ist auferstanden!")
 
     async def send_message_as_claudia(
-        self, message: str, channel: TextChannel, guild: Guild, file
+        self, message: str, channel, guild, file
     ):
         guild_webhooks: list[discord.Webhook] = await guild.webhooks()
         webhooks_filtered: list[discord.Webhook] = [
@@ -41,7 +41,7 @@ class Claudia(Cog):
         )
 
     @Cog.listener()
-    async def on_message(self, message: Message):
+    async def on_message(self, message):
         if not self.enabled:
             return
         if not any(
