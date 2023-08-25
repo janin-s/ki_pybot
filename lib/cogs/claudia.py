@@ -20,9 +20,7 @@ class Claudia(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("Gottköniginclaudia ist auferstanden!")
 
-    async def send_message_as_claudia(
-        self, message: str, channel, guild, file
-    ):
+    async def send_message_as_claudia(self, message: str, channel, guild, file):
         guild_webhooks: list[discord.Webhook] = await guild.webhooks()
         webhooks_filtered: list[discord.Webhook] = [
             w for w in guild_webhooks if str(channel.id) in w.name
@@ -42,10 +40,8 @@ class Claudia(Cog):
 
     @Cog.listener()
     async def on_message(self, message):
-        if not any(
-            message.content.lower().startswith(
-                ("@Claudia ", "@Claudi ", "@Claudimausi ", "@Eggard ", "@Eggi ")
-            )
+        if not message.content.lower().startswith(
+            ("@Claudia ", "@Claudi ", "@Claudimausi ", "@Eggard ", "@Eggi ")
         ):
             return
 
