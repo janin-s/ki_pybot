@@ -47,11 +47,8 @@ class Claudia(Cog):
 
     @Cog.listener()
     async def on_message(self, message):
-        #if not message.content.lower().startswith(
-        #    ("@Claudia ", "@Claudi ", "@Claudimausi ", "@Eggard ", "@Eggi ")
-        #):
-        if not message.content.startswith(
-            ("@Claudia ")
+        if not str(message.content).lower().startswith(
+            ("@Claudia ", "@Claudi ", "@Claudimausi ", "@Eggard ", "@Eggi ")
         ):
             return
 
