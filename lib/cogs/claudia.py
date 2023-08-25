@@ -43,6 +43,10 @@ class Claudia(Cog):
         #if not message.content.lower().startswith(
         #    ("@Claudia ", "@Claudi ", "@Claudimausi ", "@Eggard ", "@Eggi ")
         #):
+        print(message.content)
+        print(message.content.lower().startswith(
+            ("@Claudia ")
+        ))
         if not message.content.lower().startswith(
             ("@Claudia ")
         ):
