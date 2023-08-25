@@ -31,11 +31,18 @@ class Claudia(Cog):
             )
         else:
             webhook: discord.Webhook = webhooks_filtered[0]
-        await webhook.send(
+        if file:
+            await webhook.send(
             content=message,
             username="Prof. Claudi",
             avatar_url="https://www.acatech.de/wp-content/uploads/2021/06/Claudia-Eckert_Zuschnitt.jpg",
             file=file,
+        )
+        else: 
+            await webhook.send(
+            content=message,
+            username="Prof. Claudi",
+            avatar_url="https://www.acatech.de/wp-content/uploads/2021/06/Claudia-Eckert_Zuschnitt.jpg",
         )
 
     @Cog.listener()
