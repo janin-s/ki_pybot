@@ -1,72 +1,100 @@
 <div style="font-family:Arial,Verdana,sans-serif;font-size:10pt">
-   Guten Tag %NAME%,
-   <br><br>
-   vielen Dank für Ihre Bestellung vom %DATE%.
-   Die Bearbeitung Ihrer Bestellung und die Bereitstellung des Print-Tickets im Kundenportal kann einige Werktage in Anspruch nehmen.
-   Bis zur Bereitstellung Ihres Deutschlandtickets als Print-Ticket nutzen Sie daher bitte diese Bestellbestätigung als Fahrschein.
-   <br><br>
-   Bitte beachten Sie, dass die Chipkarte erst im Sommer 2023 verschickt werden kann. Bis dahin erhalten Sie monatlich Ihr persönliches Print-Ticket.
-   Dieses stellen wir Ihnen jeweils ab dem 11. des Vormonats im MVG-Kundenportal zur Verfügung.
-   Ihr Print-Ticket können Sie herunterladen und ausdrucken oder einfach auf Ihrem Smartphone nutzen.
-   <br><br>
-   Ihre Bestelldaten wurden wie folgt übernommen:
-   <table style="font-family:Arial,Verdana,sans-serif;font-size:10pt" width="75%" border="0">
-      <tbody>
-         <tr>
-            <td colspan="2"><b>Produkt</b></td>
-         </tr>
-         <tr>
-            <td>Produkt:&nbsp;</td>
-            <td>Deutschlandticket</td>
-         </tr>
-         <tr>
-            <td>Ticketform:&nbsp;</td>
-            <td>Chipkarte</td>
-         </tr>
-         <tr>
-            <td>Ticketvariante:&nbsp;</td>
-            <td>persönlich</td>
-         </tr>
-         <tr>
-            <td>Gültigkeitsbeginn:&nbsp;</td>
-            <td>%START%</td>
-         </tr>
-         <tr>
-            <td>Zahlweise:&nbsp;</td>
-            <td>monatlich</td>
-         </tr>
-         <tr>
-            <td>Preis:&nbsp;</td>
-            <td>49,00 € pro Monat
-            </td>
-         </tr>
-         <tr>
-            <td colspan="2">&nbsp;</td>
-         </tr>
-         <tr>
-            <td colspan="2"><b>Geltungsbereich</b></td>
-         </tr>
-         <tr>
-            <td>Zone:&nbsp;</td>
-            <td>Deutschlandweit gültig</td>
-         </tr>
-      </tbody>
-   </table>
-   <br>
-   <br><br>
-   Freundliche Grüße<br><br>
-   Ihr Kundenservice<br><br>
-   MVG - Die Mobilitätsmacher*innen<br>
-   Telefon: 0800 344 22 66 11, Mo. bis Do. 8 – 17 Uhr; Fr. 8 – 15 Uhr (gebührenfreie Servicenummer)<br>
-   Telefax: 089 2191-2378<br>
-   <a href="https://www.mvg.de/kundenportal" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://www.mvg.de/kundenportal&amp;source=gmail&amp;ust=1688151198029000&amp;usg=AOvVaw0JWqIHn0UKxyOwLM6DZDoE">www.mvg.de/kundenportal – Abo online verwalten</a><br>
-   <a href="https://www.mvg.de" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://www.mvg.de&amp;source=gmail&amp;ust=1688151198029000&amp;usg=AOvVaw0tHKvOgRHadppSfzs8R46y">www.mvg.de</a><br><br>
-   <span style="font-size:7.5pt">
-   Münchner Verkehrsgesellschaft mbH (MVG), Emmy-Noether-Straße 2, 80992 München; Geschäftsführer: Ingo Wortmann (Vorsitzender), Werner Albrecht, Veit Bodenschatz, Alexandra Diessner, Oliver Glaser; Sitz München; Registergericht München HRB 140658; Aufsichtsratsvorsitzender Oberbürgermeister Dieter Reiter
-   <br><br>
-   Diese E-Mail samt Anlagen ist vertraulich und nur für den genannten Menschen bestimmt. Sollten Sie diese E-Mail-Nachricht versehentlich erhalten haben, informieren Sie uns bitte und löschen Sie diese E-Mail. Es ist nicht zulässig, unbeabsichtigt erhaltene Informationen Dritten zu offenbaren, sie zu kopieren, weiterzuleiten oder in sonstiger Weise zu verwenden.
-   </span>
-   <div class="yj6qo"></div>
-   <div class="adL">
-   </div>
+    Guten Tag %NAME%,
+    <br><br>
+    vielen Dank für Ihre Bestellung vom %DATE%.
+    Die Bearbeitung Ihrer Bestellung und die Bereitstellung des HandyTickets im Kundenportal kann einige Werktage in Anspruch nehmen.
+    Wir behalten uns das Recht vor, die Bestellung abzulehnen bzw. den Vertrag zu widerrufen, wenn zum gewählten Startdatum
+    keine Berechtigung besteht.
+    <br><br>
+    Daher gilt diese Bestellbestätigung als vorläufige Fahrtberechtigung bis maximal 3 Wochen nach Gültigkeitsbeginn
+    Bitte zeigen Sie diese Bestell-/Abonnementbestätigung zusätzlich mit einem amtlich gültigen Lichtbildausweis in einer Kontrolle vor.
+    <br><br>
+    Laden Sie sich jetzt die App <a href=3D"https://www.mvg.de/mvgo">MVGO</a> oder <a href=3D"https://www.mvg.de/fahrinfo">MVG Fahrinfo</a> auf Ihr Smartphone und melden Sie sich mit Ihrem M-Login-Account an.
+    Dort erhalten Sie monatlich Ihr aktuelles Ticket bereitgestellt.
+    <div style=3D"font-family: Arial, Verdana, sans-serif; font-size: 10pt; display: flex; flex-wrap: wrap">
+    <div style=3D"display: flex; flex-direction: column; align-items: center;">
+    <img style=3D"height: 170px" src=3D"https://www.mvg.de/gwt-kupo/media/qr-appstore.png" data-unique-identifier=3D"">
+    <a href=3D"https://apps.apple.com/de/app/mvgo/id991757585">Apple Appstore</a>
+</div>
+<div style=3D"display: flex; flex-direction: column; align-items: center;">
+<img style=3D"height: 170px" src=3D"https://www.mvg.de/gwt-kupo/media/qr-playstore.png" data-unique-identifier=3D"">
+<a href=3D"https://play.google.com/store/apps/details?id=de.mvg.more">Google Playstore</a>
+</div>
+</div>
+<br><br>
+Sobald Ihre Bestellung bearbeitet wurde, senden wir Ihnen eine Vertragsbestätigung per E-Mail.
+<br><br>
+Persönliche Daten:
+<br><br>
+%NAME%
+<br>
+%STREET%
+<br>
+%ZIP_CITY%
+<br><br>
+Ihre Bestelldaten wurden wie folgt übernommen:
+<br><br>
+<table style=3D"font-family: Arial, Verdana, sans-serif; font-size: 10pt;" width=3D"75%" border=3D"0">
+<tbody>
+    <tr>
+        <td colspan=3D"2"><b>Produkt</b></td>
+    </tr>
+    <tr>
+        <td>Produkt:&nbsp;</td>
+        <td>Deutschlandticket</td>
+    </tr>
+    <tr>
+        <td>Ticketform:&nbsp;</td>
+        <td>HandyTicket</td>
+    </tr>
+    <tr>
+        <td>Ticketvariante:&nbsp;</td>
+        <td>persönlich</td>
+    </tr>
+    <tr>
+        <td>Gültigkeitsbeginn:&nbsp;</td>
+        <td>%START%</td>
+    </tr>
+    <tr>
+        <td>Zahlweise:&nbsp;</td>
+        <td>monatlich</td>
+    </tr>
+    <tr>
+        <td>Preis:&nbsp;</td>
+        <td>49,00 € pro Monat
+        </td>
+    </tr>
+    <tr>
+        <td colspan=3D"2">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan=3D"2"><b>Geltungsbereich</b></td>
+    </tr>
+    <tr>
+        <td>Zone:&nbsp;</td>
+        <td>Deutschlandweit gültig</td>
+    </tr>
+</tbody>
+</table>
+<br>
+Alle Details zum Abo als HandyTicket finden Sie unter <a href=3D"https://www.mvg.de/abo-handyticket">mvg.de/abo-handyticket</a>.
+<b>Gültigkeitszeitraum der Fahrtberechtigung bis maximal 3 Wochen nach Gültigkeitsbeginn.</b>
+<br><br>
+Freundliche Grüße<br><br>
+Ihr Kundenservice<br><br>
+MVG - Die Mobilitätsmacher*innen<br>
+Telefon: 0800 344 22 66 11, Mo. bis Do. 8 – 17 Uhr; Fr. 8 – 15 Uhr (gebührenfreie Servicenummer)<br>
+Telefax: 089 2191-2378<br>
+<a href=3D"https://www.mvg.de/kundenportal">www.mvg.de/kundenportal – Abo online verwalten</a><br>
+<a href=3D"https://www.mvg.de">www.mvg.de</a><br><br>
+<span style=3D"font-size:7.5pt">
+Münchner Verkehrsgesellschaft mbH (MVG), Emmy-Noether-Straße 2, 80992 München; Geschäftsführer: Ingo Wortmann (Vorsitzender), Werner Albrecht, Veit Bodenschatz, Alexandra Diessner, Oliver Glaser; Sitz München; Registergericht München HRB 140658; Aufsichtsratsvorsitzender Oberbürgermeister Dieter Reiter
+<br><br>
+Diese E-Mail samt Anlagen ist vertraulich und nur für den genannten Menschen bestimmt.
+Sollten Sie diese E-Mail-Nachricht versehentlich erhalten haben, informieren Sie uns bitte und löschen Sie diese E-Mail.
+Es ist nicht zulässig, unbeabsichtigt erhaltene Informationen Dritten zu offenbaren, sie zu kopieren, weiterzuleiten oder in sonstiger Weise zu verwenden.
+</span>
+<div class="yj6qo"></div>
+<div class="adL">
+</div>
 </div>

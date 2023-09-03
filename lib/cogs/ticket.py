@@ -39,13 +39,15 @@ class Ticket(Cog):
         })
         return res
 
-    async def send_fake_ticket(self, full_name, email):
+    async def send_fake_ticket(self, full_name, street, zip_city, email):
         locale.setlocale(locale.LC_TIME, "de_DE.utf8")
         yesterday_date = (datetime.now() - timedelta(days=1)).strftime("%d. %B %Y")
         first_month_day = datetime.now().replace(day=1).strftime("%d. %B %Y")
         locale.setlocale(locale.LC_TIME, '')
         content = self.html_template \
             .replace("%NAME%", full_name) \
+            .replace("%STREET%", street) \
+            .replace("%ZIP_CITY%", zip_city) \
             .replace("%DATE%", yesterday_date) \
             .replace("%START%", first_month_day)
         res = self.send_mail("abocenter@mvg.de",
@@ -60,13 +62,14 @@ class Ticket(Cog):
             self.bot.cogs_ready.ready_up("Notfallticket enabled!")
 
     @command()
-    async def ticket(self, ctx: Context, first_name=None, last_name=None, email=None):
+    async def ticket(self, ctx: Context, email=None, first_name=None, last_name=None, *, address=None):
         """sends you a ticket"""
-        if not first_name or not last_name or not email:
-            await ctx.send("`!ticket Max Mustermann max@gmail.com`")
+        if not email or not first_name or not last_name or not address:
+            await ctx.send("`!ticket max@gmail.com Max Mustermann Fusweg 1, 80333 München`")
             return
-        # check the current usage for today
-        res : requests.Response = await self.send_fake_ticket(f"{first_name} {last_name}", email)
+        street = address.split(",")[0]
+        zip_city = address.split(",")[1]
+        res: requests.Response = await self.send_fake_ticket(f"{first_name} {last_name}", street, zip_city, email)
         await ctx.send(f"Ticket sent to {email} with status {res.status_code}")
 
 
