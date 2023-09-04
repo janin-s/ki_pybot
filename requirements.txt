@@ -81,7 +81,7 @@ oauthlib==3.2.2
     # via
     #   requests-oauthlib
     #   tweepy
-openai==0.27.8
+openai==0.28.0
     # via -r requirements.in
 packaging==23.1
     # via
