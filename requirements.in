@@ -12,3 +12,5 @@ qbstyles
 openai
 leakcheck
 claude-api
+feedparser
+markdownify

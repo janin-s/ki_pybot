@@ -129,6 +129,11 @@ CREATE TABLE IF NOT EXISTS events (
     location TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS rss_feed_last_entries (
+    feed_id text PRIMARY KEY NOT NULL,
+    last_entry_id text NOT NULL
+);
+
 INSERT OR IGNORE INTO server_info (guild_id, name, main_channel, quote_channel, birthday_channel, reminder_channel, trading_channel)
 VALUES (705425948996272210, '10111011 Strassenbande', 705425949541269668, 705427122151227442, 705425949541269668, 705425949541269668, 705425949541269668);
 INSERT OR IGNORE INTO messages (shorthand, message, guild_id)
