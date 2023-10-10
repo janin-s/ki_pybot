@@ -1,5 +1,6 @@
 import dataclasses
 import itertools
+import textwrap
 from collections.abc import Iterable
 from datetime import datetime, timedelta
 from time import mktime
@@ -133,9 +134,12 @@ def format_entry(feed: RSSFeed, entry: FeedEntry) -> Embed:
 
 
 def get_db_key(entry: FeedEntry) -> str:
-    return f'''{entry.id if entry.id else ""}_
-            {entry.published if entry.published else ""}_
-            {entry.link if entry.link else ""}'''
+    return textwrap.dedent(
+        f'''\
+        {entry.id if entry.id else ""}_
+        {entry.published if entry.published else ""}_
+        {entry.link if entry.link else ""}'''
+    ).replace('\n', '')
 
 
 class RSS(Cog):
@@ -176,8 +180,8 @@ class RSS(Cog):
                 embed = format_entry(feed, entry)
                 self.last_entries[feed.id] = get_db_key(entry)
                 await channel.send(embed=embed)
+        await self.safe_newest_entry()
 
-    @rss_update_loop.after_loop
     async def safe_newest_entry(self):
         for feed_id, last_entry_id in self.last_entries.items():
             db.execute('REPLACE INTO rss_feed_last_entries (feed_id, last_entry_id) VALUES (?, ?)',
