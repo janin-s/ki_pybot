@@ -168,7 +168,7 @@ class RSS(Cog):
 
         return reversed(list(itertools.takewhile(entry_is_new, feed.entries)))
 
-    @tasks.loop(minutes=UPDATE_MINUTES)
+    @tasks.loop(minutes=UPDATE_MINUTES, reconnect=True)
     async def rss_update_loop(self, channel_id=FEED_CHANNEL_ID):
         channel = await self.bot.fetch_channel(channel_id)
         for feed_id, feed_url in FEEDS:
@@ -190,6 +190,10 @@ class RSS(Cog):
     @rss_update_loop.before_loop
     async def before_update_loop(self):
         await self.bot.wait_until_ready()
+
+    @rss_update_loop.after_loop
+    async def failsafe_update_entries(self):
+        await self.safe_newest_entry()
 
     @Cog.listener()
     async def on_ready(self):
