@@ -97,6 +97,8 @@ pandas==2.0.3
     # via
     #   alpaca-trade-api
     #   yfinance
+peewee==3.16.3
+    # via yfinance
 pillow==10.0.0
     # via matplotlib
 py-cord==2.4.1
@@ -165,7 +167,7 @@ websockets==10.4
     # via alpaca-trade-api
 yarl==1.9.2
     # via aiohttp
-yfinance==0.2.27
+yfinance==0.2.31
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
