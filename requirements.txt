@@ -27,14 +27,18 @@ beautifulsoup4==4.12.2
     #   yfinance
 certifi==2023.5.7
     # via requests
+cffi==1.15.1
+    # via curl-cffi
 charset-normalizer==2.1.1
     # via
     #   aiohttp
     #   requests
-claude-api==1.0.13
+claude-api==1.0.17
     # via -r requirements.in
 contourpy==1.1.0
     # via matplotlib
+curl-cffi==0.5.7
+    # via claude-api
 cycler==0.11.0
     # via matplotlib
 deprecation==2.1.0
@@ -101,6 +105,8 @@ pillow==10.0.0
     # via matplotlib
 py-cord==2.4.1
     # via -r requirements.in
+pycparser==2.21
+    # via cffi
 pyparsing==3.0.9
     # via matplotlib
 pysocks==1.7.1
