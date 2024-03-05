@@ -11,6 +11,9 @@ import requests
 import io
 import aiohttp
 
+import datetime
+import random
+
 from PIL import Image, ImageChops
 
 class Random(Cog):
@@ -128,6 +131,41 @@ class Random(Cog):
         checked_in = res.json()["countCheckedInCustomer"]
         msg = f"{checked_in} npcs"
         await ctx.send(msg)
+
+    @command()
+    async def label(self, ctx, name: str):
+        """ Generate a label with a given name """
+        # Generate a random date in the format YYYY-MM-DD
+        start_date = datetime.date(2021, 1, 1)
+        end_date = datetime.date.today()
+        time_between_dates = end_date - start_date
+        days_between_dates = time_between_dates.days
+        random_number_of_days = random.randrange(days_between_dates)
+        random_date = start_date + datetime.timedelta(days=random_number_of_days)
+
+        payload = {
+            "country": "Germany",
+            "name": name,
+            "roaster": name,
+            "varietals": name,
+            "region": name,
+            "farm": name,
+            "elevation": "1m",
+            "doseWeight": 1000,
+            "roastingDate": random_date.strftime("%Y-%m-%d"),
+            "processing": name,
+            "aromatics": name
+        }
+
+        try:
+            response = requests.post('https://coffee.maxkienitz.com/api/og/biglabel', json=payload)
+            response.raise_for_status()
+            with open("/tmp/label.png", 'wb') as f:
+                f.write(response.content)
+            await ctx.send(file=discord.File("/tmp/label.png"))
+    
+        except requests.exceptions.RequestException as e:
+            await ctx.send(f'An error occurred: {e}')
 
 def setup(bot):
     bot.add_cog(Random(bot))
