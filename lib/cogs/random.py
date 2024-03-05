@@ -162,7 +162,7 @@ class Random(Cog):
             response.raise_for_status()
             with open("/tmp/label.png", 'wb') as f:
                 f.write(response.content)
-            await ctx.send(file=discord.File("/tmp/label.png"))
+            await ctx.send(file=File("/tmp/label.png"))
     
         except requests.exceptions.RequestException as e:
             await ctx.send(f'An error occurred: {e}')
