@@ -133,8 +133,9 @@ class Random(Cog):
         await ctx.send(msg)
 
     @command()
-    async def label(self, ctx, name: str):
+    async def label(self, ctx, *args):
         """ Generate a label with a given name """
+        name = ' '.join(args)
         # Generate a random date in the format YYYY-MM-DD
         start_date = datetime.date(2021, 1, 1)
         end_date = datetime.date.today()
