@@ -70,6 +70,20 @@ class LXPApi:
         response = requests.post(url, headers=headers, json=data)
         return response.json()
 
+    def _delete_authorized(self, url: str, data: dict = None, test: bool = True) -> dict:
+        if data is None:
+            data = {}
+        headers = {
+            "Content-Type": "application/json"
+        }
+        data["auth"] = {
+            "username": self.user,
+            "apikey": self.token,
+            "mode": "test" if test else "live"
+        }
+        response = requests.delete(url, headers=headers, json=data)
+        return response.json()
+
     def get_balance(self) -> str:
         url = f"{self.url}/balance"
         response = self._get_authorized(url)
@@ -112,6 +126,12 @@ class LXPApi:
     def check_letter(self, letter_id: int) -> str:
         url = f"{self.url}/printjobs/{letter_id}"
         response = self._get_authorized(url)
+        beautified_json = json.dumps(response, indent=4)
+        return beautified_json
+
+    def delete_letter(self, letter_id: int) -> str:
+        url = f"{self.url}/printjobs/{letter_id}"
+        response = self._delete_authorized(url)
         beautified_json = json.dumps(response, indent=4)
         return beautified_json
 
@@ -174,9 +194,10 @@ class Letter(Cog):
     async def letter(self, ctx: Context, *, params=None):
         if not params:
             await ctx.send("`!letter status`\n"
-                           "`!letter track <id>`\n"
                            "`!letter recipients`\n"
-                           "`!letter send <recipient> <text>`")
+                           "`!letter send <recipient> <text>`\n"
+                           "`!letter track <id>`\n"
+                           "`!letter delete <id>`")
             return
         params = params.split(" ")
         if len(params) == 1 and params[0] == "status":
@@ -188,6 +209,12 @@ class Letter(Cog):
         if len(params) == 2 and params[0] == "track":
             letter_id = int(params[1])
             status = self.lxp_api.check_letter(letter_id)
+            await ctx.send(f"```{status}```")
+            return
+
+        if len(params) == 2 and params[0] == "delete":
+            letter_id = int(params[1])
+            status = self.lxp_api.delete_letter(letter_id)
             await ctx.send(f"```{status}```")
             return
 
@@ -214,14 +241,17 @@ class Letter(Cog):
                             recipient[0], recipient[1], recipient[2], recipient[3], recipient[4], text,
                             pdf_path)
             letter_id = self.lxp_api.send_letter(pdf_path, test=True)
-            await ctx.send(f"letter sent with id {letter_id}, use `!letter track {letter_id}` to check status",
+            await ctx.send(f"letter sent with id {letter_id}, use `!letter track {letter_id}` to check status\n"
+                           f"or `!letter delete {letter_id}` to cancel within 15min.\n"
+                           f"if you don't cancel, it will cost {self.lxp_api.get_price()}",
                            file=discord.File(pdf_path))
             return
 
         await ctx.send("`!letter status`\n"
-                       "`!letter track <id>`\n"
                        "`!letter recipients`\n"
-                       "`!letter send <recipient> <text>`")
+                       "`!letter send <recipient> <text>`\n"
+                       "`!letter track <id>`\n"
+                       "`!letter delete <id>`")
 
 
 def setup(bot):
