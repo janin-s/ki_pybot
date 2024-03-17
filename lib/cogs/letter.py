@@ -173,11 +173,10 @@ class Letter(Cog):
     @command()
     async def letter(self, ctx: Context, *, params=None):
         if not params:
-            await ctx.send("`!letter status`")
-            await ctx.send("`!letter track <id>`")
-            await ctx.send("`!letter <sender_name> <sender_street> <sender_street_nr> <sender_post_code> "
-                           "<sender_city> <recipient_name> <recipient_street> <recipient_street_nr> "
-                           "<recipient_post_code> <recipient_city> <text>`")
+            await ctx.send("`!letter status`\n"
+                           "`!letter track <id>`\n"
+                           "`!letter recipients`\n"
+                           "`!letter recipient <text>`")
             return
         params = params.split(" ")
         if len(params) == 1 and params[0] == "status":
@@ -192,17 +191,39 @@ class Letter(Cog):
             await ctx.send(f"```{status}```")
             return
 
-        if len(params) != 11:
-            await ctx.send("`!letter <sender_name> <sender_street> <sender_street_nr> <sender_post_code> "
-                           "<sender_city> <recipient_name> <recipient_street> <recipient_street_nr> "
-                           "<recipient_post_code> <recipient_city> <text>`")
+        recipient_dict = {
+            "max": ["Max Kienitz", "Schwanseestr.", 52, 81549, "München"],
+            "janin": ["Janin Chaib", "Ammerseestr.", 17, 82061, "Neuried"],
+        }
+        if len(params) == 1 and params[0] == "recipients":
+            await ctx.send(f"available recipients: {', '.join(recipient_dict.keys())}")
             return
 
-        pdf_path = "/tmp/letter.pdf"
-        self.create_pdf(params[0], params[1], int(params[2]), int(params[3]), params[4],
-                        params[5], params[6], int(params[7]), int(params[8]), params[9], params[10], pdf_path)
-        letter_id = self.lxp_api.send_letter(pdf_path, test=True)
-        await ctx.send(f"Letter sent with id {letter_id}")
+        sender_name = "Ki Pybot"
+        sender_street = "Netcupstr."
+        sender_street_nr = 42
+        sender_post_code = 1337
+        sender_city = "Munich"
+
+        if len(params) > 2 and params[0] == "recipient":
+            if params[1] not in recipient_dict:
+                await ctx.send(
+                    f"unknown recipient `{params[1]}`, available recipients: {', '.join(recipient_dict.keys())}")
+                return
+            recipient = recipient_dict[params[1]]
+            pdf_path = "/tmp/letter.pdf"
+            text = " ".join(params[2:])
+            self.create_pdf(sender_name, sender_street, sender_street_nr, sender_post_code, sender_city,
+                            recipient[0], recipient[1], recipient[2], recipient[3], recipient[4], text,
+                            pdf_path)
+            letter_id = self.lxp_api.send_letter(pdf_path, test=True)
+            await ctx.send(f"letter sent with id {letter_id}, use `!letter track {letter_id}` to check status")
+            return
+
+        await ctx.send("`!letter status`\n"
+                       "`!letter track <id>`\n"
+                       "`!letter recipients`\n"
+                       "`!letter recipient <text>`")
 
 
 def setup(bot):
