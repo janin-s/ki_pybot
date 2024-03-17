@@ -194,13 +194,13 @@ class Letter(Cog):
 
     @command()
     async def letter(self, ctx: Context, *, params=None):
-        message = f"Letter status: {'ENABLED' if self.enabled else 'DISABLED'}\n"
-        "Use the following commands:\n"
-        "`!letter status` - Check your current balance and the price per letter.\n"
-        "`!letter recipients` - List all available recipients.\n"
-        "`!letter send <recipient> <text>` - Send a letter to a specific recipient with your message.\n"
-        "`!letter track <id>` - Track the status of a sent letter using its ID.\n"
-        "`!letter delete <id>` - Delete a letter using its ID."
+        message = (f"Letter status: {'ENABLED' if self.enabled else 'DISABLED'}\n"
+                   "Use the following commands:\n"
+                   "`!letter status` - Check your current balance and the price per letter.\n"
+                   "`!letter recipients` - List all available recipients.\n"
+                   "`!letter send <recipient> <text>` - Send a letter to a specific recipient with your message.\n"
+                   "`!letter track <id>` - Track the status of a sent letter using its ID.\n"
+                   "`!letter delete <id>` - Delete a letter using its ID.")
 
         if not params:
             await ctx.send(message)
