@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import discord
+from discord.ext import commands
 from discord.ext.commands import Cog, command, Context
 import requests
 import base64
@@ -138,6 +139,7 @@ class LXPApi:
 
 class Letter(Cog):
     def __init__(self, bot):
+        self.enabled = False
         self.bot: Bot = bot
         self.lxp_api = LXPApi(self.bot.config.letterxpress_user, self.bot.config.letterxpress_token)
         self.address_dict = json.load(open(Path("res/letter_addresses.json"), "r"))
@@ -192,66 +194,72 @@ class Letter(Cog):
 
     @command()
     async def letter(self, ctx: Context, *, params=None):
+        message = f"Letter status: {'ENABLED' if self.enabled else 'DISABLED'}\n"
+        "Use the following commands:\n"
+        "`!letter status` - Check your current balance and the price per letter.\n"
+        "`!letter recipients` - List all available recipients.\n"
+        "`!letter send <recipient> <text>` - Send a letter to a specific recipient with your message.\n"
+        "`!letter track <id>` - Track the status of a sent letter using its ID.\n"
+        "`!letter delete <id>` - Delete a letter using its ID."
+
         if not params:
-            await ctx.send("`!letter status`\n"
-                           "`!letter recipients`\n"
-                           "`!letter send <recipient> <text>`\n"
-                           "`!letter track <id>`\n"
-                           "`!letter delete <id>`")
+            await ctx.send(message)
             return
+
         params = params.split(" ")
         if len(params) == 1 and params[0] == "status":
             balance = self.lxp_api.get_balance()
             price = self.lxp_api.get_price()
-            await ctx.send(f"current balance: {balance}, current price per letter: {price}")
+            await ctx.send(f"Current balance: {balance}\nCurrent price per letter: {price}")
             return
 
         if len(params) == 2 and params[0] == "track":
             letter_id = int(params[1])
             status = self.lxp_api.check_letter(letter_id)
-            await ctx.send(f"```{status}```")
+            await ctx.send(f"**Letter Status:**\n```{status}```")
             return
 
         if len(params) == 2 and params[0] == "delete":
             letter_id = int(params[1])
             status = self.lxp_api.delete_letter(letter_id)
-            await ctx.send(f"```{status}```")
+            await ctx.send(f"**Delete Status:**\n```{status}```")
             return
 
         if len(params) == 1 and params[0] == "recipients":
-            await ctx.send(f"available recipients: {', '.join(self.address_dict.keys())}")
+            await ctx.send(f"Available recipients: {', '.join(self.address_dict.keys())}")
             return
-
-        sender_name = "Ki Pybot"
-        sender_street = "Netcupstr."
-        sender_street_nr = 42
-        sender_post_code = 1337
-        sender_city = "Munich"
 
         if len(params) > 2 and params[0] == "send":
             recipient = params[1]
             if recipient not in self.address_dict:
                 await ctx.send(
-                    f"unknown recipient `{recipient}`, available recipients: {', '.join(self.address_dict.keys())}")
+                    f"Unknown recipient `{recipient}`.\nAvailable recipients: {', '.join(self.address_dict.keys())}")
                 return
             recipient = self.address_dict[recipient]
             pdf_path = "/tmp/letter.pdf"
             text = " ".join(params[2:])
-            self.create_pdf(sender_name, sender_street, sender_street_nr, sender_post_code, sender_city,
-                            recipient[0], recipient[1], recipient[2], recipient[3], recipient[4], text,
-                            pdf_path)
-            letter_id = self.lxp_api.send_letter(pdf_path, test=True)
-            await ctx.send(f"letter sent with id {letter_id}, use `!letter track {letter_id}` to check status\n"
-                           f"or `!letter delete {letter_id}` to cancel within 15min.\n"
-                           f"if you don't cancel, it will cost {self.lxp_api.get_price()}",
+            self.create_pdf(sender_name="Ki Pybot", sender_street="Netcupstr.", sender_street_nr=42,
+                            sender_post_code=1337, sender_city="Munich", recipient_name=recipient[0],
+                            recipient_street=recipient[1], recipient_street_nr=recipient[2],
+                            recipient_post_code=recipient[3], recipient_city=recipient[4], text=text,
+                            file_path=pdf_path)
+            letter_id = self.lxp_api.send_letter(pdf_path, test=not self.enabled)
+            await ctx.send(f"Letter sent with ID: {letter_id}\n"
+                           f"Use `!letter track {letter_id}` to check the status, or `!letter delete {letter_id}` "
+                           f"to cancel within 15 minutes.\n"
+                           f"If not cancelled, the cost will be {self.lxp_api.get_price()}.",
                            file=discord.File(pdf_path))
             return
 
-        await ctx.send("`!letter status`\n"
-                       "`!letter recipients`\n"
-                       "`!letter send <recipient> <text>`\n"
-                       "`!letter track <id>`\n"
-                       "`!letter delete <id>`")
+        await ctx.send(message)
+
+    @command()
+    @commands.has_permissions(administrator=True)
+    async def toggle_letter(self, ctx: Context):
+        # check the current usage for today
+        self.enabled = not self.enabled
+        info_message = f"`!letter` is now {'enabled' if self.enabled else 'disabled'}."
+        await ctx.send(info_message)
 
 
 def setup(bot):
