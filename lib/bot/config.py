@@ -74,6 +74,9 @@ class Config:
         self.letterxpress_user = str(self.get_key("api_tokens", "letterxpress_user"))
         self.letterxpress_token = str(self.get_key("api_tokens", "letterxpress_token"))
 
+        self.janin_address = str(self.get_key("janin_address"))
+        self.max_address = str(self.get_key("max_address"))
+
 
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)

@@ -120,6 +120,7 @@ class Letter(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.lxp_api = LXPApi(self.bot.config.letterxpress_user, self.bot.config.letterxpress_token)
+        self.address_dict = json.load(open(Path("res/addresses.json"), "r"))
 
     def escape_latex(self, text):
         latex_special_chars = {
@@ -190,12 +191,8 @@ class Letter(Cog):
             await ctx.send(f"```{status}```")
             return
 
-        recipient_dict = {
-            "max": ["Max Kienitz", "Schwanseestr.", 52, 81549, "München"],
-            "janin": ["Janin Chaib", "Ammerseestr.", 17, 82061, "Neuried"],
-        }
         if len(params) == 1 and params[0] == "recipients":
-            await ctx.send(f"available recipients: {', '.join(recipient_dict.keys())}")
+            await ctx.send(f"available recipients: {', '.join(self.address_dict.keys())}")
             return
 
         sender_name = "Ki Pybot"
@@ -206,11 +203,11 @@ class Letter(Cog):
 
         if len(params) > 2 and params[0] == "send":
             recipient = params[1]
-            if recipient not in recipient_dict:
+            if recipient not in self.address_dict:
                 await ctx.send(
-                    f"unknown recipient `{recipient}`, available recipients: {', '.join(recipient_dict.keys())}")
+                    f"unknown recipient `{recipient}`, available recipients: {', '.join(self.address_dict.keys())}")
                 return
-            recipient = recipient_dict[recipient]
+            recipient = self.address_dict[recipient]
             pdf_path = "/tmp/letter.pdf"
             text = " ".join(params[2:])
             self.create_pdf(sender_name, sender_street, sender_street_nr, sender_post_code, sender_city,
