@@ -95,7 +95,6 @@ class LXPApi:
         self._check_pdf_file(pdf_file_path)
         url = f"{self.url}/printjobs"
         base64_file, md5_hash = self._pdf_to_base64(pdf_file_path)
-        print(base64_file)
         response = self._post_authorized(url, data={
             "letter": {
                 "base64_file": base64_file,
