@@ -164,7 +164,7 @@ class Letter(Cog):
         letter_tex = tex_template
         with open(file_path, "w") as letter_tex_file:
             letter_tex_file.write(letter_tex)
-        os.system(f"pdflatex -output-directory /tmp {file_path}")
+        os.system(f"pdflatex -interaction=nonstopmode -output-directory /tmp {file_path}")
 
     async def on_ready(self):
         if not self.bot.ready:
