@@ -120,7 +120,7 @@ class Letter(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.lxp_api = LXPApi(self.bot.config.letterxpress_user, self.bot.config.letterxpress_token)
-        self.address_dict = json.load(open(Path("res/addresses.json"), "r"))
+        self.address_dict = json.load(open(Path("res/letter_addresses.json"), "r"))
 
     def escape_latex(self, text):
         latex_special_chars = {
