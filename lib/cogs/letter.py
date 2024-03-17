@@ -164,7 +164,7 @@ class Letter(Cog):
         letter_tex = tex_template
         with open(file_path, "w") as letter_tex_file:
             letter_tex_file.write(letter_tex)
-        os.system(f"pdflatex -interaction=nonstopmode -output-directory /tmp {file_path}")
+        os.system(f"xelatex -interaction=nonstopmode -output-directory /tmp {file_path}")
 
     async def on_ready(self):
         if not self.bot.ready:
@@ -218,7 +218,8 @@ class Letter(Cog):
                             recipient[0], recipient[1], recipient[2], recipient[3], recipient[4], text,
                             pdf_path)
             letter_id = self.lxp_api.send_letter(pdf_path, test=True)
-            await ctx.send(f"letter sent with id {letter_id}, use `!letter track {letter_id}` to check status")
+            await ctx.send(f"letter sent with id {letter_id}, use `!letter track {letter_id}` to check status",
+                           file=discord.File(pdf_path))
             return
 
         await ctx.send("`!letter status`\n"
