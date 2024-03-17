@@ -14,3 +14,4 @@ leakcheck
 claude-api
 feedparser
 markdownify
+PyPDF2

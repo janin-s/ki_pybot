@@ -71,6 +71,9 @@ class Config:
 
         self.claude_session_cookie = str(self.get_key("api_tokens", "claude_session_cookie"))
 
+        self.letterxpress_user = str(self.get_key("api_tokens", "letterxpress_user"))
+        self.letterxpress_token = str(self.get_key("api_tokens", "letterxpress_token"))
+
 
     def get_key(self, *path):
         return _get_key(self.config, self.default_config, *path)
