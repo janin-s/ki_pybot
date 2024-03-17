@@ -176,7 +176,7 @@ class Letter(Cog):
             await ctx.send("`!letter status`\n"
                            "`!letter track <id>`\n"
                            "`!letter recipients`\n"
-                           "`!letter recipient <text>`")
+                           "`!letter send <recipient> <text>`")
             return
         params = params.split(" ")
         if len(params) == 1 and params[0] == "status":
@@ -205,12 +205,13 @@ class Letter(Cog):
         sender_post_code = 1337
         sender_city = "Munich"
 
-        if len(params) > 2 and params[0] == "recipient":
-            if params[1] not in recipient_dict:
+        if len(params) > 2 and params[0] == "send":
+            recipient = params[1]
+            if recipient not in recipient_dict:
                 await ctx.send(
-                    f"unknown recipient `{params[1]}`, available recipients: {', '.join(recipient_dict.keys())}")
+                    f"unknown recipient `{recipient}`, available recipients: {', '.join(recipient_dict.keys())}")
                 return
-            recipient = recipient_dict[params[1]]
+            recipient = recipient_dict[recipient]
             pdf_path = "/tmp/letter.pdf"
             text = " ".join(params[2:])
             self.create_pdf(sender_name, sender_street, sender_street_nr, sender_post_code, sender_city,
@@ -223,7 +224,7 @@ class Letter(Cog):
         await ctx.send("`!letter status`\n"
                        "`!letter track <id>`\n"
                        "`!letter recipients`\n"
-                       "`!letter recipient <text>`")
+                       "`!letter send <recipient> <text>`")
 
 
 def setup(bot):
