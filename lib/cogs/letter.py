@@ -1,6 +1,7 @@
 import re
 import json
 import os
+from pathlib import Path
 
 import discord
 from discord.ext.commands import Cog, command, Context
@@ -145,7 +146,7 @@ class Letter(Cog):
                    recipient_name: str, recipient_street: str, recipient_street_nr: int, recipient_post_code: int,
                    recipient_city: str,
                    text: str, file_path: str):
-        with open("template.tex", "r") as tex_template_file:
+        with open(Path("res/ticket.txt"), "r") as tex_template_file:
             tex_template = tex_template_file.read()
 
         tex_template = tex_template.replace("$FROM_NAME$", self.escape_latex(sender_name))
@@ -170,7 +171,7 @@ class Letter(Cog):
             self.bot.cogs_ready.ready_up("Letter enabled!")
 
     @command()
-    async def letter(self, ctx: Context, *, params):
+    async def letter(self, ctx: Context, *, params=None):
         if not params:
             await ctx.send("`!letter status`")
             await ctx.send("`!letter track <id>`")

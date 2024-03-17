@@ -1,0 +1,35 @@
+\documentclass[]{scrlttr2}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{geometry}
+\geometry{verbose,a4paper,tmargin=25mm,bmargin=25mm,lmargin=20mm,rmargin=20mm}
+\usepackage{graphicx}
+
+\makeatletter
+\@setplength{toaddrhpos}{\dimexpr\oddsidemargin+1.1in}
+\makeatother
+
+\begin{document}
+	
+\pagestyle{empty}
+\setkomavar{fromname}{$FROM_NAME$}
+\setkomavar{fromaddress}{$FROM_STREET$ $FROM_STREET_NR$\\$FROM_POST_CODE$ $FROM_CITY$}
+\setkomavar{signature}{}
+
+\setkomavar{subject}{}
+
+\begin{letter}{
+    $TO_NAME$ 	\\
+    $TO_STREET$ $TO_STREET_NR$ \\
+    $TO_POST_CODE$ $TO_CITY$ \\
+}
+
+\opening{}
+
+$TEXT$
+
+\ps{}
+
+\end{letter}
+\end{document}
