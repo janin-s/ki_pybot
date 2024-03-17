@@ -146,7 +146,7 @@ class Letter(Cog):
                    recipient_name: str, recipient_street: str, recipient_street_nr: int, recipient_post_code: int,
                    recipient_city: str,
                    text: str, file_path: str):
-        with open(Path("res/ticket.txt"), "r") as tex_template_file:
+        with open(Path("res/template.tex"), "r") as tex_template_file:
             tex_template = tex_template_file.read()
 
         tex_template = tex_template.replace("$FROM_NAME$", self.escape_latex(sender_name))
