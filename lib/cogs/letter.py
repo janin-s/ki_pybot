@@ -198,6 +198,7 @@ class Letter(Cog):
                    "Use the following commands:\n"
                    "`!letter status` - Check your current balance and the price per letter.\n"
                    "`!letter recipients` - List all available recipients.\n"
+                   "`!letter cash` - Add cash to your account.\n"
                    "`!letter send <recipient> <text>` - Send a letter to a specific recipient with your message.\n"
                    "`!letter track <id>` - Track the status of a sent letter using its ID.\n"
                    "`!letter delete <id>` - Delete a letter using its ID.")
@@ -211,6 +212,14 @@ class Letter(Cog):
             balance = self.lxp_api.get_balance()
             price = self.lxp_api.get_price()
             await ctx.send(f"Current balance: {balance}\nCurrent price per letter: {price}")
+            return
+
+        if len(params) == 1 and params[0] == "cash":
+            await ctx.send("Please add cash to your account at\n"
+                           "```Hamburger Sparkasse\n"
+                           "IBAN: DE89200505501241157468\n"
+                           "BIC: HASPDEHHXXX\n"
+                           "Reference: 50045```")
             return
 
         if len(params) == 2 and params[0] == "track":
