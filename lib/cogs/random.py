@@ -115,7 +115,9 @@ class Random(Cog):
                 x.append(date)
                 y.append(int(percentage))
         # create a plot
+        plt.figure(figsize=(12, 8))
         plt.plot(x, y)
+        plt.axhline(y=y[-1], color='r', linestyle=':')
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H'))
         plt.gca().xaxis.set_major_locator(mdates.HourLocator())
         plt.xlabel("time")
