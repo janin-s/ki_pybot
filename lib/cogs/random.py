@@ -17,6 +17,7 @@ import random
 
 from PIL import Image, ImageChops
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 
 class Random(Cog):
@@ -115,6 +116,9 @@ class Random(Cog):
                 y.append(int(percentage))
         # create a plot
         plt.plot(x, y)
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+        plt.gca().xaxis.set_major_locator(mdates.HourLocator())
+        plt.gcf().autofmt_xdate()
         plt.xlabel("time")
         plt.ylabel("percentage")
         plt.title("fitstar neuried capacity")
