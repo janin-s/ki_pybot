@@ -99,9 +99,10 @@ class Random(Cog):
         """get the current capacity of fitstar neuried"""
 
         csv_path = "/home/regular/fitstar/fitstar.csv"
-        # get last 24 lines of the csv file
+        # get last 24h of the csv file
         with open(csv_path, "rb") as f:
-            lines = f.readlines()[-24:]
+            line_count = 24 * 60
+            lines = f.readlines()[-line_count:]
         # get all entries that are not older than 24 hours
         current_timestamp = datetime.datetime.now().timestamp()
         x = []
